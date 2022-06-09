@@ -4,7 +4,6 @@ df <- read.csv("~/Box/organicseed/merged_df_3panel.csv")
 
 
 df$VegiAcreage <- ifelse(df$VegiAcreage < 0, NA, df$VegiAcreage)
-
 df$IncreasedOGVegSeedf <- as.numeric(factor(df$IncreasedOGVegSeed, levels = c("Decreased the %",
                                          "About the same %",
                                          "Increased the %",
@@ -89,7 +88,6 @@ matched_funds <- fund_summary %>%
 # unsure what to do with unmatched funds yet
 unmatched_funds <- fund_summary %>% 
   filter(Region == "Multi-region") #| maincrop == "Multiple")
-
 
 df <- df %>% 
   mutate(year_range = case_when(
