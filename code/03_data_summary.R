@@ -29,10 +29,12 @@ df %>%
 
 df.long %>% 
   ggplot(aes(x = factor(survey_year), y = OGseed_percent)) +
-  geom_boxplot()
+  geom_boxplot(aes(color = OGseed_type))
 
 summary(df.long$OGseed_percent)
 plot(df.long$OGseed_percent)
+
+
 
 # Summary of "demand" variables ----
 table(df$OGSeedOGIntegrityf)
