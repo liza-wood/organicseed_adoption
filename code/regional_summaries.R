@@ -3,6 +3,45 @@ library(tidyverse)
 df <- read.csv("~/Box/organicseed/df.csv")
 df.long <- read.csv("~/Box/organicseed/df_long.csv")
 
+df %>% 
+  filter(Region != "International") %>% 
+  filter(survey_year == 2021) %>% 
+  group_by(maincrop) %>% 
+  summarize(avg_avail = mean(barrier_availability, na.rm = T),
+            avg_price = mean(barrier_price, na.rm = T),
+            avg_quality = mean(barrier_distrustQuality, na.rm = T),
+            avg_buyerReq = mean(barrier_buyerReq, na.rm = T))
+df$barrier_buyerReq
+corn <- df %>% 
+  filter(Region != "International") %>% 
+  filter(survey_year == 2021) %>% 
+  filter(growsField == T) %>% 
+  filter(str_detect(FieldCrop1, "[Cc]orn|[Mm]aize") | 
+           str_detect(FieldCrop2, "[Cc]orn|[Mm]aize") |
+           str_detect(FieldCrop3, "[Cc]orn|[Mm]aize")) 
+corn %>% 
+  summarize(avg_avail = mean(barrier_availability, na.rm = T),
+            avg_price = mean(barrier_price, na.rm = T),
+            avg_quality = mean(barrier_distrustQuality, na.rm = T),
+            avg_buyerReq = mean(barrier_buyerReq, na.rm = T))
+
+soy <- df %>% 
+  filter(Region != "International") %>% 
+  filter(survey_year == 2021) %>% 
+  filter(growsField == T) %>% 
+  filter(str_detect(FieldCrop1, "[Ss]oy") | 
+           str_detect(FieldCrop2, "[Ss]oy") |
+           str_detect(FieldCrop3, "[Ss]oy")) 
+summary(corn$OGFieldSeed)
+summary(soy$OGFieldSeed)
+
+summary(corn$barrier_availability)
+summary(corn$barrier_price)
+summary(soy$barrier_availability)
+
+summary(df$barrier_availability)
+summary(df$barrier_price)
+
 df <- df %>% 
   filter(Region != "International") %>% 
   select(OGseed_percent_maincrop, maincrop, VegiAcreage, FieldAcreage, ForageAcreage, 
@@ -10,6 +49,7 @@ df <- df %>%
          OGSeedOGIntegrityf, OGSeedOGIntegrityn, CertifierRequestn, 
          funding_avg_annual_amt, producer_n, survey_year, year_range, Region,
          contains("barrier"), producer_challenge_sum, producer_n, median_producer_revenue) 
+
 # Regional profiles
 regional_count <- df %>% 
   filter(survey_year == 2021) %>% 
