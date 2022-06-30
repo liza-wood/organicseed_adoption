@@ -18,15 +18,8 @@ df.full <- df %>%
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
   filter(complete.cases(.)) 
 
-fit1_acreage <- lm(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls + # demographics
-                      OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                      #funding_avg_annual_amt_ls + # This has amount differents by year and region
-                      #producer_n_s, #+ I can't have producer_n because it is the same as Region
-                      Region +
-                      factor(survey_year), 
-                    data = df.full)
-
-fit2_acreage <- lmer(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls + # demographics
+acreage <- lmer(OGseed_percent_maincrop ~ maincrop + 
+                       TotalAcreage_ls + # demographics
                         OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
                         funding_avg_annual_amt_ls + 
                         producer_n_s + # supply
@@ -43,24 +36,26 @@ df.full.21 <- df %>%
          producer_n_s = scale(producer_n),
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) 
 
-fit21_acreage_barriers <- lm(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls + # demographics
+acreage_barriers <- lm(OGseed_percent_maincrop ~ maincrop + 
+                               TotalAcreage_ls + # demographics
                                  OGSeedOGIntegrityn_s + 
                                  CertifierRequestn +  
                                  barrier_availability +
                                  barrier_price +
                                  barrier_lackdesiredTraits +
                                  barrier_buyerReq +
-                                 Region, data = df.full.21,
-                               family = "binomial")
+                                 Region, data = df.full.21)
 
 # Self-reported change ----
-dfi <-  filter(df, IncreasedOGseed != "Already at 100%")
-dfi$IncreasedOGseed_f <- ifelse(dfi$IncreasedOGseed == "Yes",1, 0)
+df$IncreasedOGseed_f <- factor(df$IncreasedOGseed , 
+                               levels = c("No", "Yes", "Already at 100%"))
 
-df.fulli <- dfi %>% 
+df.fulli <- df %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, IncreasedOGseed_f, maincrop, TotalAcreage, OGSeedOGIntegrityn,
-         CertifierRequestn, funding_avg_annual_amt, producer_n, survey_year, Region) %>% 
+  select(RespondentID, IncreasedOGseed_f, maincrop, 
+         TotalAcreage, OGSeedOGIntegrityn,
+         CertifierRequestn, funding_avg_annual_amt, 
+         producer_n, survey_year, Region) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
@@ -69,7 +64,8 @@ df.fulli <- dfi %>%
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
   filter(complete.cases(.)) 
 
-fit1_increase <- glm(IncreasedOGseed_f ~ maincrop + TotalAcreage_ls + # demographics
+fit1_increase <- glm(IncreasedOGseed_f ~ maincrop + 
+                       TotalAcreage_ls + # demographics
                        OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
                        #funding_avg_annual_amt_ls + # This has amount differents by year and region
                        #producer_n_s, #+ I can't have producer_n because it is the same as Region

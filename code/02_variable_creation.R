@@ -1,5 +1,6 @@
 # Variable creation for funding and seed producers
 ## Start with the merged producer data
+library(tidyverse)
 df <- read.csv("~/Box/organicseed/merged_df_3panel.csv")
 
 
@@ -184,18 +185,116 @@ rmv <- c("No answer", "partial complete", "skipped due to branching")
 levels_b <- c("Not a factor", "Slight factor", "Moderate factor", "Significant factor")
 
 df <- df %>% 
-  mutate(barrier_seedTreatlack = ifelse(Q29A %in% rmv, NA, factor(Q29A, levels = levels_b)),
-         barrier_buyerReq = ifelse(Q29B %in% rmv, NA, factor(Q29B, levels = levels_b)),
-         barrier_insuffQuantity = ifelse(Q29C %in% rmv, NA, factor(Q29C, levels = levels_b)),
-         barrier_saveOwn = ifelse(Q29D %in% rmv, NA, factor(Q29D, levels = levels_b)),
-         barrier_distrustQuality = ifelse(Q29E %in% rmv, NA, factor(Q29E, levels = levels_b)),
-         barrier_price = ifelse(Q29F %in% rmv, NA, factor(Q29F, levels = levels_b)),
-         barrier_availability = ifelse(Q29G %in% rmv, NA, factor(Q29G, levels = levels_b)),
-         barrier_lackdesiredTraits = ifelse(Q29H %in% rmv, NA, factor(Q29H, levels = levels_b)))
-
+  mutate(barrier_seedTreatlack = ifelse(Q29A %in% rmv, NA, 
+                                        as.numeric(factor(Q29A, levels = levels_b))),
+         barrier_buyerReq = ifelse(Q29B %in% rmv, NA, 
+                                   as.numeric(factor(Q29B, levels = levels_b))),
+         barrier_insuffQuantity = ifelse(Q29C %in% rmv, NA, 
+                                         as.numeric(factor(Q29C, levels = levels_b))),
+         barrier_saveOwn = ifelse(Q29D %in% rmv, NA, 
+                                  as.numeric(factor(Q29D, levels = levels_b))),
+         barrier_distrustQuality = ifelse(Q29E %in% rmv, NA, 
+                                          as.numeric(factor(Q29E, levels = levels_b))),
+         barrier_price = ifelse(Q29F %in% rmv, NA, 
+                                as.numeric(factor(Q29F, levels = levels_b))),
+         barrier_availability = ifelse(Q29G %in% rmv, NA, 
+                                       as.numeric(factor(Q29G, levels = levels_b))),
+         barrier_lackdesiredTraits = ifelse(Q29H %in% rmv, NA, 
+                                            as.numeric(factor(Q29H, levels = levels_b))))
+df$barrier_seedTreatlackf = factor(df$barrier_seedTreatlack)
+levels(df$barrier_seedTreatlackf) = levels_b
+df$barrier_buyerReqf = factor(df$barrier_buyerReq)
+levels(df$barrier_buyerReqf) = levels_b
+df$barrier_insuffQuantityf = factor(df$barrier_insuffQuantity)
+levels(df$barrier_insuffQuantityf) = levels_b
+df$barrier_saveOwnf = factor(df$barrier_saveOwn)
+levels(df$barrier_saveOwnf) = levels_b
+df$barrier_distrustQualityf = factor(df$barrier_distrustQuality)
+levels(df$barrier_distrustQualityf) = levels_b
+df$barrier_pricef = factor(df$barrier_price)
+levels(df$barrier_pricef) = levels_b
+df$barrier_availabilityf = factor(df$barrier_availability)
+levels(df$barrier_availabilityf) = levels_b
+df$barrier_lackdesiredTraitsf = factor(df$barrier_lackdesiredTraits)
+levels(df$barrier_lackdesiredTraitsf) = levels_b
+  
 table(df$Q29A)
 table(df$barrier_seedTreatlack)
+table(df$barrier_seedTreatlackf)
 df <- select(df, -c(Q29A:Q29H))
+
+# Factor analysis of barriers ----
+## So far this is not convincing
+mat <- df %>% 
+  filter(survey_year == 2021) %>% 
+  filter(!is.na(RespondentID)) %>% 
+  tibble::column_to_rownames("RespondentID") %>% 
+  dplyr::select(barrier_seedTreatlack:barrier_lackdesiredTraits) #%>%
+#map_dfr(~ ifelse(. == "Not applicable", NA, .)) #%>%  
+#filter(. != "Not applicable") #   Getting rid of only all the NAs
+
+ResponseId <- rownames(mat)
+
+#mat <- mat %>% 
+#  map_dfr(~ ifelse(is.na(.), "No response", .)) %>% # Then converting
+#  map_dfr(~ factor(., levels =
+#                     c("No response",
+#                       "Not a factor",
+#                       "Slight factor",
+#                       "Moderate factor",
+#                       "Significant factor"))) %>%
+#  map_dfr(~ as.numeric(.))
+
+nrow(mat[complete.cases(mat),])
+mat.nona <- mat[complete.cases(mat),]
+
+fa = stats::factanal(mat.nona, 
+                     factors = 3, 
+                     n.obs = nrow(mat.nona), 
+                     rotation="varimax")
+psy::scree.plot(fa$correlation) # looks like 3 or 4
+
+fa = factanal(mat.nona, 
+              factors = 4, 
+              n.obs = length(mat.nona), 
+              rotation="varimax")
+print(fa, digits=2, cutoff=.2, sort=TRUE)
+
+# For now I am getting rid of the 5th factor because it is so sparse
+loadings <- as.data.frame(fa$loadings[1:8, 1:4])
+loadings$max <- apply(X=loadings, MARGIN=1, FUN=which.max)
+
+#Factor 1
+f <- loadings %>% filter(max == 1) %>% 
+  row.names() ; f
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only 1
+f1 <- mat %>% select(f) %>% 
+  mutate(barrier_f_avail = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_avail)
+
+#Factor 2
+f <- loadings %>% filter(max == 2) %>% 
+  row.names() ; f
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only 1
+f2 <- mat %>% select(f) %>% 
+  mutate(barrier_f_treatment = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_treatment)
+
+#Factor 3
+f <- loadings %>% filter(max == 3) %>% 
+  row.names() ; f
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .59
+f3 <- mat %>% select(f) %>% 
+  mutate(barrier_f_quantity = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_quantity)
+
+#Factor 4
+f <- loadings %>% filter(max == 4) %>% 
+  row.names() ; f
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .59
+f3 <- mat %>% select(f) %>% 
+  mutate(barrier_f_quantity = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_quantity)
 
 
 df$growsVeg <- ifelse(is.na(df$VegiAcreage), 0, ifelse(df$VegiAcreage > 0, 1, 0))
@@ -217,5 +316,9 @@ df$OGVegiSeed <- ifelse(is.na(df$OGVegiSeed), 0 , df$OGVegiSeed)
 df$OGFieldSeed <- ifelse(is.na(df$OGFieldSeed), 0 , df$OGFieldSeed)
 df$OGForageSeed <- ifelse(is.na(df$OGForageSeed), 0 , df$OGForageSeed)
 
-write.csv(df, "~/Box/organicseed/df.csv", row.names = F)
-write.csv(df.long, "~/Box/organicseed/df_long.csv", row.names = F)
+df.long$OGcrop <- ifelse(stringr::str_detect(df.long$OGseed_type, "Vegi"), "Vegetable",
+                  ifelse(stringr::str_detect(df.long$OGseed_type, "Forage"), "Forage",
+                  ifelse(stringr::str_detect(df.long$OGseed_type, "Field"), "Field", NA)))    
+
+saveRDS(df, "~/Box/organicseed/df.rds")
+saveRDS(df.long, "~/Box/organicseed/df_long.rds")

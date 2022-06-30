@@ -5,8 +5,7 @@ library(tidyr)
 df <- read.csv("~/Box/organicseed/df.csv")
 
 # Cleaning and getting the data down to complete cases ----
-df <-  filter(df, IncreasedOGseed != "Already at 100%")
-df$IncreasedOGseed_f <- ifelse(df$IncreasedOGseed == "Yes",1, 0)
+df$IncreasedOGseed_f <- factor(df$IncreasedOGseed , levels = c("No", "Yes", "Already at 100%"))
 
 df.full <- df %>% 
   filter(Region != "International") %>% 
@@ -20,23 +19,30 @@ df.full <- df %>%
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
   filter(complete.cases(.)) 
 
-fit1_maincrop <- glm(IncreasedOGseed_f ~ maincrop + TotalAcreage_ls + # demographics
+library(MASS)
+polrfit_maincrop <- polr(IncreasedOGseed_f ~ maincrop + 
+                           TotalAcreage_ls + # demographics
                       OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
                       #funding_avg_annual_amt_ls + # This has amount differents by year and region
                       #producer_n_s, #+ I can't have producer_n because it is the same as Region
                       Region +
-                      factor(survey_year), family = "binomial",
+                      factor(survey_year), 
                     data = df.full)
-summary(fit1_maincrop)
+summary(polrfit_maincrop)
 
-fit2_maincrop <- glmer(IncreasedOGseed_f ~ maincrop + TotalAcreage_ls + # demographics
+df.full.i <- filter(df.full, IncreasedOGseed_f != "Already at 100%")
+df.full.i$IncreasedOGseed_f <- ifelse(df.full.i$IncreasedOGseed_f == "No", 0, 
+                                      ifelse(df.full.i$IncreasedOGseed_f == "Yes", 1,
+                                             df.full.i$IncreasedOGseed_f))
+glmer_maincrop <- glmer(as.numeric(IncreasedOGseed_f) ~ maincrop + 
+                          TotalAcreage_ls + # demographics
                         OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
                         funding_avg_annual_amt_ls + 
                         producer_n_s + # supply
                         (1|survey_year) + (1|Region), family = "binomial",
-                       data = df.full)
+                       data = df.full.i)
 
-summary(fit2_maincrop)
+summary(glmer_maincrop)
 
 df.full.21 <- df %>% 
   filter(survey_year == 2021) %>% 
