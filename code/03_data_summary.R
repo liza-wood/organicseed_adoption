@@ -16,8 +16,8 @@ df.long %>%
 
 # Let's narrow this down to the variables of interest
 df <- df %>% 
-  filter(Region != "International") %>% 
-  select(maincrop, OGseed_percent_maincrop, IncreasedOGseed,
+  filter(Region != "International", maincrop != "Unknown") %>% 
+  select(maincrop, OGseed_percent_maincrop, IncreasedOGSeed,
          VegiAcreage, FieldAcreage, ForageAcreage, # Total acres for each crop
          OGVegiSeed, OGFieldSeed, OGForageSeed, # % organic seed used
          TotalAcreage, 
@@ -30,7 +30,7 @@ df <- df %>%
 # Let's narrow this down to the variables of interest
 df.long <- df.long %>% 
   filter(Region != "International") %>% 
-  select(OGcrop, OGseed_percent, IncreasedOGseed,
+  select(OGcrop, OGseed_percent, IncreasedOGSeed,
          TotalAcreage, 
          OGSeedOGIntegrityf, OGSeedOGIntegrityn, # Belief that organic seed is important
          CertifierRequestn, # Certifier has requested
@@ -46,18 +46,17 @@ aggr(df, col=c('navyblue','red'),
 
 # Summary of dependent variable ----
 summary(df$OGseed_percent_maincrop)
-plot(df$OGseed_percent_maincrop)
 
 df %>% 
   ggplot(aes(x = factor(survey_year), y = OGseed_percent_maincrop)) +
-  geom_boxplot(aes(color = maincrop)) +
+  geom_boxplot(aes(color = maincrop),
+               position =  position_dodge2(preserve = "single")) +
   labs(x = "", y = "Percent organic seed used", 
        color = "Main crop") +
   scale_color_manual(values = palette[c(2,4,6,8)]) +
   theme_linedraw()
 
 summary(df.long$OGseed_percent)
-plot(df.long$OGseed_percent)
 
 df.long %>% 
   ggplot(aes(x = factor(survey_year), y = OGseed_percent)) +
@@ -67,22 +66,22 @@ df.long %>%
   scale_color_manual(values = palette[c(3,6,8)]) +
   theme_linedraw()
 
-table(df$IncreasedOGseed)
-table(is.na(df$IncreasedOGseed), df$survey_year)
-df$IncreasedOGseed <- ifelse(df$OGseed_percent_maincrop == 100 & 
-                               is.na(df$IncreasedOGseed), "Already at 100%", 
-                             df$IncreasedOGseed)
+table(df$IncreasedOGSeed)
+table(is.na(df$IncreasedOGSeed), df$survey_year)
+df$IncreasedOGSeed <- ifelse(df$OGseed_percent_maincrop == 100 & 
+                               is.na(df$IncreasedOGSeed), "Already at 100%", 
+                             df$IncreasedOGSeed)
 df %>% 
-  group_by(survey_year, maincrop, IncreasedOGseed) %>% 
+  group_by(survey_year, maincrop, IncreasedOGSeed) %>% 
   count() %>% 
   ungroup() %>% 
   group_by(survey_year, maincrop) %>% 
   mutate(Percent = 100*(n/sum(n))) %>% 
-  mutate(IncreasedOGseed = case_when(is.na(IncreasedOGseed) ~ "No response", 
-                                     T ~ IncreasedOGseed)) %>% 
+  mutate(IncreasedOGseed = case_when(is.na(IncreasedOGSeed) ~ "No response", 
+                                     T ~ IncreasedOGSeed)) %>% 
   ggplot(aes(x = factor(survey_year), 
              y = Percent,
-             fill = factor(IncreasedOGseed, levels = c("No response", "No", 
+             fill = factor(IncreasedOGSeed, levels = c("No response", "No", 
                                                        "Yes", "Already at 100%")))) +
   geom_bar(stat = "identity") +
   labs(x = "", y = "Percent respondents", 
@@ -90,6 +89,25 @@ df %>%
   scale_fill_manual(values = palette[c(2,4,6,8)]) +
   theme_linedraw() +
   facet_wrap(~maincrop)
+
+df.long %>% 
+  group_by(survey_year, OGcrop, IncreasedOGSeed) %>% 
+  count() %>% 
+  ungroup() %>% 
+  group_by(survey_year, OGcrop) %>% 
+  mutate(Percent = 100*(n/sum(n))) %>% 
+  mutate(IncreasedOGseed = case_when(is.na(IncreasedOGSeed) ~ "No response", 
+                                     T ~ IncreasedOGSeed)) %>% 
+  ggplot(aes(x = factor(survey_year), 
+             y = Percent,
+             fill = factor(IncreasedOGSeed, levels = c("No response", "No", 
+                                                       "Yes", "Already at 100%")))) +
+  geom_bar(stat = "identity") +
+  labs(x = "", y = "Percent respondents", 
+       fill = "Increased organic seed use") +
+  scale_fill_manual(values = palette[c(2,4,6,8)]) +
+  theme_linedraw() +
+  facet_wrap(~OGcrop)
 
 
 # Summary of "demand" variables ----
@@ -171,15 +189,18 @@ table(df$barrier_availability)
 table(df$barrier_lackdesiredTraits)
 
 # Summary of demographic variables:
-
+table(df$maincrop)
+table(df$maincrop, df$survey_year)
+table(df.long$OGcrop)
+table(df.long$OGcrop, df.long$survey_year)
 summary(df$TotalAcreage)
+summary(df.long$TotalCropAcreage)
 
 # Last year how many organic acres did you have in annual vegetables. Please fill in number
 summary(df$VegiAcreage)
-df$VegiAcreage <- ifelse(df$VegiAcreage < 0, NA, df$VegiAcreage)
 summary(df$FieldAcreage)
 summary(df$ForageAcreage)
-
+df$VegiAcreage <- ifelse(df$VegiAcreage < 0, NA, df$VegiAcreage)
 df$VegiAcreage <- ifelse(is.na(df$VegiAcreage), 0 , df$VegiAcreage)
 df$FieldAcreage <- ifelse(is.na(df$FieldAcreage), 0 , df$FieldAcreage)
 df$ForageAcreage <- ifelse(is.na(df$ForageAcreage), 0 , df$ForageAcreage)
@@ -188,10 +209,6 @@ df$ForageAcreage <- ifelse(is.na(df$ForageAcreage), 0 , df$ForageAcreage)
 summary(df$OGVegiSeed)
 summary(df$OGFieldSeed)
 summary(df$OGForageSeed)
-
-df$OGVegiSeed <- ifelse(is.na(df$OGVegiSeed), 0 , df$OGVegiSeed)
-df$OGFieldSeed <- ifelse(is.na(df$OGFieldSeed), 0 , df$OGFieldSeed)
-df$OGForageSeed <- ifelse(is.na(df$OGForageSeed), 0 , df$OGForageSeed)
 
 summary(df$VegiAcreage/df$TotalAcreage)
 summary(df$FieldAcreage/df$TotalAcreage)

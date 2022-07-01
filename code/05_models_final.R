@@ -3,87 +3,127 @@ library(tidyr)
 library(stargazer)
 library(lme4)
 
-df <- read.csv("~/Box/organicseed/df.csv")
+df <- readRDS("~/Box/organicseed/df.rds")
+df.long <- readRDS("~/Box/organicseed/df_long.rds")
 
 # Considering acreage as the dependent variable ----
 df.full <- df %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, OGseed_percent_maincrop, maincrop, TotalAcreage, OGSeedOGIntegrityn,
-         CertifierRequestn, funding_avg_annual_amt, producer_n, survey_year, Region) %>% 
+  select(RespondentID, OGseed_percent_maincrop, maincrop, 
+         TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn, 
+         funding_avg_annual_amt, survey_year, Region) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
          funding_avg_annual_amt_ls = scale(log(funding_avg_annual_amt)),
-         producer_n_s = scale(producer_n),
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
   filter(complete.cases(.)) 
 
-acreage <- lmer(OGseed_percent_maincrop ~ maincrop + 
-                       TotalAcreage_ls + # demographics
+acreage <- lm(OGseed_percent_maincrop ~ maincrop + 
+                        TotalAcreage_ls + # demographics
                         OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
                         funding_avg_annual_amt_ls + 
-                        producer_n_s + # supply
-                        (1|survey_year) + (1|Region), data = df.full)
+                        Region +
+                        factor(survey_year), 
+              data = df.full)
 
 df.full.21 <- df %>% 
   filter(survey_year == 2021) %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, OGseed_percent_maincrop, maincrop, TotalAcreage, OGSeedOGIntegrityn,
-         CertifierRequestn, funding_avg_annual_amt, producer_n, survey_year, Region, contains("barrier")) %>% 
+  select(RespondentID, OGseed_percent_maincrop, maincrop, TotalAcreage, 
+         OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
+         survey_year, Region, contains("barrier")) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
-         producer_n_s = scale(producer_n),
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) 
 
 acreage_barriers <- lm(OGseed_percent_maincrop ~ maincrop + 
-                               TotalAcreage_ls + # demographics
-                                 OGSeedOGIntegrityn_s + 
-                                 CertifierRequestn +  
-                                 barrier_availability +
-                                 barrier_price +
-                                 barrier_lackdesiredTraits +
-                                 barrier_buyerReq +
-                                 Region, data = df.full.21)
+                         TotalAcreage_ls + # demographics
+                         OGSeedOGIntegrityn_s + 
+                         CertifierRequestn +  
+                         barrier_availability +
+                         barrier_price +
+                         barrier_lackdesiredTraits +
+                         barrier_buyerReq +
+                         Region, data = df.full.21)
 
-# Self-reported change ----
-df$IncreasedOGseed_f <- factor(df$IncreasedOGseed , 
-                               levels = c("No", "Yes", "Already at 100%"))
-
-df.fulli <- df %>% 
+df.full.long <- df.long %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, IncreasedOGseed_f, maincrop, 
-         TotalAcreage, OGSeedOGIntegrityn,
-         CertifierRequestn, funding_avg_annual_amt, 
-         producer_n, survey_year, Region) %>% 
+  select(RespondentID, OGseed_percent, OGcrop, TotalAcreage, 
+         OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
+         survey_year, Region) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
          funding_avg_annual_amt_ls = scale(log(funding_avg_annual_amt)),
-         producer_n_s = scale(producer_n),
+         OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
+  filter(complete.cases(.))
+
+acreage.long <- lmer(OGseed_percent ~ 
+                           OGcrop + TotalAcreage_ls + # demographics
+                           OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
+                           funding_avg_annual_amt_ls + 
+                           Region +
+                           #producer_revenue_s +
+                           #producer_n_s + 
+                           factor(survey_year) + 
+                           (1|RespondentID),
+                         data = df.full.long)
+
+summary(acreage)
+summary(acreage_barriers)
+summary(acreage.long)
+
+# Self-reported change ----
+df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , 
+                               levels = c("No", "Yes", "Already at 100%"))
+
+df.fulli <- df %>% 
+  filter(Region != "International") %>% 
+  select(RespondentID, IncreasedOGSeed_f, maincrop, 
+         TotalAcreage, OGSeedOGIntegrityn,
+         CertifierRequestn, funding_avg_annual_amt, 
+         survey_year, Region) %>% 
+  mutate(Region = factor(Region, levels = c("West", "North Central", 
+                                            "Northeast", "South"))) %>% 
+  mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
+         funding_avg_annual_amt_ls = scale(log(funding_avg_annual_amt)),
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
   filter(complete.cases(.)) 
 
-fit1_increase <- glm(IncreasedOGseed_f ~ maincrop + 
+fit1_increase <- nnet::multinom(IncreasedOGSeed_f ~ maincrop + 
                        TotalAcreage_ls + # demographics
-                       OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
+                       OGSeedOGIntegrityn_s + 
+                       CertifierRequestn +  # demand
                        #funding_avg_annual_amt_ls + # This has amount differents by year and region
                        #producer_n_s, #+ I can't have producer_n because it is the same as Region
                        Region +
-                       factor(survey_year), family = "binomial",
+                       factor(survey_year),
                      data = df.fulli)
+summary(fit1_increase)
 
-fit2_increase <- glmer(IncreasedOGseed_f ~ maincrop + TotalAcreage_ls + # demographics
+fit2_increase <- MASS::polr(IncreasedOGSeed_f ~ maincrop + 
+                         TotalAcreage_ls + # demographics
+                         OGSeedOGIntegrityn_s + 
+                         CertifierRequestn +  # demand
+                         #funding_avg_annual_amt_ls + # This has amount differents by year and region
+                         #producer_n_s, #+ I can't have producer_n because it is the same as Region
+                         Region +
+                         factor(survey_year), data = df.fulli)
+summary(fit2_increase)
+fit3_increase <- glm(IncreasedOGSeed_f ~ maincrop + TotalAcreage_ls + # demographics
                          OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
                          funding_avg_annual_amt_ls + 
-                         producer_n_s + # supply
-                         (1|survey_year) + (1|Region), family = "binomial",
+                         #producer_n_s + # supply
+                         Region + 
+                         factor(survey_year), family = "binomial",
                        data = df.fulli)
 
 df.full.21i <- dfi %>% 
   filter(survey_year == 2021) %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, IncreasedOGseed_f, maincrop, TotalAcreage, OGSeedOGIntegrityn,
+  select(RespondentID, IncreasedOGSeed_f, maincrop, TotalAcreage, OGSeedOGIntegrityn,
          CertifierRequestn, funding_avg_annual_amt, producer_n, survey_year, Region, contains("barrier")) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
                                             "Northeast", "South"))) %>% 
@@ -92,7 +132,7 @@ df.full.21i <- dfi %>%
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) 
 
 
-fit21_increase_barriers <- glm(IncreasedOGseed_f ~ maincrop + TotalAcreage_ls + # demographics
+fit21_increase_barriers <- glm(IncreasedOGSeed_f ~ maincrop + TotalAcreage_ls + # demographics
                                  OGSeedOGIntegrityn_s + 
                                  CertifierRequestn +  
                                  barrier_availability +

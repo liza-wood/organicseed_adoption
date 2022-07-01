@@ -42,53 +42,61 @@ df.full <- df %>%
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
   filter(complete.cases(.)) 
 
+
 df.full.long <- df.long %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, OGseed_percent, OGcrop, TotalAcreage, OGSeedOGIntegrityn,
-         CertifierRequestn, funding_avg_annual_amt, producer_n, survey_year, Region) %>% 
+  select(RespondentID, OGseed_percent, OGcrop, TotalAcreage, 
+         OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
+         producer_n, median_producer_revenue, survey_year, Region) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
          funding_avg_annual_amt_ls = scale(log(funding_avg_annual_amt)),
          producer_n_s = scale(producer_n),
+         producer_revenue_s = scale(median_producer_revenue),
          OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
-  filter(complete.cases(.)) 
+  filter(complete.cases(.))
 
 # Full models ----
 
 ## Linear model with all fixed effects
 ## dependent variable is percent of organic seed on their "main crop"
 lmfit_maincrop_null <- lm(OGseed_percent_maincrop ~ 1, df.full)
-lmfit_maincrop_full <- lm(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls + # demographics
-                    OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                    funding_avg_annual_amt_ls + # This has amount differences by year and region
-                    #producer_n_s, #+ I can't have producer_n because it is the same as Region
-                    Region +
-                    factor(survey_year), 
-                    data = df.full)
+lmfit_maincrop_full <- lm(OGseed_percent_maincrop ~ maincrop + 
+                            TotalAcreage_ls + # demographics
+                            OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
+                            funding_avg_annual_amt_ls + # This has amount differences by year and region
+                            #producer_n_s, #+ I can't have producer_n because it is the same as Region
+                            Region +
+                            factor(survey_year), 
+                          data = df.full)
 summary(lmfit_maincrop_full) 
 
 step(object = lmfit_maincrop_null, 
      scope = list(upper = lmfit_maincrop_full), direction = "forward", 
-     k = log(nrow(df)), trace = TRUE)
-## This stepwise process suggests that the best fit includes everything except funding
+     k = log(nrow(df.full)), trace = TRUE)
+## This stepwise process suggests that the best fit includes everything except funding, but the difference in AIC is 4 points, which is not massive if we think this funding piece have value
 
-lmfit_maincrop <- lm(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls + # demographics
+lmfit_maincrop <- lm(OGseed_percent_maincrop ~ 
+                      maincrop + TotalAcreage_ls + # demographics
                       OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                      Region +
+                      funding_avg_annual_amt_ls + Region + # supply
                       factor(survey_year), 
                     data = df.full)
 summary(lmfit_maincrop) 
 
 # To do this analysis with the "long" dataframe, we need to have an individual value to control for repetition, so it needs to be multi-level
-lmerfit1_allcrop <- lmer(OGseed_percent ~ OGcrop + TotalAcreage_ls + # demographics
-                        OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                        funding_avg_annual_amt_ls + 
-                        #producer_n_s + 
-                        Region +
-                        factor(survey_year) + 
-                        (1|RespondentID),
+lmerfit1_allcrop <- lmer(OGseed_percent ~ 
+                           OGcrop + TotalAcreage_ls + # demographics
+                           OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
+                           funding_avg_annual_amt_ls + 
+                           Region +
+                           #producer_revenue_s +
+                           #producer_n_s + 
+                           factor(survey_year) + 
+                           (1|RespondentID),
                       data = df.full.long)
+AIC(lmerfit1_allcrop)
 summary(lmerfit1_allcrop)
 
 # Here I can have both the year and the region as random effects and then multi-level attributes, funding average annual amount and producer n, to help determine if these are important drives at these higher scales
@@ -97,8 +105,9 @@ lmerfit_maincrop <- lmer(OGseed_percent_maincrop ~ maincrop +
                            OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
                            funding_avg_annual_amt_ls + 
                            producer_n_s + # supply
-                           (1|survey_year) + (1|Region), data = df.full)
-summary(lmerfit_maincrop) 
+                           (1|survey_year) + (1|Region), 
+                         data = df.full)
+summary(lmerfit_maincrop) # the results here are the same as the lm, but we don't have the mixed
 
 lmerfit2_allcrop <- lmer(OGseed_percent ~ 
                            OGcrop + 
@@ -106,12 +115,29 @@ lmerfit2_allcrop <- lmer(OGseed_percent ~
                            OGSeedOGIntegrityn_s + # actor-focused demand
                            CertifierRequestn +  # intermediary demand
                            funding_avg_annual_amt_ls + # IS support
-                           producer_n_s + # supply
+                           #producer_n_s + # supply
+                           #producer_revenue_s +
                            (1|RespondentID) +
-                           (1|survey_year) + 
-                           (1|Region), 
+                           (1|Region) +
+                           (1|survey_year),
                          data = df.full.long)
+AIC(lmerfit2_allcrop)
 summary(lmerfit2_allcrop) # 
+
+lmerfit2_allcrop <- lmer(OGseed_percent ~ 
+                           OGcrop + 
+                           TotalAcreage_ls + # demographics
+                           OGSeedOGIntegrityn_s + # actor-focused demand
+                           CertifierRequestn +  # intermediary demand
+                           funding_avg_annual_amt_ls + # IS support
+                           #producer_n_s + # supply
+                           median_producer_revenue +
+                           (1|Region) +
+                           (1|RespondentID) +
+                           (1|survey_year),
+                         data = df.full.long)
+AIC(lmerfit2_allcrop)
+summary(lmerfit2_allcrop) 
 
 
 # Comparing the two models' predictive power ----

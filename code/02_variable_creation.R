@@ -3,27 +3,35 @@
 library(tidyverse)
 df <- read.csv("~/Box/organicseed/merged_df_3panel.csv")
 
-
 df$VegiAcreage <- ifelse(df$VegiAcreage < 0, NA, df$VegiAcreage)
-df$IncreasedOGVegSeedf <- as.numeric(factor(df$IncreasedOGVegSeed, levels = c("Decreased the %",
-                                         "About the same %",
-                                         "Increased the %",
-                                         "Already at 100%")))
-df$IncreasedOGFieldSeedf <- as.numeric(factor(df$IncreasedOGFieldSeed, levels = c("Decreased the %",
-                                                                              "About the same %",
-                                                                              "Increased the %",
-                                                                              "Already at 100%")))
-df$IncreasedOGForageSeedf <- as.numeric(factor(df$IncreasedOGForageSeed, levels = c("Decreased the %",
-                                                                              "About the same %",
-                                                                              "Increased the %",
-                                                                              "Already at 100%")))
+df$IncreasedOGVegSeedf <- as.numeric(factor(df$IncreasedOGVegSeed, 
+                                            levels = c("Decreased the %",
+                                                       "About the same %",
+                                                       "Increased the %",
+                                                       "Already at 100%")))
+df$IncreasedOGFieldSeedf <- as.numeric(factor(df$IncreasedOGFieldSeed, 
+                                              levels = c("Decreased the %",
+                                                         "About the same %",
+                                                         "Increased the %",
+                                                         "Already at 100%")))
+df$IncreasedOGForageSeedf <- as.numeric(factor(df$IncreasedOGForageSeed, 
+                                               levels = c("Decreased the %",
+                                                          "About the same %",
+                                                          "Increased the %",
+                                                          "Already at 100%")))
 df$IncreasedOGseed_avg <- round(rowMeans(df[, (ncol(df)-2):ncol(df)], na.rm = T), 0)
 df$IncreasedOGseed_avg <- ifelse(df$IncreasedOGseed_avg == "NaN", NA, df$IncreasedOGseed_avg)
 
 # One way to think about main crop is to assign each producer to a single crop, or mix
+# Last year how many organic acres did you have in annual vegetables. Please fill in number
+df$VegiAcreage <- ifelse(is.na(df$VegiAcreage), 0 , df$VegiAcreage)
+df$FieldAcreage <- ifelse(is.na(df$FieldAcreage), 0 , df$FieldAcreage)
+df$ForageAcreage <- ifelse(is.na(df$ForageAcreage), 0 , df$ForageAcreage)
+
+
 df <- df %>% 
   mutate(maincrop = case_when(
-    df$VegiAcreage == 0 & df$FieldAcreage == 0 & df$ForageAcreage ~ "Unknown",
+    df$VegiAcreage == 0 & df$FieldAcreage == 0 & df$ForageAcreage == 0 ~ "Unknown",
     df$VegiAcreage/df$TotalAcreage > .33 ~ "Vegetables",
     df$FieldAcreage/df$TotalAcreage > .33 ~ "Field",
     df$ForageAcreage/df$TotalAcreage > .33 ~ "Forage",
@@ -35,7 +43,7 @@ df <- df %>%
     maincrop == "Forage" ~ OGForageSeed,
     T ~ (OGVegiSeed + OGFieldSeed + OGForageSeed)/3, 
   )) %>% 
-  mutate(IncreasedOGseed = case_when(
+  mutate(IncreasedOGSeed = case_when(
     survey_year != 2011 & maincrop == "Vegetables" ~ IncreasedOGVegSeed,
     survey_year != 2011 & maincrop == "Field" ~ IncreasedOGFieldSeed,
     survey_year != 2011 & maincrop == "Forage" ~ IncreasedOGForageSeed,
@@ -43,14 +51,18 @@ df <- df %>%
     survey_year == 2011 ~ IncreasedOGSeed,
     T ~ IncreasedOGSeed
   )) %>% 
-  mutate(IncreasedOGseed = case_when(
-    IncreasedOGseed %in% c("4", "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
-    IncreasedOGseed %in% c("3", "Increased the %") ~ "Yes",
-    IncreasedOGseed %in% c("About the same %", "Decreased the %", "1", "2") ~ "No",
-    IncreasedOGseed == "" ~ NA_character_,
-    T ~ IncreasedOGseed
+  mutate(IncreasedOGSeed = case_when(
+    IncreasedOGSeed %in% c("4", "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
+    IncreasedOGSeed %in% c("3", "Increased the %") ~ "Yes",
+    IncreasedOGSeed %in% c("About the same %", "Decreased the %", "1", "2") ~ "No",
+    IncreasedOGSeed == "" ~ NA_character_,
+    T ~ IncreasedOGSeed
   ))
+
+filter(df, survey_year == 2021) %>% select(ForageAcreage, FieldAcreage, VegiAcreage, TotalAcreage, maincrop) %>% 
+  filter(ForageAcreage != 0)
 table(df$maincrop)
+table(df$maincrop, df$survey_year)
 table(df$IncreasedOGseed)
 
 
@@ -308,6 +320,7 @@ growsforage <- df$RespondentID[df$growsForage == 1]
 # A second way is to lengthen the data so that each crop gets an observation, making repeats for crop type
 df.long <- pivot_longer(df, cols = c(OGVegiSeed, OGFieldSeed, OGForageSeed),
                         names_to = "OGseed_type", values_to = "OGseed_percent")
+# This removes the NAs, I think
 df.long <- df.long[df.long$RespondentID %in% growsveg & df.long$OGseed_type == "OGVegiSeed" | 
                    df.long$RespondentID %in% growsfield & df.long$OGseed_type == "OGFieldSeed" | 
                    df.long$RespondentID %in% growsforage & df.long$OGseed_type == "OGForageSeed", ]
@@ -318,7 +331,11 @@ df$OGForageSeed <- ifelse(is.na(df$OGForageSeed), 0 , df$OGForageSeed)
 
 df.long$OGcrop <- ifelse(stringr::str_detect(df.long$OGseed_type, "Vegi"), "Vegetable",
                   ifelse(stringr::str_detect(df.long$OGseed_type, "Forage"), "Forage",
-                  ifelse(stringr::str_detect(df.long$OGseed_type, "Field"), "Field", NA)))    
+                  ifelse(stringr::str_detect(df.long$OGseed_type, "Field"), "Field", NA)))
+
+df.long$TotalCropAcreage <- ifelse(df.long$OGcrop == "Vegetable", df.long$VegiAcreage,
+                            ifelse(df.long$OGcrop == "Forage", df.long$ForageAcreage,
+                            ifelse(df.long$OGcrop == "Field", df.long$FieldAcreage, "missed")))
 
 saveRDS(df, "~/Box/organicseed/df.rds")
 saveRDS(df.long, "~/Box/organicseed/df_long.rds")
