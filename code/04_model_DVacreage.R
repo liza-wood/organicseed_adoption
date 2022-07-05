@@ -75,7 +75,7 @@ summary(lmfit_maincrop_full)
 step(object = lmfit_maincrop_null, 
      scope = list(upper = lmfit_maincrop_full), direction = "forward", 
      k = log(nrow(df.full)), trace = TRUE)
-## This stepwise process suggests that the best fit includes everything except funding, but the difference in AIC is 4 points, which is not massive if we think this funding piece have value
+## This stepwise process suggests that the best fit includes everything except funding, but the difference in AIC is 7 points, which is not massive if we think this funding piece have value
 
 lmfit_maincrop <- lm(OGseed_percent_maincrop ~ 
                       maincrop + TotalAcreage_ls + # demographics
@@ -115,7 +115,7 @@ lmerfit2_allcrop <- lmer(OGseed_percent ~
                            OGSeedOGIntegrityn_s + # actor-focused demand
                            CertifierRequestn +  # intermediary demand
                            funding_avg_annual_amt_ls + # IS support
-                           #producer_n_s + # supply
+                           producer_n_s + # supply
                            #producer_revenue_s +
                            (1|RespondentID) +
                            (1|Region) +
@@ -156,7 +156,7 @@ crop1 <- filter(cropn, n == 1)
 placeholder <- data.frame(RespondentID = 0)
 
 trainID3 <- crop3[sample(nrow(crop3), nrow(crop3)/2),-2]
-trainID3 <- rbind(trainID3, placeholder)
+#trainID3 <- rbind(trainID3, placeholder)
 testID3 <- anti_join(crop3, trainID3) %>% select(-n)
 trainID2 <- crop2[sample(nrow(crop2), nrow(crop2)/2),-2]
 #trainID2 <- rbind(trainID2, placeholder)
@@ -190,7 +190,7 @@ df.full.long.test <- filter(df.full.long.test, RespondentID != 0)
 
 lmfit_maincrop_test <- lm(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls + # demographics
                       OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                      #funding_avg_annual_amt_ls + # This has amount different by year and region
+                      funding_avg_annual_amt_ls + # This has amount different by year and region
                       #producer_n_s, #+ I can't have producer_n because it is the same as Region
                       Region +
                       factor(survey_year), 
@@ -198,7 +198,7 @@ lmfit_maincrop_test <- lm(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls +
 
 lmerfit1_allcrop_test <- lmer(OGseed_percent ~ OGcrop + TotalAcreage_ls + # demographics
                             OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                            #funding_avg_annual_amt_ls + 
+                            funding_avg_annual_amt_ls + 
                             #producer_n_s + 
                             Region +
                             factor(survey_year) + 
@@ -207,14 +207,17 @@ lmerfit1_allcrop_test <- lmer(OGseed_percent ~ OGcrop + TotalAcreage_ls + # demo
 
 lmerfit_maincrop_test <- lmer(OGseed_percent_maincrop ~ maincrop + TotalAcreage_ls + # demographics
                              OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                             funding_avg_annual_amt_ls + producer_n_s + # supply
+                             funding_avg_annual_amt_ls + 
+                             median_producer_revenue +
+                             #producer_n_s + # supply
                              (1|survey_year) + (1|Region), data = df.full.test)
 
 lmerfit2_allcrop_test <- lmer(OGseed_percent ~ OGcrop + TotalAcreage_ls + # demographics
                             OGSeedOGIntegrityn_s + 
                             CertifierRequestn +  # demand
                             funding_avg_annual_amt_ls + 
-                            producer_n_s + # supply
+                            #producer_n_s + # supply
+                            median_producer_revenue +
                             (1|RespondentID) +
                             (1|survey_year) + 
                             (1|Region), data = df.full.long.test)
@@ -225,6 +228,7 @@ mean((predict(lmerfit1_allcrop_test, newdata=df.full.long.train) - df.full.long.
 mean((predict(lmerfit_maincrop_test, newdata=df.full.train) - df.full.train$OGseed_percent_maincrop)^2) #**
 mean((predict(lmerfit2_allcrop_test, newdata=df.full.long.train) - df.full.long.train$OGseed_percent)^2)
 
+# Predictive power is highest of lmerfit2_allcrop but AIC is lowers with 1, so I am going to go ith lmerfit1
 AIC(lmfit_maincrop)
 AIC(lmerfit_maincrop)
 AIC(lmerfit1_allcrop)

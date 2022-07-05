@@ -2,200 +2,237 @@ library(dplyr)
 library(tidyr)
 library(stargazer)
 library(lme4)
+library(ggplot2)
 
 df <- readRDS("~/Box/organicseed/df.rds")
-df.long <- readRDS("~/Box/organicseed/df_long.rds")
 
+df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , 
+                               levels = c("No", "Yes", "Already at 100%"))
+df$IncreasedOGSeed_binom <- ifelse(df$IncreasedOGSeed_f == "No", 0,
+                                   ifelse(df$IncreasedOGSeed_f == "Yes", 1, NA))
 # Considering acreage as the dependent variable ----
+## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 df.full <- df %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, OGseed_percent_maincrop, maincrop, 
-         TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn, 
-         funding_avg_annual_amt, survey_year, Region) %>% 
+  select(RespondentID, OGseed_percent_maincrop, IncreasedOGSeed_binom, maincrop, 
+         TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn,
+         funding_avg_annual_amt, survey_year, Region, contains("barrier")) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
                                             "Northeast", "South"))) %>% 
-  mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
-         funding_avg_annual_amt_ls = scale(log(funding_avg_annual_amt)),
-         OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
-  filter(complete.cases(.)) 
+  mutate(TotalAcreage_ls = c(scale(log(TotalAcreage))), 
+         funding_avg_annual_amt_ls = c(scale(log(funding_avg_annual_amt))),
+         OGSeedOGIntegrityn_s = c(scale(OGSeedOGIntegrityn)),
+         barrier_availability_s = c(scale(barrier_availability)),
+         barrier_price_s = c(scale(barrier_price)),
+         barrier_distrustQuality_s = c(scale(barrier_distrustQuality)),
+         barrier_buyerReq_s = c(scale(barrier_buyerReq))
+         ) 
 
-acreage <- lm(OGseed_percent_maincrop ~ maincrop + 
-                        TotalAcreage_ls + # demographics
-                        OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
+df1 <- select(df.full, OGseed_percent_maincrop, maincrop,
+              CertifierRequestn,
+              TotalAcreage_ls, 
+              funding_avg_annual_amt_ls,
+              OGSeedOGIntegrityn_s,
+              Region, survey_year) %>% 
+  filter(complete.cases(.))
+
+df2 <- select(df.full, colnames(df1), 
+              barrier_availability_s,
+              barrier_price_s,
+              barrier_buyerReq_s) %>% 
+  filter(complete.cases(.))
+
+acreage <- lm(OGseed_percent_maincrop ~ 
+                        OGSeedOGIntegrityn_s + 
+                        maincrop + 
+                        TotalAcreage_ls + 
+                        CertifierRequestn +  
                         funding_avg_annual_amt_ls + 
                         Region +
                         factor(survey_year), 
-              data = df.full)
+              data = df1)
 
-df.full.21 <- df %>% 
-  filter(survey_year == 2021) %>% 
-  filter(Region != "International") %>% 
-  select(RespondentID, OGseed_percent_maincrop, maincrop, TotalAcreage, 
-         OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
-         survey_year, Region, contains("barrier")) %>% 
-  mutate(Region = factor(Region, levels = c("West", "North Central", 
-                                            "Northeast", "South"))) %>% 
-  mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
-         OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) 
 
-acreage_barriers <- lm(OGseed_percent_maincrop ~ maincrop + 
-                         TotalAcreage_ls + # demographics
+acreage_barriers <- lm(OGseed_percent_maincrop ~ 
                          OGSeedOGIntegrityn_s + 
+                         barrier_availability_s +
+                         barrier_price_s +
+                         barrier_buyerReq_s +
+                         maincrop + 
+                         TotalAcreage_ls + 
                          CertifierRequestn +  
-                         barrier_availability +
-                         barrier_price +
-                         barrier_lackdesiredTraits +
-                         barrier_buyerReq +
-                         Region, data = df.full.21)
-
-df.full.long <- df.long %>% 
-  filter(Region != "International") %>% 
-  select(RespondentID, OGseed_percent, OGcrop, TotalAcreage, 
-         OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
-         survey_year, Region) %>% 
-  mutate(Region = factor(Region, levels = c("West", "North Central", 
-                                            "Northeast", "South"))) %>% 
-  mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
-         funding_avg_annual_amt_ls = scale(log(funding_avg_annual_amt)),
-         OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
-  filter(complete.cases(.))
-
-acreage.long <- lmer(OGseed_percent ~ 
-                           OGcrop + TotalAcreage_ls + # demographics
-                           OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
-                           funding_avg_annual_amt_ls + 
-                           Region +
-                           #producer_revenue_s +
-                           #producer_n_s + 
-                           factor(survey_year) + 
-                           (1|RespondentID),
-                         data = df.full.long)
-
+                         funding_avg_annual_amt_ls + 
+                         Region +
+                         factor(survey_year), data = df2)
 summary(acreage)
 summary(acreage_barriers)
-summary(acreage.long)
 
 # Self-reported change ----
-df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , 
-                               levels = c("No", "Yes", "Already at 100%"))
 
-df.fulli <- df %>% 
-  filter(Region != "International") %>% 
-  select(RespondentID, IncreasedOGSeed_f, maincrop, 
-         TotalAcreage, OGSeedOGIntegrityn,
-         CertifierRequestn, funding_avg_annual_amt, 
-         survey_year, Region) %>% 
-  mutate(Region = factor(Region, levels = c("West", "North Central", 
-                                            "Northeast", "South"))) %>% 
-  mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
-         funding_avg_annual_amt_ls = scale(log(funding_avg_annual_amt)),
-         OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) %>% 
-  filter(complete.cases(.)) 
+df3 <- select(df.full, IncreasedOGSeed_binom, maincrop,
+              CertifierRequestn,
+              TotalAcreage_ls, 
+              funding_avg_annual_amt_ls,
+              OGSeedOGIntegrityn_s,
+              Region, survey_year) %>% 
+  filter(complete.cases(.))
 
-fit1_increase <- nnet::multinom(IncreasedOGSeed_f ~ maincrop + 
-                       TotalAcreage_ls + # demographics
-                       OGSeedOGIntegrityn_s + 
-                       CertifierRequestn +  # demand
-                       #funding_avg_annual_amt_ls + # This has amount differents by year and region
-                       #producer_n_s, #+ I can't have producer_n because it is the same as Region
-                       Region +
-                       factor(survey_year),
-                     data = df.fulli)
-summary(fit1_increase)
+df4 <- select(df.full, colnames(df3), 
+              barrier_availability_s,
+              barrier_price_s,
+              barrier_buyerReq_s) %>% 
+  filter(complete.cases(.))
 
-fit2_increase <- MASS::polr(IncreasedOGSeed_f ~ maincrop + 
-                         TotalAcreage_ls + # demographics
+increase <- glm(IncreasedOGSeed_binom ~ 
                          OGSeedOGIntegrityn_s + 
-                         CertifierRequestn +  # demand
-                         #funding_avg_annual_amt_ls + # This has amount differents by year and region
-                         #producer_n_s, #+ I can't have producer_n because it is the same as Region
-                         Region +
-                         factor(survey_year), data = df.fulli)
-summary(fit2_increase)
-fit3_increase <- glm(IncreasedOGSeed_f ~ maincrop + TotalAcreage_ls + # demographics
-                         OGSeedOGIntegrityn_s + CertifierRequestn +  # demand
+                         maincrop + 
+                         TotalAcreage_ls + 
+                         CertifierRequestn +  
                          funding_avg_annual_amt_ls + 
-                         #producer_n_s + # supply
-                         Region + 
+                         Region +
                          factor(survey_year), family = "binomial",
-                       data = df.fulli)
+                       data = df3)
 
-df.full.21i <- dfi %>% 
-  filter(survey_year == 2021) %>% 
-  filter(Region != "International") %>% 
-  select(RespondentID, IncreasedOGSeed_f, maincrop, TotalAcreage, OGSeedOGIntegrityn,
-         CertifierRequestn, funding_avg_annual_amt, producer_n, survey_year, Region, contains("barrier")) %>% 
-  mutate(Region = factor(Region, levels = c("West", "North Central", 
-                                            "Northeast", "South"))) %>% 
-  mutate(TotalAcreage_ls = scale(log(TotalAcreage)), 
-         producer_n_s = scale(producer_n),
-         OGSeedOGIntegrityn_s = scale(OGSeedOGIntegrityn)) 
+increase_barriers <- glm(IncreasedOGSeed_binom ~ 
+                            OGSeedOGIntegrityn_s + 
+                           barrier_availability_s +
+                           barrier_price_s +
+                           barrier_buyerReq_s +
+                           maincrop + 
+                           TotalAcreage_ls + 
+                           CertifierRequestn +  
+                           funding_avg_annual_amt_ls + 
+                           Region +
+                           factor(survey_year), family = "binomial",
+                               data = df4)
 
+summary(increase)
+summary(increase_barriers)
 
-fit21_increase_barriers <- glm(IncreasedOGSeed_f ~ maincrop + TotalAcreage_ls + # demographics
-                                 OGSeedOGIntegrityn_s + 
-                                 CertifierRequestn +  
-                                 barrier_availability +
-                                 barrier_price +
-                                 barrier_lackdesiredTraits +
-                                 barrier_buyerReq +
-                                 Region, data = df.full.21i,
-                               family = "binomial")
+a1 <- acreage$coef
+a2 <- acreage_barriers$coef
+i1 <- exp(increase$coef)
+i2 <- exp(increase_barriers$coef)
 
-
-summary(fit1_acreage)
-summary(fit2_acreage)
-summary(fit1_increase)
-summary(fit2_increase)
-summary(fit21_acreage_barriers)
-summary(fit21_increase_barriers)
-
-stargazer(fit1_acreage, fit2_acreage, type = "html", 
-          title = "% acres of main crop planted to organic seed",
-          out = "~/Documents/Davis/R-Projects/organicseed/tables/acreage_models.html")
-stargazer(fit1_increase, fit2_increase, type = "html", 
-          title = "Self-reported increase of organic seed usage over last 3 years",
-          out = "~/Documents/Davis/R-Projects/organicseed/tables/increase_models.html")
-
-stargazer(fit1_acreage, fit1_increase, type = "html", 
+stargazer(acreage, acreage_barriers, increase, increase_barriers, type = "html", 
           title = "Linear model comparison",
           dep.var.labels = c("% Acreage", "Increased OG seed use"),
-          out = "~/Documents/Davis/R-Projects/organicseed/tables/lm_models.html")
-stargazer(fit2_acreage, fit2_increase, type = "html", 
-          title = "Mulit-level linear model comparison",
+          covariate.labels = c("Values organic seed", 
+                               "Barrier: Variety availability", 
+                               "Barrier: Price",
+                               "Barrier: Buyer restriction",
+                               "Crop type: Forage (vs. Field)", 
+                               "Crop type: Mix (vs. Field)", 
+                               "Crop type: Vegetable (vs. Field)", 
+                               "Total Acres (log)", 
+                               "Certified request", 
+                               "Regional funding (annual average)", 
+                               "Region: North Central (vs. West)",
+                               "Region: Northeast (vs. West)",
+                               "Region: South (vs. West)",
+                               "Year: 2016",
+                               "Year: 2021"),
+          model.numbers = FALSE,
+          no.space = TRUE, 
+          header = FALSE, 
+          out = "~/Documents/Davis/R-Projects/organicseed/tables/models/lm.html")
+
+exp(increase$coefficients)
+
+stargazer(acreage, acreage_barriers, increase,increase_barriers, type = "text", 
+          title = "Linear model comparison",
           dep.var.labels = c("% Acreage", "Increased OG seed use"),
-          out = "~/Documents/Davis/R-Projects/organicseed/tables/glmer_models.html")
+          covariate.labels = c( "Values organic seed", 
+                               "Barrier: Variety availability", 
+                               "Barrier: Price",
+                               "Barrier: Buyer restriction",
+                               "Crop type: Forage (vs. Field)", 
+                               "Crop type: Mix (vs. Field)", 
+                               "Crop type: Vegetable (vs. Field)", 
+                               "Total Acres (log)",
+                               "Certified request", 
+                               "Regional funding (annual average)", 
+                               "Region: North Central (vs. West)",
+                               "Region: Northeast (vs. West)",
+                               "Region: South (vs. West)",
+                               "Year: 2016",
+                               "Year: 2021"),
+          model.numbers = FALSE,
+          no.space = TRUE, 
+          header = FALSE, 
+          out = "~/Documents/Davis/R-Projects/organicseed/tables/models/lm.doc")
 
-stargazer(fit21_acreage_barriers, fit21_increase_barriers, type = "html", 
-          dep.var.labels = c("% Acreage", "Increased OG seed use"),
-          out = "~/Documents/Davis/R-Projects/organicseed/tables/barrier21_models.html")
 
-library(emmeans)
-emmeans(fit2_increase, specs = ~ CertifierRequestn)
+emmeans::emmeans(increase, specs = ~ CertifierRequestn)
 
-
+# For a field crop grower in the North Central region in 2016, what is the effect of a certifier asking to increase
 pp_df1 <- data.frame(maincrop = "Field",
-                     TotalAcreage_ls = median(df.full$TotalAcreage_ls), 
+                     TotalAcreage_ls = median(df.full$TotalAcreage_ls[df.full$Region ==
+                                                                        "North Central" &
+                                                                        df.full$survey_year ==
+                                                                        2016], na.rm = T), 
                      OGSeedOGIntegrityn_s = median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
                      CertifierRequestn = c(0,1),
-                     Region = "West",
-                     survey_year = 2016)
+                     funding_avg_annual_amt_ls = 
+                       unique(df.full$funding_avg_annual_amt_ls[df.full$Region ==
+                                                              "North Central" &
+                                                              df.full$survey_year ==
+                                                              2016]),
+                     Region = "North Central",
+                     survey_year = 2016
+                     )
 
-pp_df2 <- data.frame(maincrop = "Field",
-                    TotalAcreage_ls = median(df.full$TotalAcreage_ls), 
-                    OGSeedOGIntegrityn_s = median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
-                    CertifierRequestn = c(0,1),
-                    Region = "West",
-                    survey_year = 2016,
-                    funding_avg_annual_amt_ls = unique(df.full$funding_avg_annual_amt_ls[df.full$Region ==
-                                                                                                "West" &
-                                                                                         df.full$survey_year ==
-                                                                                           2016]),
-                    producer_n_s = unique(df.full$producer_n_s[df.full$Region == "West" &
-                                                                 df.full$survey_year == 2016]))
+# For a vegetable grower in the Western region in 2016, what is the effect of a certifier asking to increase
+pp_df2 <- data.frame(maincrop = "Vegetables",
+                     TotalAcreage_ls = median(df.full$TotalAcreage_ls[df.full$Region ==
+                                                                    "West" &
+                                                                    df.full$survey_year ==
+                                                                    2016], na.rm = T), 
+                     OGSeedOGIntegrityn_s = median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
+                     CertifierRequestn = c(0,1),
+                     funding_avg_annual_amt_ls = 
+                       unique(df.full$funding_avg_annual_amt_ls[df.full$Region ==
+                                                              "West" &
+                                                              df.full$survey_year ==
+                                                              2016]),
+                     Region = "West",
+                     survey_year = 2016
+)
 
 # Using predict function to get predicted probabilities, with standard errors
-pp_pred <- cbind(pp_df1, predict(fit1_acreage, newdata = pp_df1, se = T))
-pp_pred <- cbind(pp_df2, predict(fit2_acreage, newdata = pp_df2, se = T))
-pp_pred <- cbind(pp_df1, predict(fit1_increase, newdata = pp_df1, se = T))
-pp_pred <- cbind(pp_df2, predict(fit2_increase, newdata = pp_df2, se = T))
+?predict
+# I am asking it to predict on the scale of the response variable
+pred_acreage_cert_ncentral16 <- cbind(pp_df1, predict(acreage, newdata = pp_df1, 
+                                                      se = T, type = "response"))
+pred_acreage_cert_west16 <- cbind(pp_df2, predict(acreage, newdata = pp_df2, 
+                                                  se = T, type = "response"))
+
+pred_increase_cert_ncentral16 <- cbind(pp_df1, predict.glm(increase, newdata = pp_df1, 
+                                                           se = T, type = "response"))
+pred_increase_cert_west16 <- cbind(pp_df2, predict.glm(increase, newdata = pp_df2, 
+                                                       se = T, type = "response"))
+
+plot_change <- function(profile, ylab){
+  profile$CIL <- profile$fit - (1.96 * profile$se.fit)
+  profile$CIU <- profile$fit + (1.96 * profile$se.fit)
+
+  profile %>% 
+    ggplot(aes(x = factor(CertifierRequestn), y = fit, 
+               ymin = CIL, ymax = CIU)) +
+    geom_point() + 
+    geom_errorbar(width=.2,
+                  position=position_dodge(.9)) +
+    labs(x = "Certifier Request", y = ylab, 
+         title = "") +
+    scale_fill_brewer() + 
+    theme_classic() + 
+    theme(text= element_text(size=12, family="Times"), 
+          plot.title = element_text(hjust = .5, vjust = 0, size = 12), 
+          strip.background  = element_blank())
+}
+
+plot_change(pred_acreage_cert_ncentral16, "Predicted % organic acreage")
+plot_change(pred_acreage_cert_west16, "Predicted % organic acreage")
+plot_change(pred_increase_cert_ncentral16, "Likelihood of increasing organic seed use")
+plot_change(pred_increase_cert_west16, "Likelihood of increasing organic seed use")
+

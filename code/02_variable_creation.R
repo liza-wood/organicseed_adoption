@@ -31,10 +31,14 @@ df$ForageAcreage <- ifelse(is.na(df$ForageAcreage), 0 , df$ForageAcreage)
 
 df <- df %>% 
   mutate(maincrop = case_when(
-    df$VegiAcreage == 0 & df$FieldAcreage == 0 & df$ForageAcreage == 0 ~ "Unknown",
-    df$VegiAcreage/df$TotalAcreage > .33 ~ "Vegetables",
-    df$FieldAcreage/df$TotalAcreage > .33 ~ "Field",
-    df$ForageAcreage/df$TotalAcreage > .33 ~ "Forage",
+    VegiAcreage == 0 & FieldAcreage == 0 & ForageAcreage == 0 ~ "Unknown",
+    # Making the distinction below because 2011 did not have cover crops
+    survey_year %in% c(2016, 2021) & VegiAcreage/TotalAcreage > .26 ~ "Vegetables",
+    survey_year %in% c(2016, 2021) & FieldAcreage/TotalAcreage > .26 ~ "Field",
+    survey_year %in% c(2016, 2021) & ForageAcreage/TotalAcreage > .26 ~ "Forage",
+    survey_year == 2011 & VegiAcreage/TotalAcreage > .34 ~ "Vegetables",
+    survey_year == 2011 & FieldAcreage/TotalAcreage > .34 ~ "Field",
+    survey_year == 2011 & ForageAcreage/TotalAcreage > .34 ~ "Forage",
     T ~ "Mix"
   )) %>% 
   mutate(OGseed_percent_maincrop = case_when(
@@ -59,10 +63,13 @@ df <- df %>%
     T ~ IncreasedOGSeed
   ))
 
-filter(df, survey_year == 2021) %>% select(ForageAcreage, FieldAcreage, VegiAcreage, TotalAcreage, maincrop) %>% 
-  filter(ForageAcreage != 0)
 table(df$maincrop)
 table(df$maincrop, df$survey_year)
+
+filter(df, survey_year == 2021) %>% 
+  select(ForageAcreage, FieldAcreage, VegiAcreage, TotalAcreage, maincrop) %>% 
+  filter(ForageAcreage != 0)
+
 table(df$IncreasedOGseed)
 
 
@@ -72,7 +79,7 @@ funds <- read.csv("local_data/public-funding-Dec21.csv")
 table(funds$proj_crop)
 table(funds$location)
 
-fund_summary <- funds %>% 
+funds <- funds %>% 
   mutate(year_range = case_when(
     year %in% 2006:2010 ~ "2006-2010",
     year %in% 2011:2015 ~ "2011-2015",
@@ -92,7 +99,13 @@ fund_summary <- funds %>%
   #  proj_crop == "Vegetables" ~ "Vegetables",
   #  T ~ "Multiple"
   #)) %>% 
-  filter(!is.na(year_range)) %>% 
+  filter(!is.na(year_range))
+
+funds %>% 
+  group_by(year_range) %>% 
+  summarize(funding_avg_annual_amt = sum(funding_amt)/5)
+  
+fund_summary <- funds %>% 
   group_by(year_range, Region) %>% 
   summarize(funding_avg_annual_amt = sum(funding_amt)/5) 
 
@@ -150,7 +163,9 @@ producers <- producers %>%
                                                     "$150,000-$299,999",
                                                     "$300,000-$1 million",
                                                     "Over $1 million"))) %>% 
-  mutate(income20_f = as.numeric(income20_f)) %>% 
+  mutate(income20_f = as.numeric(income20_f)) 
+
+producers_summ <- producers %>% 
   group_by(Region) %>% 
   summarize(income20_median = median(income20_f, na.rm =T),
             pchall_f_agron_avg = mean(pchall_f_agron, na.rm = T),
@@ -165,14 +180,21 @@ producers <- producers %>%
   rowwise() %>% 
   mutate(pchall_sum = sum(c_across(pchall_f_agron_avg:pchall_f_cost_avg)),
          npchall_sum = sum(c_across(npchall_f_business_avg:npchall_f_market_avg)),
-         chall_sum = sum(c_across(pchall_sum:npchall_sum))) %>% 
+         chall_sum = sum(c_across(pchall_sum:npchall_sum))/9) %>% 
   left_join(countdf) %>% 
   select(Region, n, income20_median, chall_sum) %>% 
   rename(producer_n = n,
          median_producer_revenue = income20_median,
          producer_challenge_sum = chall_sum)
 
-df <- left_join(df, producers)
+producers %>% 
+  filter(Region != "International" & Region != "") %>% 
+  summarize(mean_income = mean(income20_f, na.rm =T),
+            total = nrow(.),
+            chall_sum = sum(c_across(pchall_f_agron:npchall_f_market)),
+            mean_chall = (chall_sum/9)/nrow(.))
+
+df <- left_join(df, producers_summ)
 
 ## Creating a few new variables
 df$OGSeedOGIntegrityf <- factor(df$OGSeedOGIntegrity, levels = c("Strongly disagree",
@@ -197,22 +219,22 @@ rmv <- c("No answer", "partial complete", "skipped due to branching")
 levels_b <- c("Not a factor", "Slight factor", "Moderate factor", "Significant factor")
 
 df <- df %>% 
-  mutate(barrier_seedTreatlack = ifelse(Q29A %in% rmv, NA, 
-                                        as.numeric(factor(Q29A, levels = levels_b))),
-         barrier_buyerReq = ifelse(Q29B %in% rmv, NA, 
-                                   as.numeric(factor(Q29B, levels = levels_b))),
-         barrier_insuffQuantity = ifelse(Q29C %in% rmv, NA, 
-                                         as.numeric(factor(Q29C, levels = levels_b))),
-         barrier_saveOwn = ifelse(Q29D %in% rmv, NA, 
-                                  as.numeric(factor(Q29D, levels = levels_b))),
-         barrier_distrustQuality = ifelse(Q29E %in% rmv, NA, 
-                                          as.numeric(factor(Q29E, levels = levels_b))),
-         barrier_price = ifelse(Q29F %in% rmv, NA, 
-                                as.numeric(factor(Q29F, levels = levels_b))),
-         barrier_availability = ifelse(Q29G %in% rmv, NA, 
-                                       as.numeric(factor(Q29G, levels = levels_b))),
-         barrier_lackdesiredTraits = ifelse(Q29H %in% rmv, NA, 
-                                            as.numeric(factor(Q29H, levels = levels_b))))
+  mutate(barrier_seedTreatlack = ifelse(NoOGSeedTreat %in% rmv, NA, 
+                                        as.numeric(factor(NoOGSeedTreat, levels = levels_b))),
+         barrier_buyerReq = ifelse(NoOGSeedProcessor %in% rmv, NA, 
+                                   as.numeric(factor(NoOGSeedProcessor, levels = levels_b))),
+         barrier_insuffQuantity = ifelse(NoOGSeedQuant %in% rmv, NA, 
+                                         as.numeric(factor(NoOGSeedQuant, levels = levels_b))),
+         barrier_saveOwn = ifelse(NoOGSeedSave %in% rmv, NA, 
+                                  as.numeric(factor(NoOGSeedSave, levels = levels_b))),
+         barrier_distrustQuality = ifelse(NoOGSeedQual %in% rmv, NA, 
+                                          as.numeric(factor(NoOGSeedQual, levels = levels_b))),
+         barrier_price = ifelse(NoOGSeedPrice %in% rmv, NA, 
+                                as.numeric(factor(NoOGSeedPrice, levels = levels_b))),
+         barrier_availability = ifelse(NoOGSeedVar %in% rmv, NA, 
+                                       as.numeric(factor(NoOGSeedVar, levels = levels_b))),
+         barrier_lackdesiredTraits = ifelse(NoOGSeedTrait %in% rmv, NA, 
+                                            as.numeric(factor(NoOGSeedTrait, levels = levels_b))))
 df$barrier_seedTreatlackf = factor(df$barrier_seedTreatlack)
 levels(df$barrier_seedTreatlackf) = levels_b
 df$barrier_buyerReqf = factor(df$barrier_buyerReq)
@@ -230,10 +252,10 @@ levels(df$barrier_availabilityf) = levels_b
 df$barrier_lackdesiredTraitsf = factor(df$barrier_lackdesiredTraits)
 levels(df$barrier_lackdesiredTraitsf) = levels_b
   
-table(df$Q29A)
+table(df$NoOGSeedTreat)
 table(df$barrier_seedTreatlack)
 table(df$barrier_seedTreatlackf)
-df <- select(df, -c(Q29A:Q29H))
+df <- select(df, -contains("NoOG"))
 
 # Factor analysis of barriers ----
 ## So far this is not convincing
@@ -281,8 +303,8 @@ f <- loadings %>% filter(max == 1) %>%
   row.names() ; f
 ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only 1
 f1 <- mat %>% select(f) %>% 
-  mutate(barrier_f_avail = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_avail)
+  mutate(barrier_f_traits = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_traits)
 
 #Factor 2
 f <- loadings %>% filter(max == 2) %>% 
@@ -303,11 +325,12 @@ f3 <- mat %>% select(f) %>%
 #Factor 4
 f <- loadings %>% filter(max == 4) %>% 
   row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .59
-f3 <- mat %>% select(f) %>% 
-  mutate(barrier_f_quantity = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_quantity)
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .38
+f4 <- mat %>% select(f) %>% 
+  mutate(barrier_f_other = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_other)
 
+# These are no good; not using them
 
 df$growsVeg <- ifelse(is.na(df$VegiAcreage), 0, ifelse(df$VegiAcreage > 0, 1, 0))
 growsveg <- df$RespondentID[df$growsVeg == 1]

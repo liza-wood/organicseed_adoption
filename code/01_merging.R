@@ -7,7 +7,12 @@ codebook <- read.csv("data/codebook_3panel.csv")
 setwd("~/Dropbox/SOSInteractiveSurvey/")
 df11f <- readRDS("data2011_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGSeed)
 df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGVegSeed,
-                                                    IncreasedOGFieldSeed, IncreasedOGForageSeed)
+                                                    IncreasedOGFieldSeed, IncreasedOGForageSeed,
+                                                    NoOGSeedTreat, NoOGSeedProcessor,
+                                                    NoOGSeedQuant, NoOGSeedSave, 
+                                                    NoOGSeedQual,NoOGSeedPrice,
+                                                    NoOGSeedVar, NoOGSeedTrait,
+                                                    AddStepsTimely, AddStepsContract)
 df21f <- readRDS("data2021_cleaned.rds")
 zipcode <- data.table::fread("zipcode.csv")
 getzipcode <- zipcode$state
@@ -22,7 +27,11 @@ for(i in 1:ncol(df21f)){
   }
 }
 
-df21f <- select(df21f, codebook$qcode_11_16, Q29A:Q29H, IncreasedOGVegSeed,
+df21f <- select(df21f, codebook$qcode_11_16, 
+                NoOGSeedTreat, NoOGSeedProcessor,
+                NoOGSeedQuant, NoOGSeedSave, NoOGSeedQual,NoOGSeedPrice,
+                NoOGSeedVar, NoOGSeedTrait,
+                IncreasedOGVegSeed,
                 IncreasedOGFieldSeed, IncreasedOGForageSeed)
 
 df11f$survey_year = 2011
