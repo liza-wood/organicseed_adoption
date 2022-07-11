@@ -84,7 +84,7 @@ df.long %>%
             median = median(OGseed_percent, na.rm = T))
 write.csv(reg_summary, "~/Box/organicseed/regional_summary.csv", row.names = F)
 
-org <- read.csv("~/Box/organicseed/NOP_USorganic_6.6.22.csv") %>% slice(-c(1:2))
+org <- read.csv("~/Box/organicseed/NOP_USorganicCrops_6.28.22.csv") %>% slice(-c(1:2))
 
 western <- c("CA", "OR", "WA", "ID", "NV", "AZ", "UT", "NM", "CO", "WY", "MT", 
                      "AK", "HI","California", "Oregon", "Washington", "Idaho", "Nevada",

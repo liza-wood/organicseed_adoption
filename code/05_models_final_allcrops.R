@@ -4,17 +4,23 @@ library(stargazer)
 library(lme4)
 library(ggplot2)
 
-df <- readRDS("~/Box/organicseed/df.rds")
+df.long <- readRDS("~/Box/organicseed/df_long.rds")
+# Cleaning and getting the data down to complete cases ----
+df.long$IncreasedOGSeed_f <- factor(df.long$IncreasedOGSeed , levels = c("No", "Yes", "Already at 100%"))
+table(df.long$IncreasedOGSeed_f)
+df.long$IncreasedOGSeed_binom <- ifelse(df.long$IncreasedOGSeed_f == "No", 0,
+                                        ifelse(df.long$IncreasedOGSeed_f == "Yes", 1, NA))
 
-df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , 
-                               levels = c("No", "Yes", "Already at 100%"))
-df$IncreasedOGSeed_binom <- ifelse(df$IncreasedOGSeed_f == "No", 0,
-                                   ifelse(df$IncreasedOGSeed_f == "Yes", 1, NA))
-# Considering acreage as the dependent variable ----
-## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
-df.full <- df %>% 
+# These models don't converge because the responses to increased are all so similar. SO what if I try to remove those that are like repeats
+
+unique <- df.long %>% select(RespondentID, IncreasedOGSeed) %>% 
+  unique() %>% 
+  mutate(duplicate = duplicated(RespondentID))
+table(unique$duplicate)
+
+df.full <- df.long %>% 
   filter(Region != "International") %>% 
-  select(RespondentID, OGseed_percent_maincrop, IncreasedOGSeed_binom, maincrop, 
+  select(RespondentID, OGseed_percent, IncreasedOGSeed_binom, OGcrop, 
          TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn,
          funding_avg_annual_amt, survey_year, Region, contains("barrier")) %>% 
   mutate(Region = factor(Region, levels = c("West", "North Central", 
@@ -26,14 +32,17 @@ df.full <- df %>%
          barrier_price_s = c(scale(barrier_price)),
          barrier_distrustQuality_s = c(scale(barrier_distrustQuality)),
          barrier_buyerReq_s = c(scale(barrier_buyerReq))
-         ) 
+  ) 
+# Considering acreage as the dependent variable ----
+## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 
-df1 <- select(df.full, OGseed_percent_maincrop, maincrop,
+df1 <- select(df.full, OGseed_percent, OGcrop,
               CertifierRequestn,
               TotalAcreage_ls, 
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
-              Region, survey_year) %>% 
+              Region, survey_year,
+              RespondentID) %>% 
   filter(complete.cases(.))
 
 df2 <- select(df.full, colnames(df1), 
@@ -42,39 +51,42 @@ df2 <- select(df.full, colnames(df1),
               barrier_buyerReq_s) %>% 
   filter(complete.cases(.))
 
-acreage <- lm(OGseed_percent_maincrop ~ 
-                        OGSeedOGIntegrityn_s + 
-                        maincrop + 
-                        TotalAcreage_ls + 
-                        CertifierRequestn +  
-                        funding_avg_annual_amt_ls + 
-                        Region +
-                        factor(survey_year), 
+acreage <- lmer(OGseed_percent ~ 
+                OGSeedOGIntegrityn_s + 
+                OGcrop + 
+                TotalAcreage_ls + 
+                CertifierRequestn +  
+                funding_avg_annual_amt_ls + 
+                Region +
+                factor(survey_year) +
+                (1|RespondentID), 
               data = df1)
 
 
-acreage_barriers <- lm(OGseed_percent_maincrop ~ 
+acreage_barriers <- lmer(OGseed_percent ~ 
                          OGSeedOGIntegrityn_s + 
                          barrier_availability_s +
                          barrier_price_s +
                          barrier_buyerReq_s +
-                         maincrop + 
+                         OGcrop + 
                          TotalAcreage_ls + 
                          CertifierRequestn +  
                          funding_avg_annual_amt_ls + 
                          Region +
-                         factor(survey_year), data = df2)
+                         factor(survey_year) +
+                         (1|RespondentID), data = df2)
 summary(acreage)
 summary(acreage_barriers)
 
 # Self-reported change ----
 
-df3 <- select(df.full, IncreasedOGSeed_binom, maincrop,
+df3 <- select(df.full, IncreasedOGSeed_binom, OGcrop,
               CertifierRequestn,
               TotalAcreage_ls, 
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
-              Region, survey_year) %>% 
+              Region, survey_year,
+              RespondentID) %>% 
   filter(complete.cases(.))
 
 df4 <- select(df.full, colnames(df3), 
@@ -83,28 +95,30 @@ df4 <- select(df.full, colnames(df3),
               barrier_buyerReq_s) %>% 
   filter(complete.cases(.))
 
-increase <- glm(IncreasedOGSeed_binom ~ 
-                         OGSeedOGIntegrityn_s + 
-                         maincrop + 
-                         TotalAcreage_ls + 
-                         CertifierRequestn +  
-                         funding_avg_annual_amt_ls + 
-                         Region +
-                         factor(survey_year), family = "binomial",
-                       data = df3)
+increase <- glmer(IncreasedOGSeed_binom ~ 
+                  OGSeedOGIntegrityn_s + 
+                  OGcrop + 
+                  TotalAcreage_ls + 
+                  CertifierRequestn +  
+                  funding_avg_annual_amt_ls + 
+                  Region +
+                  factor(survey_year) +
+                  (1|RespondentID), family = "binomial",
+                data = df3)
 
 increase_barriers <- glm(IncreasedOGSeed_binom ~ 
-                            OGSeedOGIntegrityn_s + 
+                           OGSeedOGIntegrityn_s + 
                            barrier_availability_s +
                            barrier_price_s +
                            barrier_buyerReq_s +
-                           maincrop + 
+                           OGcrop + 
                            TotalAcreage_ls + 
                            CertifierRequestn +  
                            funding_avg_annual_amt_ls + 
                            Region +
-                           factor(survey_year), family = "binomial",
-                               data = df4)
+                           factor(survey_year) +
+                           (1|RespondentID), family = "binomial",
+                         data = df4)
 
 summary(increase)
 summary(increase_barriers)
@@ -143,20 +157,20 @@ stargazer(acreage, acreage_barriers, increase,increase_barriers, type = "text",
           title = "Linear model comparison",
           dep.var.labels = c("% Acreage", "Increased OG seed use"),
           covariate.labels = c( "Values organic seed", 
-                               "Barrier: Variety availability", 
-                               "Barrier: Price",
-                               "Barrier: Buyer restriction",
-                               "Crop type: Forage (vs. Field)", 
-                               "Crop type: Mix (vs. Field)", 
-                               "Crop type: Vegetable (vs. Field)", 
-                               "Total Acres (log)",
-                               "Certified request", 
-                               "Regional funding (annual average)", 
-                               "Region: North Central (vs. West)",
-                               "Region: Northeast (vs. West)",
-                               "Region: South (vs. West)",
-                               "Year: 2016",
-                               "Year: 2021"),
+                                "Barrier: Variety availability", 
+                                "Barrier: Price",
+                                "Barrier: Buyer restriction",
+                                "Crop type: Forage (vs. Field)", 
+                                "Crop type: Mix (vs. Field)", 
+                                "Crop type: Vegetable (vs. Field)", 
+                                "Total Acres (log)",
+                                "Certified request", 
+                                "Regional funding (annual average)", 
+                                "Region: North Central (vs. West)",
+                                "Region: Northeast (vs. West)",
+                                "Region: South (vs. West)",
+                                "Year: 2016",
+                                "Year: 2021"),
           model.numbers = FALSE,
           no.space = TRUE, 
           header = FALSE, 
@@ -175,26 +189,26 @@ pp_df1 <- data.frame(maincrop = "Field",
                      CertifierRequestn = c(0,1),
                      funding_avg_annual_amt_ls = 
                        unique(df.full$funding_avg_annual_amt_ls[df.full$Region ==
-                                                              "North Central" &
-                                                              df.full$survey_year ==
-                                                              2016]),
+                                                                  "North Central" &
+                                                                  df.full$survey_year ==
+                                                                  2016]),
                      Region = "North Central",
                      survey_year = 2016
-                     )
+)
 
 # For a vegetable grower in the Western region in 2016, what is the effect of a certifier asking to increase
 pp_df2 <- data.frame(maincrop = "Vegetables",
                      TotalAcreage_ls = median(df.full$TotalAcreage_ls[df.full$Region ==
-                                                                    "West" &
-                                                                    df.full$survey_year ==
-                                                                    2016], na.rm = T), 
+                                                                        "West" &
+                                                                        df.full$survey_year ==
+                                                                        2016], na.rm = T), 
                      OGSeedOGIntegrityn_s = median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
                      CertifierRequestn = c(0,1),
                      funding_avg_annual_amt_ls = 
                        unique(df.full$funding_avg_annual_amt_ls[df.full$Region ==
-                                                              "West" &
-                                                              df.full$survey_year ==
-                                                              2016]),
+                                                                  "West" &
+                                                                  df.full$survey_year ==
+                                                                  2016]),
                      Region = "West",
                      survey_year = 2016
 )
@@ -215,7 +229,7 @@ pred_increase_cert_west16 <- cbind(pp_df2, predict.glm(increase, newdata = pp_df
 plot_change <- function(profile, ylab){
   profile$CIL <- profile$fit - (1.96 * profile$se.fit)
   profile$CIU <- profile$fit + (1.96 * profile$se.fit)
-
+  
   profile %>% 
     ggplot(aes(x = factor(CertifierRequestn), y = fit, 
                ymin = CIL, ymax = CIU)) +
