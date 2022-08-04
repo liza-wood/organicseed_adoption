@@ -4,9 +4,9 @@ library(lubridate)
 
 # This is the dataframe where I have identified main crops of producers, so each observation is only one producer
   
-df <- readRDS("~/Box/organicseed/df.rds")
+df <- readRDS("~/Box/organicseed/df_onelevel.rds")
 # This is the dataframe where I have lengthened out each crop for the grower, so any grower may have up to 3 crops
-df.long <- readRDS("~/Box/organicseed/df_long.rds")
+df.long <- readRDS("~/Box/organicseed/df_onelevel.rds")
 
 palette <- RColorBrewer::brewer.pal(8, "YlGnBu")
 # How many crops are each grower growing?

@@ -28,12 +28,26 @@ df$VegiAcreage <- ifelse(is.na(df$VegiAcreage), 0 , df$VegiAcreage)
 df$FieldAcreage <- ifelse(is.na(df$FieldAcreage), 0 , df$FieldAcreage)
 df$ForageAcreage <- ifelse(is.na(df$ForageAcreage), 0 , df$ForageAcreage)
 
+df$GrowVegis <- ifelse(df$VegiAcreage == 0 & is.na(df$GrowVegis), 0, df$GrowVegis)
+df$GrowField <- ifelse(df$FieldAcreage == 0 & is.na(df$GrowField), 0, df$GrowField)
+df$GrowForage <- ifelse(df$ForageAcreage == 0 & is.na(df$GrowForage), 0, df$GrowForage)
+
+df$cropcat_n <- (df$GrowVegis + df$GrowField + df$GrowForage)/100
+table(df$cropcat_n)
+
 # Are these crops really unknown?
 test <- filter(df, VegiAcreage == 0 & FieldAcreage == 0 & ForageAcreage == 0)
 table(test$GrowField)
 table(test$GrowForage)
 table(test$GrowVegis)
-veg <- test[test$GrowVegis == 0 & !is.na(test$GrowVegis) & test$GrowForage == 100,]
+
+table(is.na(df$GrowField))
+table(is.na(df$GrowForage))
+table(is.na(df$GrowVegis))
+
+df$GrowVegis <- ifelse(df$VegiAcreage != 0 & is.na(df$GrowVegis), 100, df$GrowVegis)
+df$GrowField <- ifelse(df$FieldAcreage != 0 & is.na(df$GrowField), 100, df$GrowField)
+df$GrowForage <- ifelse(df$ForageAcreage != 0 & is.na(df$GrowForage), 100, df$GrowForage)
 
 df <- df %>% 
   mutate(maincrop = case_when(
@@ -90,48 +104,6 @@ filter(df, survey_year == 2021) %>%
 table(df$IncreasedOGseed)
 
 
-## Reading in public funding data so that I can merge it with the producer survey
-setwd("~/Dropbox/SOSInteractiveSurvey/")
-funds <- read.csv("local_data/public-funding-Dec21.csv")
-table(funds$proj_crop)
-table(funds$location)
-
-funds <- funds %>% 
-  mutate(year_range = case_when(
-    year %in% 2004:2008 ~ "2004-2008",
-    year %in% 2009:2013 ~ "2009-2013",
-    year %in% 2014:2018 ~ "2014-2018",
-    T ~ NA_character_
-  )) %>% 
-  mutate(Region = case_when(
-    location == "Southern" ~ "South",
-    location == "Western" ~ "West",
-    location == "North Central" ~ "North Central",
-    location == "Northeast" ~ "Northeast",
-    T ~ "Multi-region"
-  )) %>% 
-  #mutate(maincrop = case_when(
-  #  proj_crop == "Field Crops" ~ "Field",
-  #  proj_crop == "Forage and / or Cover Crops" ~ "Forage",
-  #  proj_crop == "Vegetables" ~ "Vegetables",
-  #  T ~ "Multiple"
-  #)) %>% 
-  filter(!is.na(year_range))
-
-funds %>% 
-  group_by(year_range) %>% 
-  summarize(funding_avg_annual_amt = sum(funding_amt)/5)
-  
-fund_summary <- funds %>% 
-  group_by(year_range, Region) %>% 
-  summarize(funding_avg_annual_amt = sum(funding_amt)/5) 
-
-matched_funds <- fund_summary %>% 
-  filter(Region != "Multi-region") #& maincrop != "Multiple")
-# unsure what to do with unmatched funds yet
-unmatched_funds <- fund_summary %>% 
-  filter(Region == "Multi-region") #| maincrop == "Multiple")
-
 df <- df %>% 
   mutate(year_range = case_when(
     survey_year == 2011 ~ "2004-2008",
@@ -140,139 +112,8 @@ df <- df %>%
     T ~ NA_character_
   ))
 
-df <- left_join(df, matched_funds)
+# Removed the matched funds thing to regional_data script
 
-## Reading in seed producer data so that I can merge it with the producer survey
-nodes <- fread("~/Box/osa_networks/data_combined_3/net_nodes_withdf.csv") %>% 
-  select(ResponseId_dup, variety_n, cropcat_n)
-producers <- read.csv("~/Box/osa_networks/data_combined_3/surveys_combined.csv") %>% 
-  filter(act_seed_producer == T) %>% left_join(nodes, by = c("ResponseId" = "ResponseId_dup"))
-retailers <- read.csv("~/Box/osa_networks/data_combined_3/surveys_combined.csv") %>% 
-  filter(act_seed_retail == T)
-
-ppltn.p <- read.csv("~/Box/osa_networks/data_producers/00_populatioN_data/total_populatioN.csv") 
-
-countdf <- ppltn.p %>% 
-  mutate(Region = case_when(
-    Region == "Canada" ~ "International",
-    T ~ Region
-  )) %>% 
-  filter(Region != "Other") %>% 
-  group_by(Region) %>% 
-  count()
-
-producers <- producers %>% 
-  select(income20, income20_c, contains("pchall_f_"), Region, variety_n, cropcat_n) %>% 
-  mutate(Region = case_when(
-    Region == "Canada" ~ "International",
-    T ~ Region
-  )) %>% 
-  filter(Region != "Other") %>% 
-  mutate(income20_f = case_when(
-      income20 == "Under $50,000" ~ "$25,000-$49,999",
-      income20 == "$50,000-$149,999" ~ "$75,000-$99,999",
-      income20 == "Over $300,000" ~ "$300,000-$1 million",
-      income20 == "$300,000-$499,999" ~ "$300,000-$1 million",
-      income20 == "$500,000-$1 million" ~ "$300,000-$1 million",
-      T ~ income20
-  )) %>% 
-  mutate(income20_f = factor(income20_f, levels = c("Under $25,000",
-                                                    "$25,000-$49,999",
-                                                    "$50,000-$74,999",
-                                                    "$75,000-$99,999",
-                                                    "$100,000-$149,999",
-                                                    "$150,000-$299,999",
-                                                    "$300,000-$1 million",
-                                                    "Over $1 million"))) %>% 
-  mutate(income20_f = as.numeric(income20_f)) 
-
-producers_summ <- producers %>% 
-  group_by(Region) %>% 
-  summarize(crop_n = round(mean(cropcat_n, na.rm = T), 2),
-            variety_n = round(mean(variety_n, na.rm = T), 2),
-            income20_median = median(income20_f, na.rm =T),
-            pchall_f_agron_avg = mean(pchall_f_agron, na.rm = T),
-            pchall_f_clean_equip_avg = mean(pchall_f_clean_equip, na.rm = T),
-            pchall_f_pest_disease_avg = mean(pchall_f_pest_disease, na.rm = T),
-            pchall_f_climate_avg = mean(pchall_f_climate, na.rm = T),
-            pchall_f_cost_avg = mean(pchall_f_cost, na.rm = T),
-            npchall_f_business_avg = mean(npchall_f_business, na.rm = T),
-            npchall_f_cert_avg = mean(npchall_f_cert, na.rm = T),
-            npchall_f_rltn.ipr_avg = mean(npchall_f_rltn.ipr, na.rm = T),
-            npchall_f_market_avg = mean(npchall_f_market, na.rm = T)) %>% 
-  rowwise() %>% 
-  mutate(pchall_sum = sum(c_across(pchall_f_agron_avg:pchall_f_cost_avg)),
-         npchall_sum = sum(c_across(npchall_f_business_avg:npchall_f_market_avg)),
-         chall_sum = sum(c_across(pchall_sum:npchall_sum))/9) %>% 
-  left_join(countdf) %>% 
-  select(Region, n, income20_median, chall_sum, crop_n, variety_n) %>% 
-  rename(producer_n = n,
-         median_producer_revenue = income20_median,
-         producer_challenge_sum = chall_sum)
-
-producers %>% 
-  filter(Region != "International" & Region != "") %>% 
-  summarize(mean_income = mean(income20_f, na.rm =T),
-            total = nrow(.),
-            chall_sum = sum(c_across(pchall_f_agron:npchall_f_market)),
-            mean_chall = (chall_sum/9)/nrow(.),
-            mean_varieties = mean(variety_n, na.rm = T),
-            mean_crops = mean(cropcat_n, na.rm = T))
-
-ppltn.c <- read.csv("~/Box/osa_networks/data_companies/00_populatioN_data/datawrapper_representativeness.csv") %>% 
-  group_by(Region) %>% 
-  summarize(company_n = sum(n_N)) %>% 
-  filter(Region != "other")
-
-retailers <- retailers %>% 
-  select(income20, income20_c, contains("pchall_f_"), Region) %>% 
-  mutate(Region = case_when(
-    Region == "Canada" ~ "International",
-    T ~ Region
-  )) %>% 
-  filter(Region != "Other") %>% 
-  mutate(income20_f = case_when(
-    income20 == "Under $50,000" ~ "$25,000-$49,999",
-    income20 == "$50,000-$149,999" ~ "$75,000-$99,999",
-    income20 == "Over $300,000" ~ "$300,000-$1 million",
-    income20 == "$300,000-$499,999" ~ "$300,000-$1 million",
-    income20 == "$500,000-$1 million" ~ "$300,000-$1 million",
-    T ~ income20
-  )) %>% 
-  mutate(income20_f = factor(income20_f, levels = c("Under $25,000",
-                                                    "$25,000-$49,999",
-                                                    "$50,000-$74,999",
-                                                    "$75,000-$99,999",
-                                                    "$100,000-$149,999",
-                                                    "$150,000-$299,999",
-                                                    "$300,000-$1 million",
-                                                    "Over $1 million"))) %>% 
-  mutate(income20_f = as.numeric(income20_f)) 
-
-retailers_summ <- retailers %>% 
-  group_by(Region) %>% 
-  summarize(income20_median = median(income20_f, na.rm =T),
-            pchall_f_agron_avg = mean(pchall_f_agron, na.rm = T),
-            pchall_f_clean_equip_avg = mean(pchall_f_clean_equip, na.rm = T),
-            pchall_f_pest_disease_avg = mean(pchall_f_pest_disease, na.rm = T),
-            pchall_f_climate_avg = mean(pchall_f_climate, na.rm = T),
-            pchall_f_cost_avg = mean(pchall_f_cost, na.rm = T),
-            npchall_f_business_avg = mean(npchall_f_business, na.rm = T),
-            npchall_f_cert_avg = mean(npchall_f_cert, na.rm = T),
-            npchall_f_rltn.ipr_avg = mean(npchall_f_rltn.ipr, na.rm = T),
-            npchall_f_market_avg = mean(npchall_f_market, na.rm = T)) %>% 
-  rowwise() %>% 
-  mutate(pchall_sum = sum(c_across(pchall_f_agron_avg:pchall_f_cost_avg)),
-         npchall_sum = sum(c_across(npchall_f_business_avg:npchall_f_market_avg)),
-         chall_sum = sum(c_across(pchall_sum:npchall_sum))/9) %>% 
-  left_join(ppltn.c) %>% 
-  select(Region, company_n, income20_median, chall_sum) %>% 
-  rename(retailer_n = company_n,
-         median_retailer_revenue = income20_median,
-         retailer_challenge_sum = chall_sum)
-
-df <- left_join(df, producers_summ) %>% left_join(retailers_summ)
-  
 ## Creating a few new variables
 df$OGSeedOGIntegrityf <- factor(df$OGSeedOGIntegrity, levels = c("Strongly disagree",
                                                                  "Disagree",
@@ -337,7 +178,7 @@ df <- select(df, -contains("NoOG"))
 # Factor analysis of barriers ----
 ## So far this is not convincing
 mat <- df %>% 
-  filter(survey_year == 2021) %>% 
+  filter(survey_year %in% c(2016,2021)) %>% 
   filter(!is.na(RespondentID)) %>% 
   tibble::column_to_rownames("RespondentID") %>% 
   dplyr::select(barrier_seedTreatlack:barrier_lackdesiredTraits) #%>%
@@ -366,22 +207,22 @@ fa = stats::factanal(mat.nona,
 psy::scree.plot(fa$correlation) # looks like 3 or 4
 
 fa = factanal(mat.nona, 
-              factors = 4, 
+              factors = 3, 
               n.obs = length(mat.nona), 
               rotation="varimax")
 print(fa, digits=2, cutoff=.2, sort=TRUE)
 
 # For now I am getting rid of the 5th factor because it is so sparse
-loadings <- as.data.frame(fa$loadings[1:8, 1:4])
+loadings <- as.data.frame(fa$loadings[1:8, 1:3])
 loadings$max <- apply(X=loadings, MARGIN=1, FUN=which.max)
 
 #Factor 1
 f <- loadings %>% filter(max == 1) %>% 
   row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only 1
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only .65
 f1 <- mat %>% select(f) %>% 
-  mutate(barrier_f_traits = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_traits)
+  mutate(barrier_f_quant = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_quant)
 
 #Factor 2
 f <- loadings %>% filter(max == 2) %>% 
@@ -394,18 +235,11 @@ f2 <- mat %>% select(f) %>%
 #Factor 3
 f <- loadings %>% filter(max == 3) %>% 
   row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .59
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .36
 f3 <- mat %>% select(f) %>% 
-  mutate(barrier_f_quantity = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_quantity)
+  mutate(barrier_f_quality = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_quality)
 
-#Factor 4
-f <- loadings %>% filter(max == 4) %>% 
-  row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .38
-f4 <- mat %>% select(f) %>% 
-  mutate(barrier_f_other = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_other)
 
 # These are no good; not using them
 
@@ -429,17 +263,17 @@ df$OGVegiSeed <- ifelse(is.na(df$OGVegiSeed), 0 , df$OGVegiSeed)
 df$OGFieldSeed <- ifelse(is.na(df$OGFieldSeed), 0 , df$OGFieldSeed)
 df$OGForageSeed <- ifelse(is.na(df$OGForageSeed), 0 , df$OGForageSeed)
 
-df.long$OGcrop <- ifelse(stringr::str_detect(df.long$OGseed_type, "Vegi"), "Vegetable",
+df.long$OGcrop <- ifelse(stringr::str_detect(df.long$OGseed_type, "Vegi"), "Vegetables",
                   ifelse(stringr::str_detect(df.long$OGseed_type, "Forage"), "Forage",
                   ifelse(stringr::str_detect(df.long$OGseed_type, "Field"), "Field", NA)))
 
-df.long$TotalCropAcreage <- ifelse(df.long$OGcrop == "Vegetable", df.long$VegiAcreage,
+df.long$TotalCropAcreage <- ifelse(df.long$OGcrop == "Vegetables", df.long$VegiAcreage,
                             ifelse(df.long$OGcrop == "Forage", df.long$ForageAcreage,
                             ifelse(df.long$OGcrop == "Field", df.long$FieldAcreage, "missed")))
 
 df.long <- df.long %>% 
   mutate(IncreasedOGSeed = case_when(
-  OGcrop == "Vegetable" ~ IncreasedOGVegSeed,
+  OGcrop == "Vegetables" ~ IncreasedOGVegSeed,
   OGcrop == "Field" ~ IncreasedOGFieldSeed,
   OGcrop == "Forage" ~ IncreasedOGForageSeed,
   T ~ "Error"
