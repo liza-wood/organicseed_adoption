@@ -257,7 +257,9 @@ veg_pattern <- read.csv("~/Box/osa_networks/data_combined/crop_family_manual.csv
   mutate(variety = textstem::lemmatize_words(variety))
 veg_pattern <- paste(veg_pattern$variety, collapse = "|") %>% 
   str_replace_all("wsquash|ssquash", "squash")
+
 # Reading in datasets ----
+## These are the survey data only
 nodes <- read.csv("~/Box/osa_networks/data_combined_3/net_nodes_withdf.csv") %>% 
   select(ResponseId_dup, variety_n, cropcat_n)
 master <- read.csv("~/Box/osa_networks/data_combined/master_list_manual.csv") %>% 
@@ -272,7 +274,7 @@ producers <- read.csv("~/Box/osa_networks/data_combined_3/surveys_combined.csv")
                                      cropcat_herbs == T ~ T,
                                    T ~ F
   ))
-# NOP list to have all organic growers (crops and livestock), but filtered to certified before 2020 so that it is appropriate for my groupings
+# Now for beyond the survey. The NOP list here has all organic growers (crops and livestock), but filtered to certified before 2020 so that it is appropriate for my groupings
 nop <- read.csv("~/Box/organicseed/NOP_USorganicCrops_6.28.22.csv") %>% 
   slice(-(1:2)) %>% 
   filter(Physical.Address..Country == "United States of America (the)") %>% 
@@ -644,26 +646,42 @@ supplychain_year_region_crop <- nop_crop_year %>%
   rename(ngrowers = n) %>% 
   right_join(supplychain_year_region_crop) %>% 
   mutate(ratio = ngrowers/n) %>% 
-  filter(maincrop != "Other")
+  filter(maincrop != "Other") %>% 
+  rename(nsupplychainactors = n)
+
 
 # ---- COMBINING IT ALL FOR REGIONAL SUMMARY ----
 regional_summary <- full_join(supplychain_year_region_crop, funds_year_region_crop) 
 #Not using crop_year because I want to use the Factiva revenue data and it isn't available for
 
+# What about the producer data we have ----
+survey_respondents <- readRDS("~/Box/organicseed/df.rds") %>% 
+  filter(Region != "International", !is.na(Region), maincrop != "Unknown") %>% 
+  group_by(Region, year_range, maincrop) %>% 
+  count() %>% 
+  rename(nrespondents = n)
+
+regional_summary <- left_join(regional_summary, survey_respondents)
+
 ## Saving data ----
-write.csv(regional_summary, "~/Box/organicseed/regional_data.csv", row.names = F)
+regional_summary %>% 
+  select(year_range, Region, maincrop, total_funds, funding_avg_annual_amt,
+         ngrowers, nsupplychainactors, ratio, median_rev_survey,mean_rev_survey,
+         nrespondents) %>% 
+     write.csv("~/Box/organicseed/regional_data.csv", row.names = F)
+
+write.csv(funds_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1b.csv", row.names = F)
+write.csv(supplychain_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1c.csv", row.names = F)
 
 df <- readRDS("~/Box/organicseed/df.rds")
 df.long <- readRDS("~/Box/organicseed/df_long.rds")
 
-
-# This what was I originially used, but fund summary now has crop in it and producer_n is now across years. 
+# This what was I originially used, but regional summary now has crop in it and nsupplychain is now across years. 
 df_simple <- left_join(df, regional_summary)
 # Need to make these the same so that I match on the OG crop and not the main
 df.long$maincrop <- df.long$OGcrop
 table(df.long$maincrop)
 df.long_simple <- left_join(df.long, regional_summary) 
-
 
 saveRDS(df_simple, "~/Box/organicseed/df_onelevel.rds")
 saveRDS(df.long_simple, "~/Box/organicseed/df_long_onelevel.rds")

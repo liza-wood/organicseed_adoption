@@ -7,8 +7,7 @@ library(equatiomatic)
 library(cowplot)
 library(brms)
 setwd("~/Documents/Davis/R-Projects/organicseed/")
-df <- readRDS("~/Box/organicseed/df_onelevel.rds") %>% 
-  rename(n = n_companyproducer)
+df <- readRDS("~/Box/organicseed/df_onelevel.rds") 
 
 df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , 
                                levels = c("No", "Yes", "Already at 100%"))
@@ -17,17 +16,17 @@ df$IncreasedOGSeed_binom <- ifelse(df$IncreasedOGSeed_f == "No", 0,
 # Considering acreage as the dependent variable ----
 ## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 df.full <- df %>% 
-  filter(Region != "International") %>% 
+  filter(Region != "International", maincrop != "Other") %>% 
   select(RespondentID, OGseed_percent_maincrop, IncreasedOGSeed_binom, maincrop, 
          TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn,
-         funding_avg_annual_amt, n, prop_n, median_rev_survey, survey_year, 
+         funding_avg_annual_amt, n, ratio, median_rev_survey, survey_year, 
          Region, contains("barrier")) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = c(scale(log(TotalAcreage))), 
          funding_avg_annual_amt_ls = c(scale(log(funding_avg_annual_amt))),
          OGSeedOGIntegrityn_s = c(scale(OGSeedOGIntegrityn)),
-         n_prop_s = as.numeric(scale(prop_n)),
+         ratio_s = as.numeric(scale(ratio)),
          median_rev_s = as.numeric(scale(median_rev_survey)),
          barrier_availability_s = c(scale(barrier_availability)),
          barrier_price_s = c(scale(barrier_price)),
@@ -41,7 +40,7 @@ df1 <- select(df.full, OGseed_percent_maincrop, maincrop,
               TotalAcreage_ls, 
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
-              n_prop_s, median_rev_s,
+              ratio_s, median_rev_s,
               Region, survey_year_f) %>% 
   filter(complete.cases(.))
 
@@ -56,7 +55,7 @@ acreage <- lmer(OGseed_percent_maincrop ~
                   TotalAcreage_ls + 
                   CertifierRequestn + 
                   funding_avg_annual_amt_ls + 
-                  n_prop_s +
+                  ratio_s +
                   median_rev_s +
                   (1|maincrop) +
                   (1|survey_year_f) +
@@ -68,47 +67,19 @@ acreage_b <- brm(OGseed_percent_maincrop ~
                   TotalAcreage_ls + 
                   CertifierRequestn + 
                   funding_avg_annual_amt_ls + 
-                  n_prop_s +
+                  ratio_s +
                   median_rev_s +
                   (1|maincrop) +
                   (1|survey_year_f) +
                   (1|Region),
                 data = df1)
 
-acreage_barriers <- lmer(OGseed_percent_maincrop ~ 
-                         OGSeedOGIntegrityn_s + 
-                         barrier_availability_s +
-                         barrier_price_s +
-                         barrier_buyerReq_s +
-                         TotalAcreage_ls + 
-                         CertifierRequestn + 
-                         funding_avg_annual_amt_ls + 
-                         n_prop_s +
-                         median_rev_s +
-                         (1|maincrop) +
-                         (1|survey_year_f) +
-                         (1|Region), data = df2)
 
-acreage_barriers_b <- brm(OGseed_percent_maincrop ~ 
-                           OGSeedOGIntegrityn_s + 
-                           barrier_availability_s +
-                           barrier_price_s +
-                           barrier_buyerReq_s +
-                           TotalAcreage_ls + 
-                           CertifierRequestn + 
-                           funding_avg_annual_amt_ls + 
-                           n_prop_s +
-                           median_rev_s +
-                           (1|maincrop) +
-                           (1|survey_year_f) +
-                           (1|Region), data = df2)
 summary(acreage)
 summary(acreage_b)
-summary(acreage_barriers)
-summary(acreage_barriers_b)
 equatiomatic::extract_eq(acreage)
 
-# This will tell us how far the Region is away from the overall mean
+# This will tell us how far the random effect is away from the overall mean
 ranef(acreage)$Region
 ranef(acreage_b)$Region
 ranef(acreage)$survey_year_f
@@ -123,7 +94,7 @@ df3 <- select(df.full, IncreasedOGSeed_binom, maincrop,
               TotalAcreage_ls, 
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
-              n_prop_s, median_rev_s,
+              ratio_s, median_rev_s,
               Region, survey_year_f) %>% 
   filter(complete.cases(.))
 
@@ -138,7 +109,7 @@ increase <- glmer(IncreasedOGSeed_binom ~
                   TotalAcreage_ls + 
                   CertifierRequestn + 
                   funding_avg_annual_amt_ls + 
-                  n_prop_s +
+                  ratio_s +
                   median_rev_s +
                   (1|maincrop) +
                   (1|survey_year_f) +
@@ -151,7 +122,7 @@ increase_b <- brm(IncreasedOGSeed_binom ~
                     TotalAcreage_ls + 
                     CertifierRequestn + 
                     funding_avg_annual_amt_ls + 
-                    n_prop_s +
+                    ratio_s +
                     median_rev_s +
                     (1|maincrop) +
                     (1|survey_year_f) +
@@ -159,62 +130,39 @@ increase_b <- brm(IncreasedOGSeed_binom ~
                   family = bernoulli(link = "logit"),
                   data = df3)
 
-increase_barriers <- glmer(IncreasedOGSeed_binom ~ 
-                           OGSeedOGIntegrityn_s + 
-                           barrier_availability_s +
-                           barrier_price_s +
-                           barrier_buyerReq_s +
-                           TotalAcreage_ls + 
-                           CertifierRequestn + 
-                           funding_avg_annual_amt_ls + 
-                           n_prop_s +
-                           median_rev_s +
-                           (1|maincrop) +
-                           (1|survey_year_f) +
-                           (1|Region),
-                         family = "binomial",
-                         data = df4)
 
-increase_barriers_b <- brm(IncreasedOGSeed_binom ~ 
-                           OGSeedOGIntegrityn_s + 
-                           barrier_availability_s +
-                           barrier_price_s +
-                           barrier_buyerReq_s +
-                           TotalAcreage_ls + 
-                           CertifierRequestn + 
-                           funding_avg_annual_amt_ls + 
-                           n_prop_s +
-                           median_rev_s +
-                           (1|maincrop) +
-                           (1|survey_year_f) +
-                           (1|Region),
-                           family = bernoulli(link = "logit"),
-                         data = df4)
 
 summary(increase)
 summary(increase_b)
-summary(increase_barriers)
-summary(increase_barriers_b)
 equatiomatic::extract_eq(increase)
+
+# This will tell us how far the Region is away from the overall mean
+ranef(increase)$Region
+ranef(increase_b)$Region
+ranef(increase)$survey_year_f
+ranef(increase_b)$survey_year_f
+ranef(increase)$maincrop
+ranef(increase_b)$maincrop
 
 a1 <- acreage_b$coef
 i1 <- exp(increase_b$coef)
 
-stargazer(acreage, acreage_barriers, 
-          increase, increase_barriers, type = "html", 
+stargazer(acreage, #acreage_barriers, 
+          increase, #increase_barriers, 
+          type = "html", 
           title = "Linear model comparison",
           dep.var.labels = c("% Acreage", "Increased OG seed use"),
           covariate.labels = c("Values organic seed", 
-                             "Barrier: Variety availability", 
-                             "Barrier: Price",
-                             "Barrier: Buyer restriction",
+                             #"Barrier: Variety availability", 
+                             #"Barrier: Price",
+                             #"Barrier: Buyer restriction",
                              #"Crop type: Forage (vs. Field)", 
                              #"Crop type: Vegetable (vs. Field)", 
                              "Total Acres (log)", 
                              "Certifier request", 
-                             "Research funding\n(annual avg.)", 
+                             "Research funding (annual avg.)", 
                              "Ratio of supply chain actors to growers",
-                             "Median revenue of\nseed supply chain"),
+                             "Median revenue of seed supply chain"),
                              #"Regional funding (annual average)", 
                              #"Region: West (vs. North Central)",
                              #"Region: Northeast (vs. North Central)",
@@ -330,50 +278,102 @@ emmeans::emmeans(increase, specs = ~ CertifierRequestn)
 
 # For a field crop grower in the North Central region in 2016, what is the effect of a certifier asking to increase
 pp_df1 <- data.frame(maincrop = "Field",
-                     TotalAcreage_ls = median(df.full$TotalAcreage_ls[df.full$Region ==
-                                                                        "North Central" &
-                                                                        df.full$survey_year ==
-                                                                        2016], na.rm = T), 
-                     OGSeedOGIntegrityn_s = median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
+                     TotalAcreage_ls = 
+                       median(df.full$TotalAcreage_ls[df.full$Region ==
+                                                       "North Central" &
+                                                      df.full$survey_year ==
+                                                         2016 &
+                                                  df.full$maincrop == "Field"], 
+                              na.rm = T), 
+                     OGSeedOGIntegrityn_s = 
+                       median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
                      CertifierRequestn = c(0,1),
                      funding_avg_annual_amt_ls = 
                        unique(df.full$funding_avg_annual_amt_ls[df.full$Region ==
                                                               "North Central" &
-                                                              df.full$survey_year ==
-                                                              2016]),
+                                                        df.full$survey_year ==
+                                                              2016 &
+                                                        df.full$maincrop == 
+                                                          "Field"]),
+                     ratio_s = unique(df.full$ratio_s[df.full$Region ==
+                                                        "North Central" &
+                                                        df.full$survey_year ==
+                                                                          2016 &
+                                                        df.full$maincrop == 
+                                                        "Field"]),
+                     median_rev_s = unique(df.full$median_rev_s[df.full$Region ==
+                                                        "North Central" &
+                                                        df.full$survey_year ==
+                                                        2016 &
+                                                        df.full$maincrop == 
+                                                          "Field"]),
                      Region = "North Central",
-                     survey_year = 2016
+                     survey_year_f = 2016
                      )
 
 # For a vegetable grower in the Western region in 2016, what is the effect of a certifier asking to increase
 pp_df2 <- data.frame(maincrop = "Vegetables",
-                     TotalAcreage_ls = median(df.full$TotalAcreage_ls[df.full$Region ==
-                                                                    "West" &
-                                                                    df.full$survey_year ==
-                                                                    2016], na.rm = T), 
-                     OGSeedOGIntegrityn_s = median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
+                     TotalAcreage_ls = 
+                       median(df.full$TotalAcreage_ls[df.full$Region ==
+                                                        "West" &
+                                                        df.full$survey_year ==
+                                                        2016 &
+                                                        df.full$maincrop == "Vegetables"], 
+                              na.rm = T), 
+                     OGSeedOGIntegrityn_s = 
+                       median(df.full$OGSeedOGIntegrityn_s, na.rm = T), 
                      CertifierRequestn = c(0,1),
                      funding_avg_annual_amt_ls = 
                        unique(df.full$funding_avg_annual_amt_ls[df.full$Region ==
-                                                              "West" &
-                                                              df.full$survey_year ==
-                                                              2016]),
+                                                                  "West" &
+                                                                  df.full$survey_year ==
+                                                                  2016 &
+                                                                  df.full$maincrop == 
+                                                                  "Vegetables"]),
+                     ratio_s = unique(df.full$ratio_s[df.full$Region ==
+                                                        "West" &
+                                                        df.full$survey_year ==
+                                                        2016 &
+                                                        df.full$maincrop == 
+                                                        "Vegetables"]),
+                     median_rev_s = unique(df.full$median_rev_s[df.full$Region ==
+                                                                  "West" &
+                                                                  df.full$survey_year ==
+                                                                  2016 &
+                                                                  df.full$maincrop == 
+                                                                  "Vegetables"]),
                      Region = "West",
-                     survey_year = 2016
+                     survey_year_f = 2016
 )
+
 
 # Using predict function to get predicted probabilities, with standard errors
 
 # I am asking it to predict on the scale of the response variable
-pred_acreage_cert_ncentral16 <- cbind(pp_df1, predict(acreage, newdata = pp_df1, 
-                                                      se = T, type = "response"))
-pred_acreage_cert_west16 <- cbind(pp_df2, predict(acreage, newdata = pp_df2, 
-                                                  se = T, type = "response"))
+# https://stats4nr.com/linear-mixed-models.html
+pred_acreage_cert_ncentral16 <- cbind(pp_df1, predict(acreage_b, 
+                                                      newdata = pp_df1, 
+                                                      type = "response",
+                                                      se = T,
+                                                      re.form = NULL)) #All ranef
+                                                      #re.form = NA)) #No ranef
+pred_acreage_cert_west16 <- cbind(pp_df2, predict(acreage, 
+                                                  newdata = pp_df2, 
+                                                  type = "response",
+                                                  se = T,
+                                                  re.form = NULL)) #All ranef
+                                                  #re.form = NA)) #No ranef
 
-pred_increase_cert_ncentral16 <- cbind(pp_df1, predict.glm(increase, newdata = pp_df1, 
-                                                           se = T, type = "response"))
-pred_increase_cert_west16 <- cbind(pp_df2, predict.glm(increase, newdata = pp_df2, 
-                                                       se = T, type = "response"))
+pred_increase_cert_ncentral16 <- cbind(pp_df1, predict(increase, 
+                                                       newdata = pp_df1,
+                                                       se = T, 
+                                                       type = "link",
+                                                       re.form = NULL))
+pred_increase_cert_west16 <- cbind(pp_df2, predict(increase, 
+                                                   newdata = pp_df2, 
+                                                   se = T, 
+                                                   type = "response",
+                                                   re.form = NULL))
 
 plot_change <- function(profile, ylab){
   profile$CIL <- profile$fit - (1.96 * profile$se.fit)
@@ -414,3 +414,89 @@ ggdraw() +
   draw_label("A", x = 0.1, y = .95)
 ggsave("tables/figure3.png", height = 3, width = 6, dpi = 800)
 
+acreage_barriers <- lmer(OGseed_percent_maincrop ~ 
+                           OGSeedOGIntegrityn_s + 
+                           barrier_availability_s +
+                           barrier_price_s +
+                           barrier_buyerReq_s +
+                           TotalAcreage_ls + 
+                           CertifierRequestn + 
+                           funding_avg_annual_amt_ls + 
+                           ratio_s +
+                           median_rev_s +
+                           (1|maincrop) +
+                           (1|survey_year_f) +
+                           (1|Region), data = df2)
+
+acreage_barriers_b <- brm(OGseed_percent_maincrop ~ 
+                            OGSeedOGIntegrityn_s + 
+                            barrier_availability_s +
+                            barrier_price_s +
+                            barrier_buyerReq_s +
+                            TotalAcreage_ls + 
+                            CertifierRequestn + 
+                            funding_avg_annual_amt_ls + 
+                            ratio_s +
+                            median_rev_s +
+                            (1|maincrop) +
+                            (1|survey_year_f) +
+                            (1|Region), data = df2)
+
+increase_barriers <- glmer(IncreasedOGSeed_binom ~ 
+                             OGSeedOGIntegrityn_s + 
+                             barrier_availability_s +
+                             barrier_price_s +
+                             barrier_buyerReq_s +
+                             TotalAcreage_ls + 
+                             CertifierRequestn + 
+                             funding_avg_annual_amt_ls + 
+                             ratio_s +
+                             median_rev_s +
+                             (1|maincrop) +
+                             (1|survey_year_f) +
+                             (1|Region),
+                           family = "binomial",
+                           data = df4)
+
+increase_barriers_b <- brm(IncreasedOGSeed_binom ~ 
+                             OGSeedOGIntegrityn_s + 
+                             barrier_availability_s +
+                             barrier_price_s +
+                             barrier_buyerReq_s +
+                             TotalAcreage_ls + 
+                             CertifierRequestn + 
+                             funding_avg_annual_amt_ls + 
+                             ratio_s +
+                             median_rev_s +
+                             (1|maincrop) +
+                             (1|survey_year_f) +
+                             (1|Region),
+                           family = bernoulli(link = "logit"),
+                           data = df4)
+
+stargazer(acreage, #acreage_barriers, 
+          increase, #increase_barriers, 
+          type = "html", 
+          title = "Linear model comparison",
+          dep.var.labels = c("% Acreage", "Increased OG seed use"),
+          covariate.labels = c("Values organic seed", 
+                               "Barrier: Variety availability", 
+                               "Barrier: Price",
+                               "Barrier: Buyer restriction",
+                               #"Crop type: Forage (vs. Field)", 
+                               #"Crop type: Vegetable (vs. Field)", 
+                               "Total Acres (log)", 
+                               "Certifier request", 
+                               "Research funding (annual avg.)", 
+                               "Ratio of supply chain actors to growers",
+                               "Median revenue of seed supply chain"),
+          #"Regional funding (annual average)", 
+          #"Region: West (vs. North Central)",
+          #"Region: Northeast (vs. North Central)",
+          #"Region: South (vs. North Central)",
+          #"Year: 2016",
+          #"Year: 2021"),
+          model.numbers = FALSE,
+          no.space = TRUE, 
+          header = FALSE, 
+          out = c("tables/models/lm_barriers.html"))

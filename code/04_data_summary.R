@@ -2,11 +2,10 @@ library(VIM)
 library(tidyverse)
 library(lubridate)
 
-# This is the dataframe where I have identified main crops of producers, so each observation is only one producer
-  
-df <- readRDS("~/Box/organicseed/df_onelevel.rds")
+# This is the dataframe where I have identified main crops of growers, so each observation is only one grower
+df <- readRDS("~/Box/organicseed/df_onelevel.rds") 
 # This is the dataframe where I have lengthened out each crop for the grower, so any grower may have up to 3 crops
-df.long <- readRDS("~/Box/organicseed/df_onelevel.rds")
+df.long <- readRDS("~/Box/organicseed/df_long_onelevel.rds")
 
 palette <- RColorBrewer::brewer.pal(8, "YlGnBu")
 # How many crops are each grower growing?
@@ -27,8 +26,12 @@ df <- df %>%
          CertifierRequest,
          CertifierRequestn, # Certifier has requested
          funding_avg_annual_amt, survey_year, year_range, # year variables (funding)
-         producer_n, median_producer_revenue, producer_challenge_sum, crop_n, variety_n,
-         retailer_n, median_retailer_revenue, retailer_challenge_sum, 
+         # I seemed to have ditched this stuff
+         #producer_n, median_producer_revenue, producer_challenge_sum, 
+         #retailer_n, median_retailer_revenue, retailer_challenge_sum, 
+         #variety_n, 
+         cropcat_n, median_rev_survey, 
+         ngrowers, nsupplychainactors,
          Region, # regional variables (region and seed production)
          contains("barrier"), # barriers
          contains("AddSteps")) 
@@ -43,8 +46,12 @@ df.long <- df.long %>%
          CertifierRequest,
          CertifierRequestn, # Certifier has requested
          funding_avg_annual_amt, survey_year, year_range, # year variables (funding)
-         producer_n, Region, # regional variables (region and seed production)
-         retailer_n, median_retailer_revenue, 
+         # I seemed to have ditched this stuff
+         #producer_n, median_producer_revenue, producer_challenge_sum, 
+         #retailer_n, median_retailer_revenue, retailer_challenge_sum, 
+         #variety_n, 
+         cropcat_n, median_rev_survey, 
+         ngrowers, nsupplychainactors,
          contains("barrier"), # barriers
          contains("AddSteps")) 
 
@@ -137,29 +144,22 @@ variable_df <- data.frame(
 )
 
 funding_df <- df %>% 
-  group_by(Region, survey_year) %>% 
+  group_by(survey_year, Region, maincrop) %>%  # Region, maincrop
   select(funding_avg_annual_amt) %>% 
   unique() %>% 
   pivot_wider(names_from = survey_year, values_from = funding_avg_annual_amt) %>% 
   ungroup() %>% 
-  select(Region, `2011`, `2016`, `2021`) %>% 
-  rbind(c("Total", 2530119, 4360990, 6109936))
-# Total is from line 105 in variable creation
+  select(Region, maincrop, `2011`, `2016`, `2021`) %>% 
+  rbind(c("Total", "", "856596.4", "4723600.7", "5239218.0"))
+# Total is from line 33 in regional_data (funds_yearonly)
 
 regional_df <- df %>% 
   filter(Region != "International" & !is.na(Region)) %>% 
-  group_by(Region) %>% 
-  select(producer_n, median_producer_revenue, crop_n, variety_n,
-         retailer_n, median_retailer_revenue) %>% 
+  group_by(survey_year, Region, maincrop) %>% 
+  select(ngrowers, nsupplychainactors, median_rev_survey) %>% 
   unique() %>% 
-  ungroup() %>% 
-  rbind(c("Total", 
-          sum(unique(.$producer_n), na.rm = T), 
-          mean(unique(.$median_producer_revenue), na.rm = T),
-          mean(unique(.$crop_n), na.rm = T),
-          mean(unique(.$variety_n), na.rm = T),
-          sum(unique(.$retailer_n), na.rm = T),
-          mean(unique(.$median_retailer_revenue), na.rm = T)))
+  ungroup() 
+# supplychain_year_only from regional_data
 
 # But what about as a ratio? Need to read in all organic growers?
 growers <- read.csv("~/Box/organicseed/NOP_USorganicCrops_6.28.22.csv") %>% slice(-c(1:2))
@@ -192,14 +192,12 @@ growers <- growers %>%
   count() %>% 
   filter(!is.na(Region))
 
-regional_df <- left_join(regional_df, growers)
-regional_df$n[regional_df$Region == "Total"] <- sum(regional_df$n, na.rm = T)
-regional_df$producer_ratio <- round(as.numeric(regional_df$producer_n)/regional_df$n, 2)
-regional_df$retailer_ratio <- round(as.numeric(regional_df$retailer_n)/regional_df$n, 2)
+#regional_df <- left_join(regional_df, growers)
+#regional_df$n[regional_df$Region == "Total"] <- sum(regional_df$n, na.rm = T)
+regional_df$sc_ratio <- round(as.numeric(regional_df$ngrowers)/as.numeric(regional_df$nsupplychainactors, 2))
            
 write.csv(variable_df, "~/Documents/Davis/R-Projects/organicseed/tables/table1a.csv", row.names = F)
-write.csv(funding_df, "~/Documents/Davis/R-Projects/organicseed/tables/table1b.csv", row.names = F)
-write.csv(regional_df, "~/Documents/Davis/R-Projects/organicseed/tables/table1c.csv", row.names = F)
+# Other parts of table 1 are in 03_regional_data
 
 # FIGURES FOR PAPER -----
 blues <- RColorBrewer::brewer.pal(8, "PuBu")
@@ -211,7 +209,7 @@ reds <- colorRampPalette(c("lightgrey", "#90353b"))(8)
 
 # Figure 1a and summaries for funding ----
 funds_organic <- read.csv("~/Dropbox/SOSInteractiveSurvey/local_data/public-funding-Dec21.csv")
-fed_breed <- read.csv("~/Box/lgu/breeding_awards_combined.csv")
+fed_breed <- read.csv("~/Box/lgu/data_raw/federal_funding/breeding_awards_combined.csv")
 fed_all <- read.csv("~/Box/lgu/data_raw/federal_funding/allawards.csv") %>% 
   filter(Award.Dollars > 0) %>% 
   mutate(breeding = case_when(
@@ -266,7 +264,7 @@ fed_summary <- fed_all %>%
 
 pfunding <- ggplot(fed_summary, aes(x = year, y = breeding_sum/100000, 
                                     label = paste0(Percent, "%"))) +
-  geom_col(fill = fed_percent$year_color) +
+  geom_col(fill = fed_summary$year_color) +
   geom_text(size = 3, vjust = 2) +
   theme_linedraw() +
   theme(legend.position = "none") +
@@ -310,11 +308,38 @@ pfunding <- sos_funds %>%
   filter(year > 2003 & year < 2019) %>% 
   ggplot(aes(x = year, y = annual_total/1000000, 
              label = paste0(fed_summary$Percent, "%"))) +
-  geom_col(fill = fed_summary$year_color) +
+  geom_col(fill = fed_summary_elab$year_color) +
   geom_text(size = 3, vjust = -0.5) +
   theme_linedraw() +
   theme(legend.position = "none") +
   labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding
+
+# OR
+sos_funds <- sos_funds %>% 
+  filter(year > 2003 & year < 2019)
+
+sos_funds_nuance <- funds_organic %>% 
+  filter(year > 2003 & year < 2019) %>% 
+  group_by(year, proj_crop,location) %>% 
+  summarize(annual_total = sum(funding_amt)) 
+
+pfunding2 <- 
+  ggplot() +
+  geom_col(data = sos_funds_nuance, mapping = aes(x = year, y = annual_total/1000000,
+                                                   fill = proj_crop)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding2
+
+pfunding2 <- 
+  ggplot() +
+  geom_line(data = sos_funds, mapping = aes(x = year, y = annual_total/1000000)) +
+  geom_line(data = sos_funds_nuance, mapping = aes(x = year, y = annual_total/1000000,
+                                 color = location)) +
+  theme_linedraw() +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding2
+
 
 # Average percentages over the years
 100*(sum(fed_summary$organic_total[fed_summary$year_range == "2004-2008"])/sum(fed_summary$annual_sum[fed_summary$year_range == "2004-2008"]))
@@ -345,7 +370,64 @@ funding_sources_number <- funds_organic %>%
 # Summaries about market proxies ----
 ## 1. Certifier perceptions is just straight from the survey Kiki sent
 ## 2. Seed producers and companies -- still could be improved (e.g. database for seed companies?)
-regional_df
+
+factiva <- read.csv("~/Box/organicseed/factiva_seedco_list.csv") %>% 
+  filter(remove == F) %>% left_join(master, by = c("Company" = "Operation")) %>% 
+  unique() %>% 
+  mutate(State = trimws(State)) %>% 
+  mutate(Region = case_when(
+    State %in% western ~ "West",
+    State %in% northcentral ~ "North Central",
+    State %in% southern ~ "South",
+    State %in% northeast ~ "Northeast",
+    T ~ NA_character_)) %>% 
+  mutate(yrs_ag = 2021-founded) %>% 
+  filter(!is.na(founded)) %>% 
+  mutate(year_started = case_when(
+    founded <= 2004 ~ 2004,
+    T ~ as.numeric(founded)
+  ))
+
+pmarket_factiva <- 
+  ggplot() +
+  geom_bar(data = factiva, mapping = aes(x = founded, fill = Region)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_factiva
+
+pmarket_factiva2 <- 
+  ggplot() +
+  geom_bar(data = factiva, mapping = aes(x = founded, fill = Region)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_factiva2
+
+companies <- read.csv("~/Box/osa_networks/data_combined_3/surveys_combined.csv") %>% 
+  filter(role_refined != "org" & role_refined != "university_ext" & 
+           role_refined != "other") %>% 
+  left_join(nodes, by = c("ResponseId" = "ResponseId_dup")) %>% 
+  mutate(cropcat_field = case_when(cropcat_grain == T ~ T, T ~ cropcat_field)) %>% 
+  mutate(cropcat_veg = case_when(cropcat_propogules == T ~ T, T ~ cropcat_veg)) %>% 
+  mutate(cropcat_other = case_when(cropcat_orn == T |
+                                     cropcat_herbs == T ~ T,
+                                   T ~ F
+  ))
+
+pmarket_survey <- companies %>% 
+  filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = income20_c, fill = Region)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_survey
+
+pmarket_survey <- companies %>% 
+  filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = income20_c, fill = cropcat)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_survey
 
 # 7 = "$300,000-$1 million"
 # 6 = "$75,000-$99,999",

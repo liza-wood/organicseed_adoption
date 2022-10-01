@@ -4,10 +4,10 @@ library(lme4)
 library(brms)
 
 # This data frame is the result of the merging.R and variable_creation.R scripts. The former merged together the three waves of surveys and the latter added in funding data (average annual funding between 2006-2010, 2011-2015, 2016-2020), and added data about producers at the regional level. 
-df <- readRDS("~/Box/organicseed/df_onelevel.rds") %>% 
-  rename(n = n_companyproducer)
-df.long <- readRDS("~/Box/organicseed/df_long_onelevel.rds") %>% 
-  rename(n = n_companyproducer)
+df <- readRDS("~/Box/organicseed/df_onelevel.rds")# %>% 
+  #rename(n = n_companyproducer)
+df.long <- readRDS("~/Box/organicseed/df_long_onelevel.rds") #%>% 
+  #rename(n = n_companyproducer)
 
 # The general idea of the model is as follows:
 # Percent organic seed used  ~ demand + supply + farm details ; over time
