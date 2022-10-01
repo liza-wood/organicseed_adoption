@@ -176,74 +176,6 @@ funds_year_region_crop <- funds_year_region_crop %>%
   mutate(funding_avg_annual_amt = total_funds/5)
 
 
-# Not working: Summarizing by year for more specific data ----
-#funds <- funds %>% 
-#  group_by(year, year_range, Region, maincrop) %>% 
-#  mutate(funding_amt = sum(funding_amt)) %>% 
-#  unique()
-#
-#unmatched_funds2 <- funds %>% 
-#  filter(Region == "Multi-region" | maincrop == "Multiple") %>% 
-#  group_by(year, Region, maincrop) %>% 
-#  mutate(funding_amt = sum(funding_amt)) %>% 
-#  unique()
-  
-#years <- as.numeric(unique(funds$year))
-#Regions <- unique(funds$Region)
-#crops <- unique(funds$maincrop)
-#funds$amt_multir_multic <- NA
-#funds$amt_oner_multic <- NA
-#funds$amt_multir_onec <- NA
-#for(j in 1:nrow(funds)) {
-#  for(i in 1:length(years)) {
-#    funds$amt_multir_multic[j] = case_when(
-#      funds$year[j] == years[i] ~ ifelse(length(filter(unmatched_funds2, 
-#                                         year == years[i] &
-#                                        Region == "Multi-region" &
-#                                         maincrop == "Multiple")[[5]]) == 
-#                                           0, 0, 
-#                                     filter(unmatched_funds2, 
-#                                            year == years[i] &
-#                                              Region == "Multi-region" &
-#                                              maincrop == "Multiple")[[5]])) 
-#    for(k in 1:length(Regions)) {
-#      funds$amt_oner_multic[j] = case_when(
-#        funds$year[j] == years[i] &
-#          funds$Region[j] == Regions[k] ~ ifelse(length(filter(unmatched_funds2, 
-#                                            year == years[i] &
-#                                            Region == Regions[k] &
-#                                             maincrop == "Multiple")[[5]]) == 
-#                                                   0, 0,
-#                                          filter(unmatched_funds2, 
-#                                                 year == years[i] &
-#                                                   Region == Regions[k] &
-#                                                   maincrop == "Multiple")[[5]]))
-#      for(l in 1:length(crops)) {
-#        
-#       funds$amt_multir_onec[j] = case_when(
-#           funds$year[j] == years[i] &
-#           funds$maincrop[j] == crops[l] ~ ifelse(length(filter(unmatched_funds2, 
-#                                            year == years[i] &
-#                                              Region == "Multi-region" &
-#                                              maincrop == crops[l])[[5]])  == 
-#                                              0, 0,
-#                                        filter(unmatched_funds2, 
-#                                               year == years[i] &
-#                                                 Region == "Multi-region" &
-#                                                 maincrop == crops[l])[[5]]))
-#      }
-#    }
-#  }
-#}
-#
-## Then get rid of the multiple and add them in elsewhere
-#funds <- funds %>% 
-#  ungroup() %>% 
-#  filter(Region != "Multi-region", maincrop != "Multiple") %>% 
-#  mutate(total_funds = rowSums(.[5:8])) %>% 
-#  select(year, year_range, Region, maincrop, total_funds) %>% 
-#  rename(funding_avg_annual_amt = total_funds)
-
 # ---- SUPPLY CHAIN ----
 # Patterns for matching later ----
 western <- c("California", "Oregon", "Washington", "Idaho", "Nevada", "Arizona", "Utah", "New Mexico", "Colorado", "Wyoming", "Montana", "Alaska", "Hawaii")
@@ -670,6 +602,7 @@ regional_summary %>%
          nrespondents) %>% 
      write.csv("~/Box/organicseed/regional_data.csv", row.names = F)
 
+# summaries
 write.csv(funds_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1b.csv", row.names = F)
 write.csv(supplychain_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1c.csv", row.names = F)
 
@@ -685,3 +618,216 @@ df.long_simple <- left_join(df.long, regional_summary)
 
 saveRDS(df_simple, "~/Box/organicseed/df_onelevel.rds")
 saveRDS(df.long_simple, "~/Box/organicseed/df_long_onelevel.rds")
+
+## PLOTS -----
+
+# FIGURES FOR PAPER -----
+blues <- RColorBrewer::brewer.pal(8, "PuBu")
+blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8)
+greens <- RColorBrewer::brewer.pal(8, "Greens")
+greens <- colorRampPalette(c("lightgrey", "#55752f"))(8)
+reds <- RColorBrewer::brewer.pal(8, "Oranges")
+reds <- colorRampPalette(c("lightgrey", "#90353b"))(8)
+
+
+# Figure 1a and summaries for funding ----
+funds_organic <- read.csv("~/Dropbox/SOSInteractiveSurvey/local_data/public-funding-Dec21.csv")
+fed_breed <- read.csv("~/Box/lgu/data_raw/federal_funding/breeding_awards_combined.csv")
+fed_all <- read.csv("~/Box/lgu/data_raw/federal_funding/allawards.csv") %>% 
+  filter(Award.Dollars > 0) %>% 
+  mutate(breeding = case_when(
+    Proposal.Number %in% fed_breed$Proposal.Number ~ T,
+    T ~ F
+  )) %>% 
+  mutate(organic = case_when(
+    str_detect(Program.Name, "[Oo]rganic") ~ T,
+    T ~ F
+  )) %>% 
+  mutate(year = year(Award.Date)) 
+fed_organicbreed <- filter(fed_all, breeding == T & organic == T)
+fed_all <- unique(fed_all)
+fed_all <- filter(fed_all, year > 2003 & year < 2019)
+
+# Compare my measure for organic breeding funds from federal (using regex) versus what we used for SOS report:
+sos_funds <- funds_organic %>% 
+  filter(year > 2001) %>% 
+  group_by(year) %>% 
+  summarize(annual_total = sum(funding_amt)) 
+sos_funds %>% 
+  ggplot(aes(x = year, y = annual_total)) +
+  geom_col() +
+  geom_smooth(method = "lm")
+lm(scale(annual_total) ~ year, data = sos_funds)$coefficients[2]
+
+fed_funds <- fed_organicbreed %>% 
+  group_by(year) %>% 
+  summarize(annual_total = sum(Award.Dollars))
+fed_funds %>% 
+  ggplot(aes(x = year, y = annual_total)) +
+  geom_col() +
+  geom_smooth(method = "lm")
+lm(scale(annual_total) ~ year, data = sos_funds)$coefficients[2]
+
+year_color <- data.frame(year = 2004:2018,
+                         year_color = c(rep(greens[8], 5),
+                                        rep(reds[8], 5),
+                                        rep(blues[8], 5)))
+
+# This is looking at organic breeding as portion of all federal funding, according to the USDA database only and my regex, not the SOS generated list.
+fed_summary <- fed_all %>% 
+  group_by(year, breeding, organic) %>% 
+  summarize(breeding_sum = sum(Award.Dollars, na.rm = T)) %>% 
+  ungroup() %>% 
+  group_by(year) %>% 
+  mutate(annual_sum = sum(breeding_sum, na.rm = T)) %>% 
+  filter(breeding == T & organic == T) %>% 
+  unique() %>% 
+  mutate(Percent = round(100*(breeding_sum/annual_sum), 1)) %>% 
+  left_join(year_color)
+
+pfunding <- ggplot(fed_summary, aes(x = year, y = breeding_sum/100000, 
+                                    label = paste0(Percent, "%"))) +
+  geom_col(fill = fed_summary$year_color) +
+  geom_text(size = 3, vjust = 2) +
+  theme_linedraw() +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Federal funding by $100 thousand\n(% of total funding)"); pfunding
+
+# This is not satisfying, so let's identify the federal fundings from the SOS list and look at this amount as a portion of tital federal funds 
+
+funds_organic <- funds_organic %>% 
+  filter(year > 2003 & year < 2019) %>% 
+  mutate(year_range = case_when(
+    year %in% 2004:2008 ~ "2004-2008",
+    year %in% 2009:2013 ~ "2009-2013",
+    year %in% 2014:2018 ~ "2014-2018",
+    T ~ NA_character_
+  )) %>% 
+  mutate(source_aggregate = case_when(
+    funding_source %in% c("FAFO", "OFRF", "Other Non-Federal Funds", "Clif Bar Family Foundation") ~ "non-public",
+    T ~ "public"
+  )) %>% 
+  mutate(federal = case_when(
+    funding_source %in% c("FAFO", "OFRF", "Other Non-Federal Funds", "Clif Bar Family Foundation", "SARE") ~ F,
+    T ~ T
+  )) %>% 
+  group_by(year_range) %>% 
+  mutate(average_by_project = sum(funding_amt)/n()) %>% 
+  mutate(annual_average = sum(funding_amt)/5)
+
+fed_summary_elab <- fed_all %>% 
+  group_by(year) %>% 
+  summarize(annual_sum = sum(Award.Dollars, na.rm = T)) %>% 
+  left_join(year_color)
+
+fed_summary <- funds_organic %>% 
+  filter(!is.na(year_range), federal == T) %>% 
+  group_by(year_range, year) %>% 
+  summarize(organic_total = sum(funding_amt)) %>% 
+  left_join(fed_summary_elab) %>% 
+  mutate(Percent = round(100*(organic_total/annual_sum), 1))
+
+pfunding <- sos_funds %>% 
+  filter(year > 2003 & year < 2019) %>% 
+  ggplot(aes(x = year, y = annual_total/1000000, 
+             label = paste0(fed_summary$Percent, "%"))) +
+  geom_col(fill = fed_summary_elab$year_color) +
+  geom_text(size = 3, vjust = -0.5) +
+  theme_linedraw() +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding
+
+# OR
+sos_funds <- sos_funds %>% 
+  filter(year > 2003 & year < 2019)
+
+sos_funds_nuance <- funds_organic %>% 
+  filter(year > 2003 & year < 2019) %>% 
+  group_by(year, proj_crop,location) %>% 
+  summarize(annual_total = sum(funding_amt)) 
+
+pfunding2 <- 
+  ggplot() +
+  geom_col(data = sos_funds_nuance, mapping = aes(x = year, y = annual_total/1000000,
+                                                  fill = proj_crop)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding2
+
+pfunding2 <- 
+  ggplot() +
+  geom_line(data = sos_funds, mapping = aes(x = year, y = annual_total/1000000)) +
+  geom_line(data = sos_funds_nuance, mapping = aes(x = year, y = annual_total/1000000,
+                                                   color = location)) +
+  theme_linedraw() +
+  theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding2
+
+
+# Average percentages over the years
+100*(sum(fed_summary$organic_total[fed_summary$year_range == "2004-2008"])/sum(fed_summary$annual_sum[fed_summary$year_range == "2004-2008"]))
+100*(sum(fed_summary$organic_total[fed_summary$year_range == "2009-2013"])/sum(fed_summary$annual_sum[fed_summary$year_range == "2009-2013"]))
+100*(sum(fed_summary$organic_total[fed_summary$year_range == "2014-2018"])/sum(fed_summary$annual_sum[fed_summary$year_range == "2014-2018"]))
+
+# Some details from different sources
+funding_sources_amt <- funds_organic %>% 
+  group_by(year_range) %>% 
+  mutate(yr_range_total = sum(funding_amt, na.rm = T)) %>% 
+  ungroup() %>% 
+  group_by(year_range, source_aggregate) %>% 
+  summarize(yr_range_total = yr_range_total, 
+            source_sum = sum(funding_amt),
+            Percent = round(100*(source_sum/yr_range_total), 1)) %>% 
+  unique()
+
+funding_sources_number <- funds_organic %>% 
+  group_by(year_range) %>% 
+  mutate(n_projects = n()) %>% 
+  ungroup() %>% 
+  group_by(year_range, source_aggregate) %>% 
+  summarize(n_projects = n_projects, 
+            source_n = n(),
+            Percent = round(100*(source_n/n_projects), 1)) %>% 
+  unique()
+
+# Summaries about market proxies ----
+## 1. Certifier perceptions is just straight from the survey Kiki sent
+## 2. Seed producers and companies -- still could be improved (e.g. database for seed companies?)
+
+pmarket_factiva <- ggplot() +
+  geom_bar(data = factiva, mapping = aes(x = founded, fill = Region)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_factiva
+
+pmarket_factiva2 <- ggplot() +
+  geom_bar(data = factiva, mapping = aes(x = founded, fill = Region)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_factiva2
+
+# This is all the companies, but with their crops
+survey_companies <- p_co_crop_year %>% 
+  select(Operation, Region, maincrop, income20_c) %>% 
+  unique()
+
+pmarket_survey <- survey_companies %>% 
+  filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = income20_c, fill = Region)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_survey
+
+pmarket_survey <- survey_companies %>% 
+  filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = income20_c, fill = maincrop)) +
+  theme_linedraw() +
+  #theme(legend.position = "none") +
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_survey
+
+# 7 = "$300,000-$1 million"
+# 6 = "$75,000-$99,999",
+# 5 = "$100,000-$149,999",
+# 4 = "$150,000-$299,999",

@@ -34,13 +34,16 @@ df.full <- df %>%
   filter(Region != "International") %>% 
   select(RespondentID, OGseed_percent_maincrop, maincrop, TotalAcreage, 
          OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
-         n, prop_n, median_rev_survey, survey_year, Region, cropcat_n) %>% 
+         #n, prop_n, 
+         ngrowers, nsupplychainactors,
+         median_rev_survey, survey_year, Region, cropcat_n) %>% 
+  mutate(prop_n = ngrowers/nsupplychainactors) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = as.numeric(scale(log(TotalAcreage))), 
          funding_avg_annual_amt_ls = as.numeric(scale(log(funding_avg_annual_amt))),
          #funding_sum_5yr_ls = scale(log(funding_sum_5yr)),
-         n_s = as.numeric(scale(n)),
+         #n_s = as.numeric(scale(n)),
          n_prop_s = as.numeric(scale(prop_n)),
          median_rev_s = as.numeric(scale(median_rev_survey)),
          OGSeedOGIntegrityn_s = as.numeric(scale(OGSeedOGIntegrityn))) %>% 
@@ -75,7 +78,7 @@ df.full %>%
   facet_wrap(~Region)
 # N is by year only, otherwise I lose too much data
 df.full %>% 
-  ggplot(aes(x = survey_year_f, y = n)) +
+  ggplot(aes(x = survey_year_f, y = prop_n)) +
   geom_boxplot() +
   geom_point(aes(color = maincrop)) +
   facet_wrap(~Region)
@@ -85,6 +88,10 @@ df.full %>%
   geom_boxplot() +
   geom_point(aes(color = maincrop)) +
   facet_wrap(~Region)
+
+number_resp <- df.full %>% 
+  group_by(Region, maincrop, survey_year) %>% 
+  count()
 
 # Full models ----
 ## Let's run a stepwise process just to see what the model likes
@@ -115,7 +122,7 @@ maincrop_simple <- lm(OGseed_percent_maincrop ~
                        OGSeedOGIntegrityn_s + 
                        CertifierRequestn +  # demand
                        funding_avg_annual_amt_ls + 
-                       n_s +
+                       n_prop_s +
                        median_rev_s +
                        survey_year_f +
                        Region , # supply
@@ -153,6 +160,7 @@ maincrop_crossed <- lmer(OGseed_percent_maincrop ~
                            (1|survey_year_f) +
                            (1|Region),
                          data = df.full)
+
 summary(maincrop_crossed) 
 AIC(maincrop_crossed)
 AIC(maincrop_simple)

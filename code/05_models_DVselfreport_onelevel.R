@@ -2,10 +2,8 @@ library(dplyr)
 library(tidyr)
 
 # This data frame is the result of the merging.R and variable_creation.R scripts. The former merged together the three waves of surveys and the latter added in funding data (average annual funding between 2006-2010, 2011-2015, 2016-2020), and added data about producers at the regional level. 
-df <- readRDS("~/Box/organicseed/df_onelevel.rds") %>% 
-  rename(n = n_companyproducer)
-df.long <- readRDS("~/Box/organicseed/df_long_onelevel.rds")%>% 
-  rename(n = n_companyproducer)
+df <- readRDS("~/Box/organicseed/df_onelevel.rds")
+df.long <- readRDS("~/Box/organicseed/df_long_onelevel.rds")
 # Cleaning and getting the data down to complete cases ----
 df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , levels = c("No", "Yes", "Already at 100%"))
 table(df$IncreasedOGSeed_f)
@@ -22,13 +20,16 @@ df.full <- df %>%
   select(RespondentID, IncreasedOGSeed_f, IncreasedOGSeed_binom, maincrop, 
          TotalAcreage, 
          OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
-         n, prop_n, median_rev_survey, survey_year, Region, cropcat_n) %>% 
+         #n, prop_n, 
+         ngrowers, nsupplychainactors,
+         median_rev_survey, survey_year, Region, cropcat_n) %>% 
+  mutate(prop_n = ngrowers/nsupplychainactors) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = as.numeric(scale(log(TotalAcreage))), 
          funding_avg_annual_amt_ls = as.numeric(scale(log(funding_avg_annual_amt))),
          #funding_sum_5yr_ls = scale(log(funding_sum_5yr)),
-         n_s = as.numeric(scale(n)),
+         #n_s = as.numeric(scale(n)),
          n_prop_s = as.numeric(scale(prop_n)),
          median_rev_s = as.numeric(scale(median_rev_survey)),
          OGSeedOGIntegrityn_s = as.numeric(scale(OGSeedOGIntegrityn))) %>% 
@@ -55,34 +56,41 @@ df.full.long <- df.long %>%
 
 
 maincrop_simple <- glm(IncreasedOGSeed_binom ~ 
-                           maincrop + 
                            TotalAcreage_ls + 
                            OGSeedOGIntegrityn_s + 
                            CertifierRequestn +  
                            funding_avg_annual_amt_ls + 
-                           n_s +
+                           n_prop_s +
                            median_rev_s +
+                           maincrop + 
                            survey_year_f +
                            Region,
                        family = "binomial",
                          data = df.full)
 summary(maincrop_simple)
-
-maincrop_crossed <- glmer(IncreasedOGSeed_binom ~ 
-                         #maincrop + 
-                         TotalAcreage_ls + 
-                         OGSeedOGIntegrityn_s + 
-                         CertifierRequestn +  
-                         funding_avg_annual_amt_ls + 
-                         n_s +
-                         median_rev_s +
-                         (1|maincrop) +
-                         (1|survey_year_f) +
+table(df.full$Region, df.full$IncreasedOGSeed_binom)
+maincrop_crossed1 <- glmer(IncreasedOGSeed_binom ~ 1 +
+                         #TotalAcreage_ls + 
+                         #OGSeedOGIntegrityn_s + 
+                         #CertifierRequestn +  
+                         #funding_avg_annual_amt_ls + 
+                         #median_rev_s +
+                         #(1|maincrop),
+                         #(1|survey_year_f),
                          (1|Region),
                        family = "binomial",
                        data = df.full)
-summary(maincrop_crossed)
+class(df.full$Region)
+class(df.full$survey_year_f)
+summary(maincrop_crossed1)
+summary(maincrop_crossed0)
+ranef(maincrop_crossed0)
+ranef(maincrop_crossed1)
 
+
+tapply(df.full$IncreasedOGSeed_binom, df.full$Region, summary)
+table(is.na(df.full$Region))
+?isSingular
 
 maincrop_b <- brm(IncreasedOGSeed_binom ~ 
                     #maincrop + 
