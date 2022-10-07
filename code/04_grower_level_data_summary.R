@@ -148,15 +148,22 @@ write.csv(variable_df, "~/Documents/Davis/R-Projects/organicseed/tables/table1a.
 # Other parts of table 1 are in 03_regional_data: line 33 for funding and supplychain_yearonly for supply chain
 
 # FIGURES FOR PAPER -----
-blues <- RColorBrewer::brewer.pal(8, "PuBu")
-blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8)
+# 2004-2008
 greens <- RColorBrewer::brewer.pal(8, "Greens")
 greens <- colorRampPalette(c("lightgrey", "#55752f"))(8)
+# 2009-2013
 reds <- RColorBrewer::brewer.pal(8, "Oranges")
 reds <- colorRampPalette(c("lightgrey", "#90353b"))(8)
+# 2014-2018
+blues <- RColorBrewer::brewer.pal(8, "PuBu")
+blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8)
 
 # Figure 1b and summaries for barriers ----
-barrier_eachyr <- barriers %>% 
+# COME BACK TO THIS
+barrier_eachyr <- df %>% 
+  pivot_longer(cols = c(barrier_seedTreatlack, barrier_buyerReq,
+                        barrier_insuffQuantity,barrier_distrustQuality), 
+               names_to = "barrier_type", values_to = "barrier_strength")
   group_by(survey_year, barrier, score) %>% 
   count() %>% 
   ungroup() %>% 
@@ -187,6 +194,32 @@ pbarrier <- barrier_eachyr %>%
   labs(x = "", fill = "", y = "Percent of respondents") +
   theme_linedraw() +
   theme(legend.position = "none"); pbarrier
+
+# Sentiment ----
+df %>% 
+  filter(!is.na(OGSeedOGIntegrityf)) %>% 
+  ggplot(aes(fill = factor(survey_year),
+             x = OGSeedOGIntegrityf)) +
+  geom_bar(position = "dodge") +
+  #geom_text(position=position_dodge(width=0.9), size = 3, hjust = 1.2, vjust = .5) +
+  coord_flip() +
+  scale_fill_manual(values = c(greens[8], reds[8], blues[8])) + 
+  labs(x = "", fill = "", y = "Percent of respondents") +
+  theme_linedraw() +
+  theme(legend.position = "none")
+
+# Sentiment ----
+df %>% 
+  filter(!is.na(TotalAcreage)) %>% 
+  ggplot(aes(x = factor(survey_year),
+             y = TotalAcreage)) +
+  geom_boxplot() +
+  #geom_text(position=position_dodge(width=0.9), size = 3, hjust = 1.2, vjust = .5) +
+  coord_flip() +
+  scale_fill_manual(values = c(greens[8], reds[8], blues[8])) + 
+  labs(x = "", fill = "", y = "Percent of respondents") +
+  theme_linedraw() +
+  theme(legend.position = "none")
 
 # Certifier behavior ----
 
@@ -233,12 +266,12 @@ df %>%
   ggplot(aes(x = factor(survey_year), y = OGSeedOGIntegrityn,
              color = factor(survey_year))) +
   geom_boxplot() +
-  labs(x = "", y = "Percent organic seed used", color = "") +
+  labs(x = "", y = "Values organic seed", color = "") +
   scale_color_manual(values = c(greens[8],reds[8], blues[8])) +
   theme_linedraw() +
   theme(legend.position = "none")
 
-# Farm size
+# Farm size ----
 df %>% 
   ggplot(aes(x = factor(survey_year), y = TotalAcreage,
              color = factor(survey_year))) +

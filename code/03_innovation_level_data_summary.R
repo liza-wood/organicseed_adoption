@@ -685,13 +685,13 @@ fed_summary <- fed_all %>%
   mutate(Percent = round(100*(breeding_sum/annual_sum), 1)) %>% 
   left_join(year_color)
 
-pfunding <- ggplot(fed_summary, aes(x = year, y = breeding_sum/100000, 
+ggplot(fed_summary, aes(x = year, y = breeding_sum/100000, 
                                     label = paste0(Percent, "%"))) +
   geom_col(fill = fed_summary$year_color) +
   geom_text(size = 3, vjust = 2) +
   theme_linedraw() +
   theme(legend.position = "none") +
-  labs(x = "", y = "Federal funding by $100 thousand\n(% of total funding)"); pfunding
+  labs(x = "", y = "Federal funding by $100 thousand\n(% of total funding)")
 
 # This is not satisfying, so let's identify the federal fundings from the SOS list and look at this amount as a portion of tital federal funds 
 
@@ -746,22 +746,26 @@ sos_funds_nuance <- funds_organic %>%
   group_by(year, proj_crop,location) %>% 
   summarize(annual_total = sum(funding_amt)) 
 
-pfunding2 <- 
+sos_funds_nuance %>% 
+  mutate(year_range = case_when(
+    year %in% 2004:2008 ~ "2004-2008",
+    year %in% 2009:2013 ~ "2009-2013",
+    year %in% 2014:2018 ~ "2014-2018",
+    T ~ NA_character_
+  )) %>% 
+  group_by(year_range, proj_crop) %>% 
+  mutate(range_total = sum(annual_total)) %>% 
+  select(year_range, range_total, proj_crop) %>% 
+  unique() %>% 
   ggplot() +
-  geom_col(data = sos_funds_nuance, mapping = aes(x = year, y = annual_total/1000000,
-                                                  fill = proj_crop)) +
+  geom_col(mapping = aes(x = year_range, y = range_total/1000000,
+                         fill = proj_crop),
+           position = position_dodge2(preserve = "single")) +
   theme_linedraw() +
   #theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding2
+  labs(x = "", y = "Funding in millions\n(% of total federal funding)",
+       fill = "Crop category")
 
-pfunding2 <- 
-  ggplot() +
-  geom_line(data = sos_funds, mapping = aes(x = year, y = annual_total/1000000)) +
-  geom_line(data = sos_funds_nuance, mapping = aes(x = year, y = annual_total/1000000,
-                                                   color = location)) +
-  theme_linedraw() +
-  theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding2
 
 
 # Average percentages over the years
@@ -794,8 +798,19 @@ funding_sources_number <- funds_organic %>%
 ## 1. Certifier perceptions is just straight from the survey Kiki sent
 ## 2. Seed producers and companies -- still could be improved (e.g. database for seed companies?)
 
-pmarket_factiva <- ggplot() +
-  geom_bar(data = factiva, mapping = aes(x = founded, fill = Region)) +
+# Want to add these together ---
+factiva %>% 
+  mutate(year_range = case_when(
+    is.na(founded) ~ NA_character_,
+    founded < 2000 ~ "pre-2000",
+    T ~ founded
+  ))
+
+pmarket_factiva <- factiva %>% 
+  filter(!is.na(Region)) %>% 
+  ggplot() +
+  geom_bar(mapping = aes(x = founded, fill = Region),
+           position = position_dodge2(preserve = "single")) +
   theme_linedraw() +
   #theme(legend.position = "none") +
   labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_factiva
@@ -811,21 +826,29 @@ survey_companies <- p_co_crop_year %>%
   select(Operation, Region, maincrop, income20_c) %>% 
   unique()
 
+survey_companies$income20_cf <- factor(survey_companies$income20_c, levels = c("Under $50,000",
+                                                          "$50,000-$299,999",
+                                                          "$300,000-$1 million",
+                                                          "Over $1 million"))
 pmarket_survey <- survey_companies %>% 
   filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
+  filter(!is.na(income20_cf)) %>% 
   ggplot() +
-  geom_bar(mapping = aes(x = income20_c, fill = Region)) +
+  geom_bar(mapping = aes(x = income20_cf, fill = Region),
+           position = position_dodge2(preserve = "single")) +
   theme_linedraw() +
   #theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_survey
+  labs(x = "", y = "Count of companies"); pmarket_survey
 
 pmarket_survey <- survey_companies %>% 
+  filter(income20_c != "" & !is.na(income20_cf)) %>% 
   filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
   ggplot() +
-  geom_bar(mapping = aes(x = income20_c, fill = maincrop)) +
+  geom_bar(mapping = aes(x = , fill = maincrop),
+           position = position_dodge2(preserve = "single")) +
   theme_linedraw() +
   #theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_survey
+  labs(x = "", y = "Count of companies"); pmarket_survey
 
 # 7 = "$300,000-$1 million"
 # 6 = "$75,000-$99,999",

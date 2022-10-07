@@ -54,13 +54,16 @@ df.full.long <- df.long %>%
   filter(Region != "International") %>% 
   select(RespondentID, OGseed_percent, OGcrop, TotalAcreage, 
          OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
-         n, prop_n, median_rev_survey, survey_year, Region, cropcat_n) %>% 
+         #n, prop_n, 
+         ngrowers, nsupplychainactors,
+         median_rev_survey, survey_year, Region, cropcat_n) %>% 
+  mutate(prop_n = ngrowers/nsupplychainactors) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West",
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = as.numeric(scale(log(TotalAcreage))), 
          funding_avg_annual_amt_ls = as.numeric(scale(log(funding_avg_annual_amt))),
          #funding_sum_5yr_ls = scale(log(funding_sum_5yr)),
-         n_s = as.numeric(scale(n)),
+         #n_s = as.numeric(scale(n)),
          n_prop_s = as.numeric(scale(prop_n)),
          median_rev_s = as.numeric(scale(median_rev_survey)),
          OGSeedOGIntegrityn_s = as.numeric(scale(OGSeedOGIntegrityn))) %>% 
@@ -117,13 +120,14 @@ step(object = lmfit_maincrop_null,
 ## This stepwise process suggests removing those regional level attributes
 
 maincrop_simple <- lm(OGseed_percent_maincrop ~ 
-                      maincrop + 
-                       TotalAcreage_ls + # demographics
+                       cropcat_n +
+                       TotalAcreage_ls +
                        OGSeedOGIntegrityn_s + 
-                       CertifierRequestn +  # demand
+                       CertifierRequestn +
                        funding_avg_annual_amt_ls + 
                        n_prop_s +
                        median_rev_s +
+                       maincrop + 
                        survey_year_f +
                        Region , # supply
                     data = df.full)
@@ -149,7 +153,7 @@ lmtest::coeftest(lmfit_maincrop_full, vcov_tw)
 
 # Let's get back to looking at models.
 maincrop_crossed <- lmer(OGseed_percent_maincrop ~ 
-                           #cropcat_n + 
+                           cropcat_n + 
                            TotalAcreage_ls + # demographics
                            OGSeedOGIntegrityn_s + 
                            CertifierRequestn +  # demand
@@ -170,7 +174,7 @@ BIC(maincrop_simple)
 
 # Break this down little by little
 maincrop_crossed_1 <- lm(OGseed_percent_maincrop ~ 
-                           #maincrop + 
+                           cropcat_n +
                            TotalAcreage_ls + # demographics
                            OGSeedOGIntegrityn_s + 
                            CertifierRequestn +  # demand
@@ -181,6 +185,7 @@ maincrop_crossed_1 <- lm(OGseed_percent_maincrop ~
 summary(maincrop_crossed_1) # Without fixing regions effects we see n negative and rev positive
 
 maincrop_crossed_2 <- lmer(OGseed_percent_maincrop ~ 
+                          cropcat_n +
                            TotalAcreage_ls + # demographics
                            OGSeedOGIntegrityn_s + 
                            CertifierRequestn +  # demand
@@ -394,81 +399,69 @@ survey16.long <- df.full.long %>% filter(survey_year == 2016)
 survey21.long <- df.full.long %>% filter(survey_year == 2021)
 
 fit11_maincrop <- lm(OGseed_percent_maincrop ~ 
-                       maincrop + 
+                       cropcat_n +
                        TotalAcreage_ls + # demographics
                        OGSeedOGIntegrityn_s + 
                        CertifierRequestn +  # demand
                        funding_avg_annual_amt_ls + 
+                       n_prop_s +
+                       median_rev_s +
+                       maincrop + 
                        Region, 
                       data = survey11)
 summary(fit11_maincrop)
 
 fit11_mainlmer <- lmer(OGseed_percent_maincrop ~ 
-                         maincrop + 
+                         cropcat_n +
                          TotalAcreage_ls + # demographics
                          OGSeedOGIntegrityn_s + 
                          CertifierRequestn +  # demand
                          funding_avg_annual_amt_ls + 
-                         n_s +
-                         median_rev_factiva_s +
-                         (1|Region), 
+                         n_prop_s +
+                         median_rev_s +
+                         (1|Region) +
+                         (1|maincrop), 
                        data = survey11)
 summary(fit11_mainlmer)
 
-fit11_allcrop <- lmer(OGseed_percent ~ 
-                           OGcrop + 
-                           TotalAcreage_ls + # demographics
-                           OGSeedOGIntegrityn_s + # actor-focused demand
-                           CertifierRequestn +  # intermediary demand
-                           funding_avg_annual_amt_ls + # IS support
-                           n_s +
-                           median_rev_factiva_s +
-                           (1|RespondentID) +
-                           (1|Region),
-                         data = survey11.long)
-summary(fit11_allcrop) # 
 
 fit16_maincrop <- lm(OGseed_percent_maincrop ~ 
-                       maincrop + 
+                       cropcat_n +
                        TotalAcreage_ls + # demographics
                        OGSeedOGIntegrityn_s + 
                        CertifierRequestn +  # demand
                        funding_avg_annual_amt_ls + 
-                       Region, data = survey16)
+                       n_prop_s +
+                       median_rev_s +
+                       maincrop + 
+                       Region,
+                     data = survey16)
 summary(fit16_maincrop)
 
 fit16_mainlmer <- lmer(OGseed_percent_maincrop ~ 
-                         maincrop + 
+                         cropcat_n +
                          TotalAcreage_ls + # demographics
                          OGSeedOGIntegrityn_s + 
                          CertifierRequestn +  # demand
                          funding_avg_annual_amt_ls + 
-                         n_s +
-                         median_rev_factiva_s +
-                         (1|Region), 
+                         n_prop_s +
+                         median_rev_s +
+                         (1|Region) +
+                         (1|maincrop), 
                        data = survey16)
 summary(fit16_mainlmer)
 
-fit16_allcrop <- lmer(OGseed_percent ~ 
-                        OGcrop + 
-                        TotalAcreage_ls + # demographics
-                        OGSeedOGIntegrityn_s + # actor-focused demand
-                        CertifierRequestn +  # intermediary demand
-                        funding_avg_annual_amt_ls + # IS support
-                        n_s +
-                        median_rev_factiva_s +
-                        (1|RespondentID) +
-                        (1|Region),
-                      data = survey16.long)
-summary(fit16_allcrop) # 
 
 fit21_maincrop <- lm(OGseed_percent_maincrop ~
-                       maincrop + 
+                       cropcat_n +
                        TotalAcreage_ls + # demographics
                        OGSeedOGIntegrityn_s + 
                        CertifierRequestn +  # demand
                        funding_avg_annual_amt_ls + 
-                       Region, 
+                       n_prop_s +
+                       median_rev_s +
+                       maincrop + 
+                       Region,
                        data = survey21)
 summary(fit21_maincrop)
 

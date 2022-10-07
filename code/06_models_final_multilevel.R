@@ -19,14 +19,18 @@ df.full <- df %>%
   filter(Region != "International", maincrop != "Other") %>% 
   select(RespondentID, OGseed_percent_maincrop, IncreasedOGSeed_binom, maincrop, 
          TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn,
-         funding_avg_annual_amt, n, ratio, median_rev_survey, survey_year, 
-         Region, contains("barrier")) %>% 
+         funding_avg_annual_amt, 
+         #n, prop_n, 
+         ngrowers, nsupplychainactors,
+         median_rev_survey, survey_year, Region, cropcat_n,
+         contains("barrier")) %>% 
+  mutate(prop_n = ngrowers/nsupplychainactors) %>%
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = c(scale(log(TotalAcreage))), 
          funding_avg_annual_amt_ls = c(scale(log(funding_avg_annual_amt))),
          OGSeedOGIntegrityn_s = c(scale(OGSeedOGIntegrityn)),
-         ratio_s = as.numeric(scale(ratio)),
+         prop_n_s = as.numeric(scale(prop_n)),
          median_rev_s = as.numeric(scale(median_rev_survey)),
          barrier_availability_s = c(scale(barrier_availability)),
          barrier_price_s = c(scale(barrier_price)),
@@ -40,7 +44,7 @@ df1 <- select(df.full, OGseed_percent_maincrop, maincrop,
               TotalAcreage_ls, 
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
-              ratio_s, median_rev_s,
+              prop_n_s, median_rev_s,
               Region, survey_year_f) %>% 
   filter(complete.cases(.))
 
