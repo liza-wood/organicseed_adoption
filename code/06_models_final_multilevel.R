@@ -19,8 +19,8 @@ df.full <- df %>%
   filter(Region != "International", maincrop != "Other") %>% 
   select(RespondentID, OGseed_percent_maincrop, IncreasedOGSeed_binom, maincrop, 
          TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn,
-         #funding_avg_annual_amt, 
-         funding_amt,
+         funding_avg_annual_amt, 
+         #funding_amt,
          #n, prop_n, 
          ngrowers, nsupplychainactors,
          sum_rev_dnb, survey_year, Region, cropcat_n,
@@ -29,9 +29,10 @@ df.full <- df %>%
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = c(scale(log(TotalAcreage))), 
-         funding_avg_annual_amt_ls = c(scale(log(funding_amt))),
+         funding_avg_annual_amt_ls = c(scale(log(funding_avg_annual_amt))),
          OGSeedOGIntegrityn_s = c(scale(OGSeedOGIntegrityn)),
          prop_n_s = as.numeric(scale(prop_n)),
+         nsupplychainactors_s = as.numeric(scale(nsupplychainactors)),
          sum_rev_s = as.numeric(scale(sum_rev_dnb)),
          barrier_availability_s = c(scale(barrier_availability)),
          barrier_price_s = c(scale(barrier_price)),
@@ -46,6 +47,7 @@ df1 <- select(df.full, OGseed_percent_maincrop, maincrop,
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
               prop_n_s, sum_rev_s,
+              nsupplychainactors_s,
               Region, survey_year_f) %>% 
   filter(complete.cases(.))
 
@@ -60,9 +62,10 @@ acreage <- lmer(OGseed_percent_maincrop ~
                   TotalAcreage_ls + 
                   CertifierRequestn + 
                   funding_avg_annual_amt_ls + 
-                  prop_n_s +
+                  #prop_n_s +
+                  nsupplychainactors_s + 
                   sum_rev_s +
-                  maincrop +
+                  (1|maincrop) +
                   (1|survey_year_f) +
                   (1|Region),
                 data = df1)
@@ -72,9 +75,10 @@ acreage_b <- brm(OGseed_percent_maincrop ~
                   TotalAcreage_ls + 
                   CertifierRequestn + 
                   funding_avg_annual_amt_ls + 
-                  prop_n_s +
+                   #prop_n_s +
+                   nsupplychainactors_s + 
                   sum_rev_s +
-                  maincrop +
+                  (1|maincrop) +
                   (1|survey_year_f) +
                   (1|Region),
                 data = df1)
@@ -100,6 +104,7 @@ df3 <- select(df.full, IncreasedOGSeed_binom, maincrop,
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
               prop_n_s, sum_rev_s,
+              nsupplychainactors_s,
               Region, survey_year_f) %>% 
   filter(complete.cases(.))
 
@@ -114,9 +119,10 @@ increase <- glmer(IncreasedOGSeed_binom ~
                   TotalAcreage_ls + 
                   CertifierRequestn + 
                   funding_avg_annual_amt_ls + 
-                  prop_n_s +
+                  #prop_n_s +
+                  nsupplychainactors_s +
                   sum_rev_s +
-                  maincrop +
+                  (1|maincrop) +
                   (1|survey_year_f) +
                   (1|Region),
                   family = "binomial",
@@ -127,9 +133,10 @@ increase_b <- brm(IncreasedOGSeed_binom ~
                     TotalAcreage_ls + 
                     CertifierRequestn + 
                     funding_avg_annual_amt_ls + 
-                    prop_n_s +
+                    #prop_n_s +
+                    nsupplychainactors_s +
                     sum_rev_s +
-                    maincrop +
+                    (1|maincrop) +
                     (1|survey_year_f) +
                     (1|Region),
                   family = bernoulli(link = "logit"),
