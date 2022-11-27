@@ -20,9 +20,10 @@ df.full <- df %>%
   select(RespondentID, OGseed_percent_maincrop, IncreasedOGSeed_binom, maincrop, 
          TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn,
          funding_avg_annual_amt, 
+         #funding_amt,
          #n, prop_n, 
-         ngrowers, nsupplychainactors,
-         median_rev_survey, survey_year, Region, cropcat_n,
+         ngrowers, nsupplychainactors, #ndnbcompanies,
+         sum_rev_dnb, survey_year, Region, cropcat_n,
          contains("barrier")) %>% 
   mutate(prop_n = ngrowers/nsupplychainactors) %>%
   mutate(Region = factor(Region, levels = c("North Central", "West", 
@@ -31,7 +32,8 @@ df.full <- df %>%
          funding_avg_annual_amt_ls = c(scale(log(funding_avg_annual_amt))),
          OGSeedOGIntegrityn_s = c(scale(OGSeedOGIntegrityn)),
          prop_n_s = as.numeric(scale(prop_n)),
-         median_rev_s = as.numeric(scale(median_rev_survey)),
+         nsupplychainactors_s = as.numeric(scale(nsupplychainactors)),
+         sum_rev_s = as.numeric(scale(sum_rev_dnb)),
          barrier_availability_s = c(scale(barrier_availability)),
          barrier_price_s = c(scale(barrier_price)),
          barrier_distrustQuality_s = c(scale(barrier_distrustQuality)),
@@ -44,7 +46,9 @@ df1 <- select(df.full, OGseed_percent_maincrop, maincrop,
               TotalAcreage_ls, 
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
-              prop_n_s, median_rev_s,
+              #prop_n_s, 
+              nsupplychainactors_s,
+              sum_rev_s,
               Region, survey_year_f) %>% 
   filter(complete.cases(.))
 
@@ -59,8 +63,9 @@ acreage <- lm(OGseed_percent_maincrop ~
                   TotalAcreage_ls + 
                   CertifierRequestn + 
                   funding_avg_annual_amt_ls + 
-                  prop_n_s +
-                  median_rev_s +
+                  #prop_n_s +
+                  nsupplychainactors_s +
+                  #sum_rev_s +
                   maincrop +
                   survey_year_f +
                   Region,
@@ -74,7 +79,9 @@ df3 <- select(df.full, IncreasedOGSeed_binom, maincrop,
               TotalAcreage_ls, 
               funding_avg_annual_amt_ls,
               OGSeedOGIntegrityn_s,
-              prop_n_s, median_rev_s,
+              #prop_n_s, 
+              nsupplychainactors_s,
+              sum_rev_s,
               Region, survey_year_f) %>% 
   filter(complete.cases(.))
 
@@ -83,8 +90,9 @@ increase <- glm(IncreasedOGSeed_binom ~
                     TotalAcreage_ls + 
                     CertifierRequestn + 
                     funding_avg_annual_amt_ls + 
-                    prop_n_s +
-                    median_rev_s +
+                    #prop_n_s +
+                    nsupplychainactors_s +
+                    sum_rev_s +
                     maincrop +
                     survey_year_f +
                     Region,

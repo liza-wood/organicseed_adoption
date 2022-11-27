@@ -3,7 +3,7 @@ library(lubridate)
 setwd("~/Dropbox/SOSInteractiveSurvey/")
 
 # ---- FUNDING ----
-# Setting up funds at year range, region, and crop ----
+## Setting up funds at year range, region, and crop ----
 funds <- read.csv("local_data/public-funding-Dec21.csv")
 
 funds <- funds %>% 
@@ -177,7 +177,7 @@ funds_year_region_crop <- funds_year_region_crop %>%
 
 
 # ---- SUPPLY CHAIN ----
-# Patterns for matching later ----
+## Patterns for matching later ----
 western <- c("California", "Oregon", "Washington", "Idaho", "Nevada", "Arizona", "Utah", "New Mexico", "Colorado", "Wyoming", "Montana", "Alaska", "Hawaii")
 northcentral <- c("North Dakota", "South Dakota", "Kansas", "Nebraska", "Minnesota", "Iowa", "Missouri", "Wisconsin", "Illinois", "Michigan", "Indiana", "Ohio")
 southern <- c("Texas", "Oklahoma", "Arkansas", "Louisiana", "Kentucky", "Tennessee", "Mississippi", "Alabama", "Florida", "Georgia", "South Carolina", "North Carolina", "Virginia")
@@ -190,22 +190,25 @@ veg_pattern <- read.csv("~/Box/osa_networks/data_combined/crop_family_manual.csv
 veg_pattern <- paste(veg_pattern$variety, collapse = "|") %>% 
   str_replace_all("wsquash|ssquash", "squash")
 
-# Reading in datasets ----
-## These are the survey data only
-nodes <- read.csv("~/Box/osa_networks/data_combined_3/net_nodes_withdf.csv") %>% 
-  select(ResponseId_dup, variety_n, cropcat_n)
+## Reading in datasets ----
+# These are the survey data only
+nodes <- read.csv("~/Box/osa_networks/data_combined/nodes_plus_surveydata_attributes.csv") %>% 
+  select(Operation, variety_n, cropcat_n)
 master <- read.csv("~/Box/osa_networks/data_combined/master_list_manual.csv") %>% 
   select(Operation, State)
-producers <- read.csv("~/Box/osa_networks/data_combined_3/surveys_combined.csv") %>% 
-  filter(role_refined != "org" & role_refined != "university_ext" & 
-           role_refined != "other") %>% 
-  left_join(nodes, by = c("ResponseId" = "ResponseId_dup")) %>% 
+producers <- readRDS("~/Box/osa_networks/data_combined/surveys.rds") %>% 
+  filter(act_seed_producer == T | act_seed_breeder == T |
+           act_seed_handling == T | act_seed_retail == T) %>% 
+  left_join(nodes) %>% 
   mutate(cropcat_field = case_when(cropcat_grain == T ~ T, T ~ cropcat_field)) %>% 
   mutate(cropcat_veg = case_when(cropcat_propogules == T ~ T, T ~ cropcat_veg)) %>% 
   mutate(cropcat_other = case_when(cropcat_orn == T |
                                      cropcat_herbs == T ~ T,
                                    T ~ F
-  ))
+  )) %>% 
+  rename(physical_street = Street.Address)
+
+## Beyond the survey: NOP ----
 # Now for beyond the survey. The NOP list here has all organic growers (crops and livestock), but filtered to certified before 2020 so that it is appropriate for my groupings
 nop <- read.csv("~/Box/organicseed/NOP_USorganicCrops_6.28.22.csv") %>% 
   slice(-(1:2)) %>% 
@@ -226,37 +229,49 @@ nop <- read.csv("~/Box/organicseed/NOP_USorganicCrops_6.28.22.csv") %>%
                                     field_pattern),
          cropcat_forage = str_detect(Certified.Products.Under.CROPS.Scope, 
                                      forage_pattern))
-# NOP list that I used to consider the population of seed producers, to match up with the populatioN data and current nop database
+# Then this is the NOP list that I used to consider the population of seed producers, to match up with the populatioN data and current nop database
 nop.old <- read.csv("~/Box/osa_networks/data_contacts/01_raw_inputs/NOP.database.products.csv") %>% 
   mutate(cert_year = year(mdy(.$Effective.Date.of.Operation.Status)))
-ppltn.p <- read.csv("~/Box/osa_networks/data_producers/00_populatioN_data/population_for_regional_summary.csv")
+ppltn.p <- read.csv("~/Box/osa_networks/data_producers/00_populatioN_data/total_populatioN.csv")
 
-factiva <- read.csv("~/Box/organicseed/factiva_seedco_list.csv") %>% 
-  filter(remove == F) %>% left_join(master, by = c("Company" = "Operation")) %>% 
-  unique() %>% 
-  mutate(State = trimws(State)) %>% 
+## Beyond the survey: D&B ----
+dnb <- read.csv("~/Box/organicseed/dnb_organic_seed_companies.csv") %>% 
+  full_join(read.csv("~/Box/organicseed/dnb_manual_pull.csv"), 
+            by = c("Company.Name" = "dnb_company_name")) %>% 
+  filter(Company.Name != "") %>% 
+  select(Operation, Company.Name, City, State.Or.Province, 
+         Postal.Code, Country.Region, URL,
+         Sales..USD., Pre.Tax.Profit..USD., Assets..USD., Employees..Single.Site.,
+         Employees..Total., Parent.Company, Parent.Country.Region, 
+         Address.Line.1, Key.ID,
+         year_started) %>% 
+  rename(Company_dnb = Company.Name,
+         sales = Sales..USD., assets = Assets..USD., 
+         n_employees = Employees..Total.,
+         physical_street = Address.Line.1) %>% 
+  mutate(State = trimws(State.Or.Province)) %>% 
   mutate(Region = case_when(
     State %in% western ~ "West",
     State %in% northcentral ~ "North Central",
     State %in% southern ~ "South",
     State %in% northeast ~ "Northeast",
+    Country.Region != "United States" ~ "Outside US",
     T ~ NA_character_)) %>% 
-  mutate(yrs_ag = 2021-founded)
+  mutate(dnblisting = T)
 
-# Combine survey data  with factiva database and NOP producer database ----
-### First bind in Factiva
-p_co <- full_join(producers, factiva, by = c("Operation" = "Company", 
+
+## Combine D&B and NOP ----
+### First bind in D&B
+p_co <- full_join(producers, dnb, by = c("Operation", 
                                              "Region")) %>% 
+  mutate(physical_street = ifelse(is.na(.$physical_street.x) & !is.na(.$physical_street.y),
+                         .$physical_street.y, .$physical_street.x)) %>% 
   select(Operation, RecipientEmail, ResponseId, income20, income20_c, 
-         contains("pchall_f_"), Region, cropcat_field, cropcat_forage, 
+         contains("pchall"), Region, cropcat_field, cropcat_forage, 
          cropcat_grain, cropcat_veg, cropcat_orn, cropcat_propogules, 
-         cropcat_herbs, cropcat_other,
-         variety_n, cropcat_n, yrs_ag.x, yrs_ag.y, yrs_orgseed, 
-         sales_million, employees, founded) %>% 
-  mutate(yrs_ag = ifelse(is.na(.$yrs_ag.x) & !is.na(.$yrs_ag.y),
-                         .$yrs_ag.y, .$yrs_ag.x)) %>% 
-  #UNSURE WHY THIS TWEAKS WITH CASEWHEN
-  select(-yrs_ag.x, -yrs_ag.y) %>% 
+         cropcat_herbs, physical_street,
+         variety_n, cropcat_n, yrs_ag, yrs_orgseed, 
+         sales, n_employees, year_started, dnblisting) %>% 
   mutate(Region = case_when(
            Region == "Canada" ~ "International",
            T ~ Region
@@ -279,7 +294,8 @@ p_co <- full_join(producers, factiva, by = c("Operation" = "Company",
                                                     "$300,000-$1 million",
                                                     "Over $1 million"))) %>% 
   mutate(income20_f = as.numeric(income20_f)) %>% 
-  rename(Email = RecipientEmail)
+  rename(Email = RecipientEmail)  %>% 
+  mutate(yrs_ag = 2022-year_started)
 
 ### Then clean up old NOP to get the full NOP data
 ppltn_p_nop <- nop.old %>% 
@@ -309,21 +325,21 @@ ppltn_p_nop <- nop.old %>%
          cert_year, Region,  
          yrs_ag, cropcat_veg, cropcat_field, cropcat_forage) 
 
-### Then merge the old NOP list with the survey and Factive.
-# Warning, this merge gets weird. So first we take those from the database that have the same operation name as those surveyed. Left to p_co keeps survey data by default over database data
-p_co_left <- left_join(p_co, ppltn_p_nop)  %>% unique()
+### Then merge the old NOP list with the survey and D&B.
+# Warning, this merge gets weird. So first we take those from the database that have the same operation name as those surveyed. Left to p_co keeps survey data by default over database data -- no matches
+p_co_left <- left_join(p_co, select(ppltn_p_nop, Operation, cert_year, yrs_ag))  %>% unique()
 # Then we remove Operation
-ppltn_p_nop <- select(ppltn_p_nop, - Operation)
 # Then we merge on email, so we stack on those that have the same email, but we don't merge by some data because we want the manually specified values to be from survey
-p_co_email <- full_join(ppltn_p_nop[ppltn_p_nop$Email != "",], 
+p_co_email <- full_join(filter(select(ppltn_p_nop, Email, yrs_ag, cert_year, Region, 
+                                      cropcat_veg, cropcat_field, cropcat_forage), Email != ""), 
                         p_co_left, by = c("Email", "Region")) %>% 
   mutate(yrs_ag = ifelse(is.na(.$yrs_ag.x) & !is.na(.$yrs_ag.y),
                          .$yrs_ag.y, .$yrs_ag.x),
          cert_year = ifelse(is.na(.$cert_year.x) & !is.na(.$cert_year.y),
                          .$cert_year.y, .$cert_year.x),
-         physical_street = ifelse(.$physical_street.x != "" & 
-                                    !is.na(.$physical_street.y),
-                            .$physical_street.y, .$physical_street.x),
+         #physical_street = ifelse(.$physical_street.x != "" & 
+         #                           !is.na(.$physical_street.y),
+         #                   .$physical_street.y, .$physical_street.x),
          cropcat_veg = ifelse(is.na(.$cropcat_veg.y),
                          .$cropcat_veg.x, .$cropcat_veg.y),
          cropcat_field = ifelse(is.na(.$cropcat_field.y),
@@ -331,13 +347,16 @@ p_co_email <- full_join(ppltn_p_nop[ppltn_p_nop$Email != "",],
          cropcat_forage = ifelse(is.na(.$cropcat_forage.y),
                          .$cropcat_forage.x, .$cropcat_forage.y)) %>% 
   select(-c(yrs_ag.x, yrs_ag.y, cert_year.x, cert_year.y,
-            physical_street.x, physical_street.y, cropcat_veg.x, cropcat_veg.y,
+            cropcat_veg.x, cropcat_veg.y,
             cropcat_field.x, cropcat_field.y, cropcat_forage.x, cropcat_forage.y)) %>% 
   unique()
 # Then we remove Email
-ppltn_p_nop <- select(ppltn_p_nop, - Email)
+ppltn_p_nop_emails <- filter(ppltn_p_nop, Email == "")
+
 # Then we merge on email, so we stack on those that have the same address
-p_co_street <- full_join(ppltn_p_nop[ppltn_p_nop$physical_street != "",], 
+p_co_street <- full_join(select(filter(ppltn_p_nop, Email == "" & physical_street != ""), 
+                                physical_street, yrs_ag, cert_year, Region, 
+                                       cropcat_veg, cropcat_field, cropcat_forage), 
                         p_co_left, by = c("physical_street", "Region")) %>% 
   mutate(yrs_ag = ifelse(is.na(.$yrs_ag.x) & !is.na(.$yrs_ag.y),
                          .$yrs_ag.y, .$yrs_ag.x),
@@ -355,16 +374,20 @@ p_co_street <- full_join(ppltn_p_nop[ppltn_p_nop$physical_street != "",],
   unique()
 p_co <- rbind(p_co_left, p_co_email, p_co_street) %>%  unique()
 
+
 ## Supply chain only by region----
 supplychain_regiononly <- p_co %>% 
   group_by(Region) %>% 
-  summarize(median_rev_survey = median(income20_f, na.rm = T),
+  summarize(sum_rev_dnb = sum(sales, na.rm =T),
+            ndnbcompanies = sum(!is.na(dnblisting)),
+            median_rev_survey = median(income20_f, na.rm = T),
             mean_rev_survey = mean(income20_f, na.rm = T)) %>% 
   filter(Region != "International") 
 
 supplychain_regiononly <- p_co %>% 
   group_by(Region) %>% 
   count() %>% 
+  rename(nsupplychainactors = n) %>% 
   right_join(supplychain_regiononly)
 
 supplychain_regiononly <- nop %>% 
@@ -372,25 +395,29 @@ supplychain_regiononly <- nop %>%
   count() %>% 
   rename(ngrowers = n) %>% 
   right_join(supplychain_regiononly) %>% 
-  mutate(ratio = ngrowers/n)
+  mutate(ratio = ngrowers/nsupplychainactors)
 
 # Lengthening data by year ---- 
-## Do this before crop because we want to still keep NOP and Factiva's data on companies that we don't have crop data for
+## Do this before crop because we want to still keep NOP and dnb's data on companies that we don't have crop data for
 p_co_year <- p_co %>% 
   select(ResponseId, Operation, income20_c, Region, variety_n:income20_f) %>% 
   mutate(years0408 = case_when(
-    yrs_ag >= 12 ~ "2004-2008",
+    is.na(dnblisting) & yrs_ag >= 12 ~ "2004-2008",
+    dnblisting == T & yrs_ag >= 14 ~ "2004-2008",
     T ~ NA_character_ )) %>% 
   mutate(years0913 = case_when(
-    yrs_ag >= 7 ~ "2009-2013",
+    is.na(dnblisting) & yrs_ag >= 7 ~ "2009-2013",
+    dnblisting == T & yrs_ag >= 9 ~ "2009-2013",
     T ~ NA_character_ )) %>% 
   mutate(years14on = case_when(
-    yrs_ag >= 0 ~ "2014-2018",
+    is.na(dnblisting) & yrs_ag >= 0 ~ "2014-2018",
+    dnblisting == T & yrs_ag >= 0 ~ "2014-2018",
     T ~ NA_character_
   )) %>% 
   pivot_longer(cols = years0408:years14on, 
                names_to = "title", values_to = "year_range") %>% 
-  select(-title) 
+  select(-title) %>% 
+  filter(!is.na(year_range)) # removing these because there are NAs for ones that are only in one section
 
 nop_year <- nop %>% 
   mutate(years0408 = case_when(
@@ -412,14 +439,16 @@ nop_year <- nop %>%
 supplychain_yearonly <- p_co_year %>% 
   group_by(year_range) %>% 
   summarize(
-    median_rev_factiva = median(sales_million, na.rm = T),
-    mean_rev_factiva = mean(sales_million, na.rm = T),
+    sum_rev_dnb = sum(sales, na.rm =T),
+    ndnbcompanies = sum(!is.na(dnblisting)),
     median_rev_survey = median(income20_f, na.rm = T),
-    mean_rev_survey = mean(income20_f, na.rm = T))
+    mean_rev_survey = mean(income20_f, na.rm = T)) %>% 
+  mutate(scaled_sum_rev_dnb = sum_rev_dnb-.$sum_rev_dnb[1])
  
 supplychain_yearonly <- p_co_year %>% 
   group_by(year_range) %>% 
   count() %>% 
+  rename(nsupplychainactors = n) %>% 
   right_join(supplychain_yearonly)
 
 supplychain_yearonly <- nop_year %>% 
@@ -427,20 +456,22 @@ supplychain_yearonly <- nop_year %>%
   count() %>% 
   rename(ngrowers = n) %>% 
   right_join(supplychain_yearonly) %>% 
-  mutate(ratio = ngrowers/n)
+  mutate(ratio = ngrowers/nsupplychainactors)
 
 ## Supply chain by year and region ----
 supplychain_year_region <- p_co_year %>% 
   filter(Region != "International") %>% 
   group_by(year_range, Region) %>% 
-  summarize(median_rev_factiva = median(sales_million, na.rm = T),
-            mean_rev_factiva = mean(sales_million, na.rm = T),
-            median_rev_survey = median(income20_f, na.rm = T),
-            mean_rev_survey = mean(income20_f, na.rm = T)) 
+  summarize(
+    sum_rev_dnb = sum(sales, na.rm =T),
+    ndnbcompanies = sum(!is.na(dnblisting)),
+    median_rev_survey = median(income20_f, na.rm = T),
+    mean_rev_survey = mean(income20_f, na.rm = T)) 
 
 supplychain_year_region <- p_co_year %>% 
   group_by(year_range, Region) %>% 
   count() %>% 
+  rename(nsupplychainactors = n) %>% 
   right_join(supplychain_year_region)
 
 supplychain_year_region <- nop_year %>% 
@@ -448,19 +479,19 @@ supplychain_year_region <- nop_year %>%
   count() %>% 
   rename(ngrowers = n) %>% 
   right_join(supplychain_year_region) %>% 
-  mutate(ratio = ngrowers/n)
+  mutate(ratio = ngrowers/nsupplychainactors)
 
 # Lengthening data by crop ---- 
-## Once we do this we lose Factiva
+## Once we do this we lose dnb
 p_co_crop <- p_co %>% 
-  pivot_longer(cols = c(cropcat_field, cropcat_forage, cropcat_veg, cropcat_other),
+  pivot_longer(cols = c(cropcat_field, cropcat_forage, cropcat_veg), #cropcat_other
                names_to = "maincrop", values_to = "logical") %>% 
   filter(logical == T) %>% 
   mutate(maincrop = case_when(
     maincrop == "cropcat_field" ~ "Field",
     maincrop == "cropcat_forage" ~ "Forage",
     maincrop == "cropcat_veg" ~ "Vegetables",
-    maincrop == "cropcat_other" ~ "Other"
+    #maincrop == "cropcat_other" ~ "Other"
   )) %>% 
   select(-cropcat_orn, -cropcat_herbs, -cropcat_propogules, 
          -cropcat_grain, -logical) %>% 
@@ -482,15 +513,16 @@ nop_crop <- nop %>%
 supplychain_croponly <- p_co_crop %>% 
   filter(Region != "International") %>% 
   group_by(maincrop) %>% 
-  summarize(median_rev_factiva = median(sales_million, na.rm = T),
-            mean_rev_factiva = mean(sales_million, na.rm = T),
-            median_rev_survey = median(income20_f, na.rm = T),
-            mean_rev_survey = mean(income20_f, na.rm = T)) 
+  summarize(
+    #sum_rev_dnb = sum(sales, na.rm =T),
+    median_rev_survey = median(income20_f, na.rm = T),
+    mean_rev_survey = mean(income20_f, na.rm = T)) 
 
 supplychain_croponly <- p_co_crop %>% 
   filter(Region != "International") %>% 
   group_by(maincrop) %>% 
   count() %>% 
+  rename(nsupplychainactors = n) %>% 
   left_join(supplychain_croponly)
 
 supplychain_croponly <- nop_crop %>% 
@@ -498,20 +530,21 @@ supplychain_croponly <- nop_crop %>%
   count() %>% 
   rename(ngrowers = n) %>% 
   right_join(supplychain_croponly) %>% 
-  mutate(ratio = ngrowers/n)
+  mutate(ratio = ngrowers/nsupplychainactors)
 
 ## Supply chain by region and crop ----
 supplychain_crop_region <- p_co_crop %>% 
   filter(Region != "International") %>% 
   group_by(Region, maincrop) %>% 
-  summarize(median_rev_factiva = median(sales_million, na.rm = T),
-            mean_rev_factiva = mean(sales_million, na.rm = T),
-            median_rev_survey = median(income20_f, na.rm = T),
-            mean_rev_survey = mean(income20_f, na.rm = T)) 
+  summarize(
+    #sum_rev_dnb = sum(sales, na.rm =T),
+    median_rev_survey = median(income20_f, na.rm = T),
+    mean_rev_survey = mean(income20_f, na.rm = T)) 
 
 supplychain_crop_region <- p_co_crop %>% 
   group_by(Region, maincrop) %>% 
   count() %>% 
+  rename(nsupplychainactors = n) %>% 
   right_join(supplychain_crop_region)
 
 supplychain_crop_region <- nop_crop %>% 
@@ -519,7 +552,7 @@ supplychain_crop_region <- nop_crop %>%
   count() %>% 
   rename(ngrowers = n) %>% 
   right_join(supplychain_crop_region) %>% 
-  mutate(ratio = ngrowers/n)
+  mutate(ratio = ngrowers/nsupplychainactors)
 
 # Lengthen by crop and year ----
  p_co_crop_year <- p_co_crop %>% 
@@ -537,7 +570,8 @@ supplychain_crop_region <- nop_crop %>%
   )) %>% 
   pivot_longer(cols = years0408:years14on, 
                names_to = "title", values_to = "year_range") %>% 
-  select(-title) 
+  select(-title) %>% 
+  filter(!is.na(year_range))
 
 nop_crop_year <- nop_crop %>% 
   mutate(years0408 = case_when(
@@ -552,14 +586,42 @@ nop_crop_year <- nop_crop %>%
   )) %>% 
   pivot_longer(cols = years0408:years14on, 
                names_to = "title", values_to = "year_range") %>% 
-  select(-title)
+  select(-title) %>% 
+  filter(!is.na(year_range))
+
+## Supply chain by year and crop ----
+supplychain_year_crop <- p_co_crop_year %>% 
+  filter(Region != "International") %>% 
+  group_by(year_range, maincrop) %>% 
+  summarize(#sum_rev_dnb = sum(sales, na.rm = T),
+    median_rev_survey = median(income20_f, na.rm = T),
+    mean_rev_survey = mean(income20_f, na.rm = T)) 
+
+supplychain_year_crop <- p_co_crop_year %>% 
+  ungroup() %>% 
+  filter(Region != "International") %>% 
+  filter(!is.na(year_range)) %>% 
+  group_by(year_range, maincrop) %>% 
+  count() %>% 
+  rename(nsupplychainactors = n) %>% 
+  left_join(supplychain_year_crop)
+
+supplychain_year_crop <- nop_crop_year %>% 
+  filter(Region != "International") %>% 
+  filter(!is.na(year_range)) %>% 
+  group_by(year_range, maincrop) %>% 
+  count() %>% 
+  rename(ngrowers = n) %>% 
+  right_join(supplychain_year_crop) %>% 
+  mutate(ratio = ngrowers/nsupplychainactors) %>% 
+  filter(maincrop != "Other") 
 
 ## Supply chain by year, region, and crop ----
 supplychain_year_region_crop <- p_co_crop_year %>% 
   filter(Region != "International") %>% 
-  filter(!is.na(year_range)) %>% 
   group_by(year_range, Region, maincrop) %>% 
-  summarize(median_rev_survey = median(income20_f, na.rm = T),
+  summarize(#sum_rev_dnb = sum(sales, na.rm = T),
+            median_rev_survey = median(income20_f, na.rm = T),
             mean_rev_survey = mean(income20_f, na.rm = T)) 
 
 supplychain_year_region_crop <- p_co_crop_year %>% 
@@ -568,6 +630,7 @@ supplychain_year_region_crop <- p_co_crop_year %>%
   filter(!is.na(year_range)) %>% 
   group_by(year_range, Region, maincrop) %>% 
   count() %>% 
+  rename(nsupplychainactors = n) %>% 
   left_join(supplychain_year_region_crop)
 
 supplychain_year_region_crop <- nop_crop_year %>% 
@@ -577,39 +640,40 @@ supplychain_year_region_crop <- nop_crop_year %>%
   count() %>% 
   rename(ngrowers = n) %>% 
   right_join(supplychain_year_region_crop) %>% 
-  mutate(ratio = ngrowers/n) %>% 
-  filter(maincrop != "Other") %>% 
-  rename(nsupplychainactors = n)
+  mutate(ratio = ngrowers/nsupplychainactors) %>% 
+  filter(maincrop != "Other") 
 
 
-# ---- COMBINING IT ALL FOR REGIONAL SUMMARY ----
-regional_summary <- full_join(supplychain_year_region_crop, funds_year_region_crop) 
-#Not using crop_year because I want to use the Factiva revenue data and it isn't available for
-
-# What about the producer data we have ----
+# ---- COMPLETE REGIONAL SUMMARY ----
+## Create and save regional summary ----
+#ratios <- select(supplychain_year_region_crop, year_range:nsupplychainactors)
+ratios <- select(supplychain_year_region_crop, year_range:nsupplychainactors) # Number of actors by year and crop and region
+sales <- select(supplychain_yearonly, year_range, sum_rev_dnb) # Sales by years
+regional_summary <- full_join(ratios, sales) %>% full_join(funds_year_region_crop) %>% 
+  filter(Region != "Multi-region" & Region != "Outside US") 
+# Not using crop level because I want to use the dnb revenue data and it isn't available for
 survey_respondents <- readRDS("~/Box/organicseed/df.rds") %>% 
   filter(Region != "International", !is.na(Region), maincrop != "Unknown") %>% 
-  group_by(Region, year_range, maincrop) %>% 
+  group_by(Region, year_range) %>% 
   count() %>% 
   rename(nrespondents = n)
 
+## What about the producer data we have ----
 regional_summary <- left_join(regional_summary, survey_respondents)
 
 ## Saving data ----
-regional_summary %>% 
-  select(year_range, Region, maincrop, total_funds, funding_avg_annual_amt,
-         ngrowers, nsupplychainactors, ratio, median_rev_survey,mean_rev_survey,
-         nrespondents) %>% 
-     write.csv("~/Box/organicseed/regional_data.csv", row.names = F)
+write.csv(regional_summary, "~/Box/organicseed/regional_data.csv", row.names = F)
 
-# summaries
+## Tables 1b and 1c ----
 write.csv(funds_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1b.csv", row.names = F)
 write.csv(supplychain_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1c.csv", row.names = F)
 
+
+# ---- COMBINE SURVEY WITH REGIONAL SUMMARIES ----
+## join df and regional summary ----
 df <- readRDS("~/Box/organicseed/df.rds")
 df.long <- readRDS("~/Box/organicseed/df_long.rds")
-
-# This what was I originially used, but regional summary now has crop in it and nsupplychain is now across years. 
+## This what was I originially used, but regional summary now has crop in it and nsupplychain is now across years. 
 df_simple <- left_join(df, regional_summary)
 # Need to make these the same so that I match on the OG crop and not the main
 df.long$maincrop <- df.long$OGcrop
@@ -619,238 +683,3 @@ df.long_simple <- left_join(df.long, regional_summary)
 saveRDS(df_simple, "~/Box/organicseed/df_onelevel.rds")
 saveRDS(df.long_simple, "~/Box/organicseed/df_long_onelevel.rds")
 
-## PLOTS -----
-
-# FIGURES FOR PAPER -----
-blues <- RColorBrewer::brewer.pal(8, "PuBu")
-blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8)
-greens <- RColorBrewer::brewer.pal(8, "Greens")
-greens <- colorRampPalette(c("lightgrey", "#55752f"))(8)
-reds <- RColorBrewer::brewer.pal(8, "Oranges")
-reds <- colorRampPalette(c("lightgrey", "#90353b"))(8)
-
-
-# Figure 1a and summaries for funding ----
-funds_organic <- read.csv("~/Dropbox/SOSInteractiveSurvey/local_data/public-funding-Dec21.csv")
-fed_breed <- read.csv("~/Box/lgu/data_raw/federal_funding/breeding_awards_combined.csv")
-fed_all <- read.csv("~/Box/lgu/data_raw/federal_funding/allawards.csv") %>% 
-  filter(Award.Dollars > 0) %>% 
-  mutate(breeding = case_when(
-    Proposal.Number %in% fed_breed$Proposal.Number ~ T,
-    T ~ F
-  )) %>% 
-  mutate(organic = case_when(
-    str_detect(Program.Name, "[Oo]rganic") ~ T,
-    T ~ F
-  )) %>% 
-  mutate(year = year(Award.Date)) 
-fed_organicbreed <- filter(fed_all, breeding == T & organic == T)
-fed_all <- unique(fed_all)
-fed_all <- filter(fed_all, year > 2003 & year < 2019)
-
-# Compare my measure for organic breeding funds from federal (using regex) versus what we used for SOS report:
-sos_funds <- funds_organic %>% 
-  filter(year > 2001) %>% 
-  group_by(year) %>% 
-  summarize(annual_total = sum(funding_amt)) 
-sos_funds %>% 
-  ggplot(aes(x = year, y = annual_total)) +
-  geom_col() +
-  geom_smooth(method = "lm")
-lm(scale(annual_total) ~ year, data = sos_funds)$coefficients[2]
-
-fed_funds <- fed_organicbreed %>% 
-  group_by(year) %>% 
-  summarize(annual_total = sum(Award.Dollars))
-fed_funds %>% 
-  ggplot(aes(x = year, y = annual_total)) +
-  geom_col() +
-  geom_smooth(method = "lm")
-lm(scale(annual_total) ~ year, data = sos_funds)$coefficients[2]
-
-year_color <- data.frame(year = 2004:2018,
-                         year_color = c(rep(greens[8], 5),
-                                        rep(reds[8], 5),
-                                        rep(blues[8], 5)))
-
-# This is looking at organic breeding as portion of all federal funding, according to the USDA database only and my regex, not the SOS generated list.
-fed_summary <- fed_all %>% 
-  group_by(year, breeding, organic) %>% 
-  summarize(breeding_sum = sum(Award.Dollars, na.rm = T)) %>% 
-  ungroup() %>% 
-  group_by(year) %>% 
-  mutate(annual_sum = sum(breeding_sum, na.rm = T)) %>% 
-  filter(breeding == T & organic == T) %>% 
-  unique() %>% 
-  mutate(Percent = round(100*(breeding_sum/annual_sum), 1)) %>% 
-  left_join(year_color)
-
-ggplot(fed_summary, aes(x = year, y = breeding_sum/100000, 
-                                    label = paste0(Percent, "%"))) +
-  geom_col(fill = fed_summary$year_color) +
-  geom_text(size = 3, vjust = 2) +
-  theme_linedraw() +
-  theme(legend.position = "none") +
-  labs(x = "", y = "Federal funding by $100 thousand\n(% of total funding)")
-
-# This is not satisfying, so let's identify the federal fundings from the SOS list and look at this amount as a portion of tital federal funds 
-
-funds_organic <- funds_organic %>% 
-  filter(year > 2003 & year < 2019) %>% 
-  mutate(year_range = case_when(
-    year %in% 2004:2008 ~ "2004-2008",
-    year %in% 2009:2013 ~ "2009-2013",
-    year %in% 2014:2018 ~ "2014-2018",
-    T ~ NA_character_
-  )) %>% 
-  mutate(source_aggregate = case_when(
-    funding_source %in% c("FAFO", "OFRF", "Other Non-Federal Funds", "Clif Bar Family Foundation") ~ "non-public",
-    T ~ "public"
-  )) %>% 
-  mutate(federal = case_when(
-    funding_source %in% c("FAFO", "OFRF", "Other Non-Federal Funds", "Clif Bar Family Foundation", "SARE") ~ F,
-    T ~ T
-  )) %>% 
-  group_by(year_range) %>% 
-  mutate(average_by_project = sum(funding_amt)/n()) %>% 
-  mutate(annual_average = sum(funding_amt)/5)
-
-fed_summary_elab <- fed_all %>% 
-  group_by(year) %>% 
-  summarize(annual_sum = sum(Award.Dollars, na.rm = T)) %>% 
-  left_join(year_color)
-
-fed_summary <- funds_organic %>% 
-  filter(!is.na(year_range), federal == T) %>% 
-  group_by(year_range, year) %>% 
-  summarize(organic_total = sum(funding_amt)) %>% 
-  left_join(fed_summary_elab) %>% 
-  mutate(Percent = round(100*(organic_total/annual_sum), 1))
-
-pfunding <- sos_funds %>% 
-  filter(year > 2003 & year < 2019) %>% 
-  ggplot(aes(x = year, y = annual_total/1000000, 
-             label = paste0(fed_summary$Percent, "%"))) +
-  geom_col(fill = fed_summary_elab$year_color) +
-  geom_text(size = 3, vjust = -0.5) +
-  theme_linedraw() +
-  theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pfunding
-
-# OR
-sos_funds <- sos_funds %>% 
-  filter(year > 2003 & year < 2019)
-
-sos_funds_nuance <- funds_organic %>% 
-  filter(year > 2003 & year < 2019) %>% 
-  group_by(year, proj_crop,location) %>% 
-  summarize(annual_total = sum(funding_amt)) 
-
-sos_funds_nuance %>% 
-  mutate(year_range = case_when(
-    year %in% 2004:2008 ~ "2004-2008",
-    year %in% 2009:2013 ~ "2009-2013",
-    year %in% 2014:2018 ~ "2014-2018",
-    T ~ NA_character_
-  )) %>% 
-  group_by(year_range, proj_crop) %>% 
-  mutate(range_total = sum(annual_total)) %>% 
-  select(year_range, range_total, proj_crop) %>% 
-  unique() %>% 
-  ggplot() +
-  geom_col(mapping = aes(x = year_range, y = range_total/1000000,
-                         fill = proj_crop),
-           position = position_dodge2(preserve = "single")) +
-  theme_linedraw() +
-  #theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)",
-       fill = "Crop category")
-
-
-
-# Average percentages over the years
-100*(sum(fed_summary$organic_total[fed_summary$year_range == "2004-2008"])/sum(fed_summary$annual_sum[fed_summary$year_range == "2004-2008"]))
-100*(sum(fed_summary$organic_total[fed_summary$year_range == "2009-2013"])/sum(fed_summary$annual_sum[fed_summary$year_range == "2009-2013"]))
-100*(sum(fed_summary$organic_total[fed_summary$year_range == "2014-2018"])/sum(fed_summary$annual_sum[fed_summary$year_range == "2014-2018"]))
-
-# Some details from different sources
-funding_sources_amt <- funds_organic %>% 
-  group_by(year_range) %>% 
-  mutate(yr_range_total = sum(funding_amt, na.rm = T)) %>% 
-  ungroup() %>% 
-  group_by(year_range, source_aggregate) %>% 
-  summarize(yr_range_total = yr_range_total, 
-            source_sum = sum(funding_amt),
-            Percent = round(100*(source_sum/yr_range_total), 1)) %>% 
-  unique()
-
-funding_sources_number <- funds_organic %>% 
-  group_by(year_range) %>% 
-  mutate(n_projects = n()) %>% 
-  ungroup() %>% 
-  group_by(year_range, source_aggregate) %>% 
-  summarize(n_projects = n_projects, 
-            source_n = n(),
-            Percent = round(100*(source_n/n_projects), 1)) %>% 
-  unique()
-
-# Summaries about market proxies ----
-## 1. Certifier perceptions is just straight from the survey Kiki sent
-## 2. Seed producers and companies -- still could be improved (e.g. database for seed companies?)
-
-# Want to add these together ---
-factiva %>% 
-  mutate(year_range = case_when(
-    is.na(founded) ~ NA_character_,
-    founded < 2000 ~ "pre-2000",
-    T ~ founded
-  ))
-
-pmarket_factiva <- factiva %>% 
-  filter(!is.na(Region)) %>% 
-  ggplot() +
-  geom_bar(mapping = aes(x = founded, fill = Region),
-           position = position_dodge2(preserve = "single")) +
-  theme_linedraw() +
-  #theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_factiva
-
-pmarket_factiva2 <- ggplot() +
-  geom_bar(data = factiva, mapping = aes(x = founded, fill = Region)) +
-  theme_linedraw() +
-  #theme(legend.position = "none") +
-  labs(x = "", y = "Funding in millions\n(% of total federal funding)"); pmarket_factiva2
-
-# This is all the companies, but with their crops
-survey_companies <- p_co_crop_year %>% 
-  select(Operation, Region, maincrop, income20_c) %>% 
-  unique()
-
-survey_companies$income20_cf <- factor(survey_companies$income20_c, levels = c("Under $50,000",
-                                                          "$50,000-$299,999",
-                                                          "$300,000-$1 million",
-                                                          "Over $1 million"))
-pmarket_survey <- survey_companies %>% 
-  filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
-  filter(!is.na(income20_cf)) %>% 
-  ggplot() +
-  geom_bar(mapping = aes(x = income20_cf, fill = Region),
-           position = position_dodge2(preserve = "single")) +
-  theme_linedraw() +
-  #theme(legend.position = "none") +
-  labs(x = "", y = "Count of companies"); pmarket_survey
-
-pmarket_survey <- survey_companies %>% 
-  filter(income20_c != "" & !is.na(income20_cf)) %>% 
-  filter(!(Region %in% c("Canada", "International", "Other"))) %>% 
-  ggplot() +
-  geom_bar(mapping = aes(x = , fill = maincrop),
-           position = position_dodge2(preserve = "single")) +
-  theme_linedraw() +
-  #theme(legend.position = "none") +
-  labs(x = "", y = "Count of companies"); pmarket_survey
-
-# 7 = "$300,000-$1 million"
-# 6 = "$75,000-$99,999",
-# 5 = "$100,000-$149,999",
-# 4 = "$150,000-$299,999",

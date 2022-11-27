@@ -22,7 +22,8 @@ df.full <- df %>%
          OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
          #n, prop_n, 
          ngrowers, nsupplychainactors,
-         median_rev_survey, survey_year, Region, cropcat_n) %>% 
+         sum_rev_dnb, 
+         survey_year, Region, cropcat_n) %>% 
   mutate(prop_n = ngrowers/nsupplychainactors) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
@@ -31,7 +32,7 @@ df.full <- df %>%
          #funding_sum_5yr_ls = scale(log(funding_sum_5yr)),
          #n_s = as.numeric(scale(n)),
          n_prop_s = as.numeric(scale(prop_n)),
-         median_rev_s = as.numeric(scale(median_rev_survey)),
+         sum_rev_s = as.numeric(scale(sum_rev_dnb)),
          OGSeedOGIntegrityn_s = as.numeric(scale(OGSeedOGIntegrityn))) %>% 
   filter(complete.cases(.)) %>% 
   mutate(survey_year_f = factor(survey_year))
@@ -41,15 +42,19 @@ df.full.long <- df.long %>%
   select(RespondentID, IncreasedOGSeed_f, IncreasedOGSeed_binom, OGcrop, 
          TotalAcreage, 
          OGSeedOGIntegrityn, CertifierRequestn, funding_avg_annual_amt, 
-         n, prop_n, median_rev_survey, survey_year, Region, cropcat_n) %>% 
+         #n, prop_n, 
+         ngrowers, nsupplychainactors,
+         sum_rev_dnb, 
+         survey_year, Region, cropcat_n) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West",
                                             "Northeast", "South"))) %>% 
+  mutate(prop_n = ngrowers/nsupplychainactors) %>% 
   mutate(TotalAcreage_ls = as.numeric(scale(log(TotalAcreage))), 
          funding_avg_annual_amt_ls = as.numeric(scale(log(funding_avg_annual_amt))),
          #funding_sum_5yr_ls = scale(log(funding_sum_5yr)),
-         n_s = as.numeric(scale(n)),
+         #n_s = as.numeric(scale(n)),
          n_prop_s = as.numeric(scale(prop_n)),
-         median_rev_s = as.numeric(scale(median_rev_survey)),
+         sum_rev_s = as.numeric(scale(sum_rev_dnb)),
          OGSeedOGIntegrityn_s = as.numeric(scale(OGSeedOGIntegrityn))) %>% 
   filter(complete.cases(.)) %>% 
   mutate(survey_year_f = factor(survey_year))
@@ -61,7 +66,7 @@ maincrop_simple <- glm(IncreasedOGSeed_binom ~
                            CertifierRequestn +  
                            funding_avg_annual_amt_ls + 
                            n_prop_s +
-                           median_rev_s +
+                           sum_rev_s +
                            maincrop + 
                            survey_year_f +
                            Region,
@@ -70,13 +75,13 @@ maincrop_simple <- glm(IncreasedOGSeed_binom ~
 summary(maincrop_simple)
 table(df.full$Region, df.full$IncreasedOGSeed_binom)
 maincrop_crossed1 <- glmer(IncreasedOGSeed_binom ~ 1 +
-                         #TotalAcreage_ls + 
-                         #OGSeedOGIntegrityn_s + 
-                         #CertifierRequestn +  
-                         #funding_avg_annual_amt_ls + 
-                         #median_rev_s +
-                         #(1|maincrop),
-                         #(1|survey_year_f),
+                         TotalAcreage_ls + 
+                         OGSeedOGIntegrityn_s + 
+                         CertifierRequestn +  
+                         funding_avg_annual_amt_ls + 
+                         sum_rev_s +
+                         (1|maincrop) +
+                         (1|survey_year_f) +
                          (1|Region),
                        family = "binomial",
                        data = df.full)
@@ -99,7 +104,7 @@ maincrop_b <- brm(IncreasedOGSeed_binom ~
                     CertifierRequestn +  
                     funding_avg_annual_amt_ls + 
                     n_s +
-                    median_rev_s +
+                    sum_rev_s +
                     (1|maincrop) +
                     (1|survey_year_f) +
                     (1|Region),
@@ -127,7 +132,7 @@ allcrops_simple <- glmer(IncreasedOGSeed_binom ~
                            CertifierRequestn + 
                            funding_avg_annual_amt_ls  + 
                            n_s +
-                           median_rev_s +
+                           sum_rev_s +
                            survey_year_f +
                            Region +
                            (1|RespondentID),
