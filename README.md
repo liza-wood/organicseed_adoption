@@ -1,9 +1,9 @@
-### Drivers of organic seed adoption, 2004-2020  
+## Drivers of organic seed adoption, 2004-2020  
 
-**Data storage:**  
+### Data storage:   
 Organic producer survey data from the 2011, 2016, and 2021 SOS reports are stored on the shared Dropbox, SOSInteractiveSurvey, and newly created data are stored in the shared Box folder, organicseed_adoption, or in the `data/` folder (for codebooks).
 
-**Code file structure**  
+### Code file structure:    
 
 ```
 code/
@@ -56,7 +56,7 @@ code/
      visualize the effect of our key variables of interest. 
 ```
 
-**Data flow:**   
+### Data flow:    
 
 1. From the `Dropbox/SOSInteractiveSurvey/` read in `data2011_cleaned.rds` + `data2016_cleaned.rds` +  `data2021_cleaned.rds` into `01_merged.R`. Merged outputs saved into `Box/organicseed_adoption/` as `merged_df_3panel.csv`
 1. `02_variable_creation.R` reads in `merged_df_3panel.csv`, as well as funding data from `Dropbox/SOSInteractiveSurvey/local_data/`, `public-funding-Dec21.csv`, and seed producer data from `Box/osa_networks/`, `data_combined_3/surveys_combined.csv`, to combine with the producer data and create any new variables, saved as `Box/organicseed/df.RDS` and `Box/organicseed/df.long.RDS`  
