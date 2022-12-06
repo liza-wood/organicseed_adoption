@@ -1,7 +1,7 @@
 # Variable creation for funding and seed producers
 ## Start with the merged producer data
 library(tidyverse)
-df <- read.csv("~/Box/organicseed/merged_df_3panel.csv")
+df <- read.csv("~/Box/organicseed_adoption/merged_df_3panel.csv")
 
 df$VegiAcreage <- ifelse(df$VegiAcreage < 0, NA, df$VegiAcreage)
 df$IncreasedOGVegSeedf <- as.numeric(factor(df$IncreasedOGVegSeed, 
@@ -83,7 +83,8 @@ df <- df %>%
   mutate(IncreasedOGSeed = case_when(
     IncreasedOGSeed %in% c("4", "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
     IncreasedOGSeed %in% c("3", "Increased the %") ~ "Yes",
-    IncreasedOGSeed %in% c("About the same %", "Decreased the %", "1", "2") ~ "No",
+    IncreasedOGSeed %in% c("2", "About the same %") ~ "No change",
+    IncreasedOGSeed %in% c("1", "Decreased the %") ~ "Decreased",
     IncreasedOGSeed == "" ~ NA_character_,
     T ~ IncreasedOGSeed
   ))
@@ -121,6 +122,13 @@ df$OGSeedOGIntegrityf <- factor(df$OGSeedOGIntegrity, levels = c("Strongly disag
                                                                  "Agree",
                                                                  "Strongly agree"))
 df$OGSeedOGIntegrityn <- as.numeric(df$OGSeedOGIntegrityf)
+
+df$OGVarietiesSuccessf <- factor(df$OGVarietiesSuccess, levels = c("Strongly disagree",
+                                                                 "Disagree",
+                                                                 "Neutral",
+                                                                 "Agree",
+                                                                 "Strongly agree"))
+df$OGVarietiesSuccessn <- as.numeric(df$OGVarietiesSuccessf)
 
 df$CertifierRequestn <- ifelse(df$CertifierRequest == "No", 0,
                                ifelse(df$CertifierRequest == "Yes", 1, NA))
@@ -227,7 +235,7 @@ f1 <- mat %>% select(f) %>%
 #Factor 2
 f <- loadings %>% filter(max == 2) %>% 
   row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only 1
+#ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only 1
 f2 <- mat %>% select(f) %>% 
   mutate(barrier_f_treatment = rowMeans(., na.rm = T)) %>% 
   select(barrier_f_treatment)
@@ -281,7 +289,8 @@ df.long <- df.long %>%
   mutate(IncreasedOGSeed = case_when(
     IncreasedOGSeed %in% c("4", "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
     IncreasedOGSeed %in% c("3", "Increased the %") ~ "Yes",
-    IncreasedOGSeed %in% c("About the same %", "Decreased the %", "1", "2") ~ "No",
+    IncreasedOGSeed %in% c("2", "About the same %") ~ "No change",
+    IncreasedOGSeed %in% c("1", "Decreased the %") ~ "Decreased",
     IncreasedOGSeed == "" ~ NA_character_,
     T ~ IncreasedOGSeed
   ))
@@ -290,6 +299,6 @@ df.long$IncreasedOGSeed <- ifelse(df.long$OGseed_percent == 100 &
                                is.na(df.long$IncreasedOGSeed), "Already at 100%", 
                              df.long$IncreasedOGSeed)
 
-saveRDS(df, "~/Box/organicseed/df.rds")
-saveRDS(df.long, "~/Box/organicseed/df_long.rds")
+saveRDS(df, "~/Box/organicseed_adoption/df.rds")
+saveRDS(df.long, "~/Box/organicseed_adoption/df_long.rds")
 

@@ -2,7 +2,7 @@
 library(dplyr)
 library(stringr)
 
-setwd("~/Documents/Davis/R-Projects/organicseed/")
+setwd("~/Documents/Davis/R-Projects/organicseed_adoption//")
 codebook <- read.csv("data/codebook_3panel.csv")
 setwd("~/Dropbox/SOSInteractiveSurvey/")
 df11f <- readRDS("data2011_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGSeed)
@@ -91,7 +91,7 @@ df.full <- df.full %>%
 table(is.na(df.full$Region))
 table(df.full$State[is.na(df.full$Region)])
 
-write.csv(df.full, "~/Box/organicseed/merged_df_3panel.csv", row.names = F)
+write.csv(df.full, "~/Box/organicseed_adoption/merged_df_3panel.csv", row.names = F)
 
 #setwd("~/Documents/Davis/R-Projects/organicseed/")
 #codebook <- read.csv("data/codebook_2panel.csv")

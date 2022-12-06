@@ -6,8 +6,8 @@ library(ggplot2)
 library(equatiomatic)
 library(cowplot)
 library(brms)
-setwd("~/Documents/Davis/R-Projects/organicseed/")
-df <- readRDS("~/Box/organicseed/df_onelevel.rds") 
+setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
+df <- readRDS("~/Box/organicseed_adoption/df_multilevel.rds") 
 
 df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , 
                                levels = c("No", "Yes", "Already at 100%"))
@@ -17,22 +17,22 @@ df$IncreasedOGSeed_binom <- ifelse(df$IncreasedOGSeed_f == "No", 0,
 ## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 df.full <- df %>% 
   filter(Region != "International", maincrop != "Other") %>% 
-  select(RespondentID, OGseed_percent_maincrop, IncreasedOGSeed_binom, maincrop, 
-         TotalAcreage, OGSeedOGIntegrityn,CertifierRequestn,
-         funding_avg_annual_amt, 
-         #funding_amt,
-         #n, prop_n, 
-         ngrowers, nsupplychainactors,
-         sum_rev_dnb, survey_year, Region, cropcat_n,
+  select(RespondentID, OGseed_percent_maincrop, 
+         IncreasedOGSeed_binom, maincrop, 
+         TotalAcreage, 
+         OGVarietiesSuccessn, 
+         CertifierRequestn,
+         total_awards, 
+         ratio,
+         organicip_n,
+         #sum_rev_dnb, 
+         survey_year, Region, cropcat_n,
          contains("barrier")) %>% 
-  mutate(prop_n = ngrowers/nsupplychainactors) %>%
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(TotalAcreage_ls = c(scale(log(TotalAcreage))), 
-         funding_avg_annual_amt_ls = c(scale(log(funding_avg_annual_amt))),
-         OGSeedOGIntegrityn_s = c(scale(OGSeedOGIntegrityn)),
-         prop_n_s = as.numeric(scale(prop_n)),
-         nsupplychainactors_s = as.numeric(scale(nsupplychainactors)),
+         funding_avg_annual_amt_ls = c(scale(log(total_awards))),
+         OGVarietiesSuccessn_s = c(scale(OGVarietiesSuccessn)),
          sum_rev_s = as.numeric(scale(sum_rev_dnb)),
          barrier_availability_s = c(scale(barrier_availability)),
          barrier_price_s = c(scale(barrier_price)),
