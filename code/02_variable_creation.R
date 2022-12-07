@@ -19,8 +19,8 @@ df$IncreasedOGForageSeedf <- as.numeric(factor(df$IncreasedOGForageSeed,
                                                           "About the same %",
                                                           "Increased the %",
                                                           "Already at 100%")))
-df$IncreasedOGseed_avg <- round(rowMeans(df[, (ncol(df)-2):ncol(df)], na.rm = T), 0)
-df$IncreasedOGseed_avg <- ifelse(df$IncreasedOGseed_avg == "NaN", NA, df$IncreasedOGseed_avg)
+df$IncreasedOGSeed_avg <- round(rowMeans(df[, (ncol(df)-2):ncol(df)], na.rm = T), 0)
+df$IncreasedOGSeed_avg <- ifelse(df$IncreasedOGSeed_avg == "NaN", NA, df$IncreasedOGSeed_avg)
 
 # One way to think about main crop is to assign each producer to a single crop, or mix
 # Last year how many organic acres did you have in annual vegetables. Please fill in number
@@ -76,19 +76,19 @@ df <- df %>%
     survey_year != 2011 & maincrop == "Vegetables" ~ IncreasedOGVegSeed,
     survey_year != 2011 & maincrop == "Field" ~ IncreasedOGFieldSeed,
     survey_year != 2011 & maincrop == "Forage" ~ IncreasedOGForageSeed,
-    survey_year != 2011 & maincrop == "Mix" ~ as.character(IncreasedOGseed_avg),
+    survey_year != 2011 & maincrop == "Mix" ~ as.character(IncreasedOGSeed_avg),
     survey_year == 2011 ~ IncreasedOGSeed,
     T ~ IncreasedOGSeed
   )) %>% 
   mutate(IncreasedOGSeed = case_when(
-    IncreasedOGSeed %in% c("4", "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
-    IncreasedOGSeed %in% c("3", "Increased the %") ~ "Yes",
-    IncreasedOGSeed %in% c("2", "About the same %") ~ "No change",
-    IncreasedOGSeed %in% c("1", "Decreased the %") ~ "Decreased",
+    IncreasedOGSeed %in% c("4", "Already at 100%", 
+                           "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
+    IncreasedOGSeed %in% c("3", "Increased the %", "Yes") ~ "Yes: Increased the %",
+    IncreasedOGSeed %in% c("2", "About the same %", "No", "1", "Decreased the %") ~ "No: About the same % or decreased",
     IncreasedOGSeed == "" ~ NA_character_,
     T ~ IncreasedOGSeed
   ))
-
+table(df$IncreasedOGSeed)
 
 
 df$IncreasedOGSeed <- ifelse(df$OGseed_percent_maincrop == 100 & 
@@ -101,8 +101,6 @@ table(df$maincrop, df$survey_year)
 filter(df, survey_year == 2021) %>% 
   select(ForageAcreage, FieldAcreage, VegiAcreage, TotalAcreage, maincrop) %>% 
   filter(ForageAcreage != 0)
-
-table(df$IncreasedOGseed)
 
 
 df <- df %>% 
@@ -287,10 +285,10 @@ df.long <- df.long %>%
   T ~ "Error"
 )) %>% 
   mutate(IncreasedOGSeed = case_when(
-    IncreasedOGSeed %in% c("4", "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
-    IncreasedOGSeed %in% c("3", "Increased the %") ~ "Yes",
-    IncreasedOGSeed %in% c("2", "About the same %") ~ "No change",
-    IncreasedOGSeed %in% c("1", "Decreased the %") ~ "Decreased",
+    IncreasedOGSeed %in% c("4", "Already at 100%", 
+                           "Have been using 100% certified organic seed for at least three years") ~ "Already at 100%",
+    IncreasedOGSeed %in% c("3", "Increased the %", "Yes") ~ "Yes: Increased the %",
+    IncreasedOGSeed %in% c("2", "About the same %", "No", "1", "Decreased the %") ~ "No: About the same % or decreased",
     IncreasedOGSeed == "" ~ NA_character_,
     T ~ IncreasedOGSeed
   ))

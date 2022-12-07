@@ -6,271 +6,436 @@ library(ggplot2)
 library(equatiomatic)
 library(cowplot)
 library(brms)
+library(RColorBrewer)
 setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
 df <- readRDS("~/Box/organicseed_adoption/df_multilevel.rds") 
 
-df$IncreasedOGSeed_f <- factor(df$IncreasedOGSeed , 
-                               levels = c("No", "Yes", "Already at 100%"))
-df$IncreasedOGSeed_binom <- ifelse(df$IncreasedOGSeed_f == "No", 0,
-                                   ifelse(df$IncreasedOGSeed_f == "Yes", 1, NA))
 # Considering acreage as the dependent variable ----
 ## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 df.full <- df %>% 
   filter(Region != "International", maincrop != "Other") %>% 
-  select(RespondentID, OGseed_percent_maincrop, 
-         IncreasedOGSeed_binom, maincrop, 
-         TotalAcreage, 
-         OGVarietiesSuccessn, 
-         CertifierRequestn,
-         total_awards, 
-         ratio,
-         organicip_n,
-         #sum_rev_dnb, 
-         survey_year, Region, cropcat_n,
-         contains("barrier")) %>% 
+  select(RespondentID, 
+         OGseed_percent_maincrop, #dependent variable
+         OGVarietiesSuccessn, # legitimation
+         CertifierRequestn, # guidance of the search
+         total_awards, # knowledge development/resource mobilization
+         ratio, # entrepreneurial activities 
+         organicip_n, # knowledge development
+         # sales would be market formation?
+         maincrop, survey_year, Region, # system level features
+         TotalAcreage, cropcat_n # operation controls
+         ) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
-  mutate(TotalAcreage_ls = c(scale(log(TotalAcreage))), 
-         funding_avg_annual_amt_ls = c(scale(log(total_awards))),
-         OGVarietiesSuccessn_s = c(scale(OGVarietiesSuccessn)),
-         sum_rev_s = as.numeric(scale(sum_rev_dnb)),
-         barrier_availability_s = c(scale(barrier_availability)),
-         barrier_price_s = c(scale(barrier_price)),
-         barrier_distrustQuality_s = c(scale(barrier_distrustQuality)),
-         barrier_buyerReq_s = c(scale(barrier_buyerReq))
-         ) %>% 
-  mutate(survey_year_f = factor(survey_year))
+  mutate(acreage_log = c(scale(log(TotalAcreage), scale = F)), 
+         cropcat_n = c(scale(cropcat_n, scale = F)),
+         funding_million = c(scale(total_awards/1000000, scale = F)),
+         legitimation = c(scale(OGVarietiesSuccessn, scale = F)),
+         ratio = c(scale(ratio, scale = F)), # entrepreneurial activities 
+         organicip = c(scale(organicip_n, scale = F)), # knowledge development
+         survey_year = factor(survey_year))
 
-df1 <- select(df.full, OGseed_percent_maincrop, maincrop,
+dfm1 <- select(df.full, 
+              OGseed_percent_maincrop, 
+              maincrop,
               CertifierRequestn,
-              TotalAcreage_ls, 
-              funding_avg_annual_amt_ls,
-              OGSeedOGIntegrityn_s,
-              prop_n_s, sum_rev_s,
-              nsupplychainactors_s,
-              Region, survey_year_f) %>% 
+              acreage_log, 
+              cropcat_n,
+              funding_million,
+              legitimation,
+              ratio, 
+              organicip,
+              Region, survey_year) %>% 
   filter(complete.cases(.))
 
-df2 <- select(df.full, colnames(df1), 
-              barrier_availability_s,
-              barrier_price_s,
-              barrier_buyerReq_s) %>% 
-  filter(complete.cases(.))
+## Let's run a stepwise process just to see what the model likes
+lmfit_null <- lm(OGseed_percent_maincrop ~ 1, dfm1)
+lmfit_full <- lm(OGseed_percent_maincrop ~ 
+                            legitimation + 
+                            CertifierRequestn + 
+                            funding_million + 
+                            ratio +
+                            organicip +
+                            maincrop +
+                            survey_year +
+                            Region +
+                            acreage_log +  
+                            cropcat_n, 
+                          data = dfm1)
 
-acreage <- lmer(OGseed_percent_maincrop ~ 
-                  OGSeedOGIntegrityn_s + 
-                  TotalAcreage_ls + 
+step(object = lmfit_null, 
+     scope = list(upper = lmfit_full), direction = "forward", 
+     k = log(nrow(dfm1)), trace = TRUE)
+
+# Full models ----
+fullmodel_fx <- function(data, model_type = "lm"){
+  if(model_type == "bayes"){
+    model <- brm(OGseed_percent_maincrop ~ 
+                   legitimation + 
+                   CertifierRequestn + 
+                   funding_million + 
+                   ratio +
+                   organicip +
+                   (1|maincrop) +
+                   (1|Region) +
+                   (1|survey_year) +
+                   acreage_log +  
+                   cropcat_n, 
+                 data = data)
+  } else if(model_type == "lm"){
+    model <- lm(OGseed_percent_maincrop ~ 
+                  legitimation + 
                   CertifierRequestn + 
-                  funding_avg_annual_amt_ls + 
-                  #prop_n_s +
-                  nsupplychainactors_s + 
-                  sum_rev_s +
-                  (1|maincrop) +
-                  (1|survey_year_f) +
-                  (1|Region),
-                data = df1)
+                  funding_million + 
+                  ratio +
+                  organicip +
+                  maincrop +
+                  Region +
+                  survey_year +
+                  acreage_log +  
+                  cropcat_n, 
+                data = data)
+  } else if (model_type == "lmer"){
+    model <- lmer(OGseed_percent_maincrop ~ 
+                    legitimation + 
+                    CertifierRequestn + 
+                    funding_million + 
+                    ratio +
+                    organicip +
+                    (1|maincrop) +
+                    (1|Region) +
+                    (1|survey_year) +
+                    acreage_log +  
+                    cropcat_n, 
+                  data = data)
+  }
+  return(model)
+}
 
-acreage_b <- brm(OGseed_percent_maincrop ~ 
-                  OGSeedOGIntegrityn_s + 
-                  TotalAcreage_ls + 
+acreage_lm <- fullmodel_fx(data = dfm1, model_type = "lm")
+acreage_lmer <- fullmodel_fx(data = dfm1, model_type = "lmer")
+acreage_bayes <- fullmodel_fx(data = dfm1, model_type = "bayes")
+
+summary(acreage_lm)
+summary(acreage_lmer)
+summary(acreage_bayes)
+
+# Yearly models ----
+yearlymodel_fx <- function(data, model_type = "lm"){
+  if(model_type == "bayes"){
+    model <- brm(OGseed_percent_maincrop ~ 
+                   legitimation + 
+                   CertifierRequestn + 
+                   funding_million + 
+                   ratio +
+                   organicip +
+                   (1|maincrop) +
+                   (1|Region) +
+                   acreage_log +  
+                   cropcat_n, 
+                 data = data)
+  } else if(model_type == "lm"){
+    model <- lm(OGseed_percent_maincrop ~ 
+                  legitimation + 
                   CertifierRequestn + 
-                  funding_avg_annual_amt_ls + 
-                   #prop_n_s +
-                   nsupplychainactors_s + 
-                  sum_rev_s +
-                  (1|maincrop) +
-                  (1|survey_year_f) +
-                  (1|Region),
-                data = df1)
+                  funding_million + 
+                  ratio +
+                  organicip +
+                  maincrop +
+                  Region +
+                  acreage_log +  
+                  cropcat_n, 
+                data = data)
+  } else if (model_type == "lmer"){
+    model <- lmer(OGseed_percent_maincrop ~ 
+                    legitimation + 
+                    CertifierRequestn + 
+                    funding_million + 
+                    ratio +
+                    organicip +
+                    (1|maincrop) +
+                    (1|Region) +
+                    acreage_log +  
+                    cropcat_n, 
+                  data = data)
+  }
+  return(model)
+}
+df2011 <- filter(dfm1, survey_year == 2011)
+df2016 <- filter(dfm1, survey_year == 2016)
+df2021 <- filter(dfm1, survey_year == 2021)
 
+acreage_2011_lmer <- yearlymodel_fx(data = df2011, model_type = "lmer")
+acreage_2016_lmer <- yearlymodel_fx(data = df2016, model_type = "lmer")
+acreage_2021_lmer <- yearlymodel_fx(data = df2021, model_type = "lmer")
+acreage_2011_lm <- yearlymodel_fx(data = df2011, model_type = "lm")
+acreage_2016_lm <- yearlymodel_fx(data = df2016, model_type = "lm")
+acreage_2021_lm <- yearlymodel_fx(data = df2021, model_type = "lm")
 
-summary(acreage)
-summary(acreage_b)
-equatiomatic::extract_eq(acreage)
+summary(acreage_2011_lmer)
+summary(acreage_2016_lmer)
+summary(acreage_2021_lmer)
+
+# Regional models ----
+regionalmodel_fx <- function(data, model_type = "lm"){
+  if(model_type == "bayes"){
+    model <- brm(OGseed_percent_maincrop ~ 
+                   legitimation + 
+                   CertifierRequestn + 
+                   funding_million + 
+                   ratio +
+                   organicip +
+                   (1|maincrop) +
+                   (1|survey_year) +
+                   acreage_log +  
+                   cropcat_n, 
+                 data = data)
+  } else if(model_type == "lm"){
+    model <- lm(OGseed_percent_maincrop ~ 
+                  legitimation + 
+                  CertifierRequestn + 
+                  funding_million + 
+                  ratio +
+                  organicip +
+                  maincrop +
+                  survey_year +
+                  acreage_log +  
+                  cropcat_n, 
+                data = data)
+  } else if (model_type == "lmer"){
+    model <- lmer(OGseed_percent_maincrop ~ 
+                    legitimation + 
+                    CertifierRequestn + 
+                    funding_million + 
+                    ratio +
+                    organicip +
+                    (1|maincrop) +
+                    (1|survey_year) +
+                    acreage_log +  
+                    cropcat_n, 
+                  data = data)
+  }
+  return(model)
+}
+dfwest <- filter(dfm1, Region == "West")
+dfne <- filter(dfm1, Region == "Northeast")
+dfnc <- filter(dfm1, Region == "North Central")
+dfsouth <- filter(dfm1, Region == "South")
+
+acreage_west <- regionalmodel_fx(data = dfwest, model_type = "lmer")
+acreage_ne <- regionalmodel_fx(data = dfne, model_type = "lmer")
+acreage_nc <- regionalmodel_fx(data = dfnc, model_type = "lmer")
+acreage_south <- regionalmodel_fx(data = dfsouth, model_type = "lmer")
+
+summary(acreage_west)
+summary(acreage_ne)
+summary(acreage_nc)
+summary(acreage_south)
 
 # This will tell us how far the random effect is away from the overall mean
 ranef(acreage)$Region
 ranef(acreage_b)$Region
-ranef(acreage)$survey_year_f
-ranef(acreage_b)$survey_year_f
+ranef(acreage)$survey_year
+ranef(acreage_b)$survey_year
 ranef(acreage)$maincrop
 ranef(acreage_b)$maincrop
 
-# Self-reported change ----
-
-df3 <- select(df.full, IncreasedOGSeed_binom, maincrop,
-              CertifierRequestn,
-              TotalAcreage_ls, 
-              funding_avg_annual_amt_ls,
-              OGSeedOGIntegrityn_s,
-              prop_n_s, sum_rev_s,
-              nsupplychainactors_s,
-              Region, survey_year_f) %>% 
-  filter(complete.cases(.))
-
-df4 <- select(df.full, colnames(df3), 
-              barrier_availability_s,
-              barrier_price_s,
-              barrier_buyerReq_s) %>% 
-  filter(complete.cases(.))
-
-increase <- glmer(IncreasedOGSeed_binom ~ 
-                  OGSeedOGIntegrityn_s + 
-                  TotalAcreage_ls + 
-                  CertifierRequestn + 
-                  funding_avg_annual_amt_ls + 
-                  #prop_n_s +
-                  nsupplychainactors_s +
-                  sum_rev_s +
-                  (1|maincrop) +
-                  (1|survey_year_f) +
-                  (1|Region),
-                  family = "binomial",
-                  data = df3)
-
-increase_b <- brm(IncreasedOGSeed_binom ~ 
-                    OGSeedOGIntegrityn_s + 
-                    TotalAcreage_ls + 
-                    CertifierRequestn + 
-                    funding_avg_annual_amt_ls + 
-                    #prop_n_s +
-                    nsupplychainactors_s +
-                    sum_rev_s +
-                    (1|maincrop) +
-                    (1|survey_year_f) +
-                    (1|Region),
-                  family = bernoulli(link = "logit"),
-                  data = df3)
-
-
-
-summary(increase)
-summary(increase_b)
-equatiomatic::extract_eq(increase)
-
-# This will tell us how far the Region is away from the overall mean
-ranef(increase)$Region
-ranef(increase_b)$Region
-ranef(increase)$survey_year_f
-ranef(increase_b)$survey_year_f
-ranef(increase)$maincrop
-ranef(increase_b)$maincrop
-
 a1 <- acreage_b$coef
-i1 <- exp(increase_b$coef)
 
-stargazer(acreage, #acreage_barriers, 
-          increase, #increase_barriers, 
-          type = "html", 
-          title = "Linear model comparison",
-          dep.var.labels = c("% Acreage", "Increased OG seed use"),
-          covariate.labels = c("Values organic seed", 
-                             #"Barrier: Variety availability", 
-                             #"Barrier: Price",
-                             #"Barrier: Buyer restriction",
-                             #"Crop type: Forage (vs. Field)", 
-                             #"Crop type: Vegetable (vs. Field)", 
-                             "Total Acres (log)", 
-                             "Certifier request", 
-                             "Research funding (annual avg.)", 
-                             "Ratio of supply chain actors to growers",
-                             "Median revenue of seed supply chain"),
-                             #"Regional funding (annual average)", 
-                             #"Region: West (vs. North Central)",
-                             #"Region: Northeast (vs. North Central)",
-                             #"Region: South (vs. North Central)",
-                             #"Year: 2016",
-                              #"Year: 2021"),
-          model.numbers = FALSE,
-          no.space = TRUE, 
-          header = FALSE, 
-          out = c("tables/models/lm.html"))
+table_stargazer <- function(model, model_levels, output_filepath){
+  if(model_levels == 2){
+    stargazer(model, 
+              type = "html", 
+              title = "",
+              dep.var.labels = "% Acreage",
+              covariate.labels = c("Legimitation: Organic seed impacts success", 
+                                   "Guidance: Certifiers request organic seed use", 
+                                   "Resource mobilization: Organic research funding (million USD)", 
+                                   "Entrepreneurship: Ratio of organic supply chain actors to growers",
+                                   "Knowledge development: Organically bred varieties",
+                                   "Control: Farm size (log acres)",
+                                   "Control: Number of crop categories",
+                                   "Intercept: Percent of land planted to organic seed (under 'average' conditions)"
+              ),
+              model.numbers = FALSE,
+              no.space = TRUE, 
+              header = FALSE, 
+              out = output_filepath)
+  } else if(model_levels == 1){
+    stargazer(model, 
+              type = "html", 
+              title = "",
+              dep.var.labels = "% Acreage",
+              covariate.labels = c("Legimitation: Organic seed impacts success", 
+                                   "Guidance: Certifiers request organic seed use", 
+                                   "Resource mobilization: Organic research funding (million USD)", 
+                                   "Entrepreneurship: Ratio of organic supply chain actors to growers",
+                                   "Knowledge development: Organically bred varieties",
+                                   "Crop type: Forage (vs. Field)",
+                                   "Crop type: Vegetable (vs. Field)",
+                                   "Region: West (vs. North Central)",
+                                   "Region: Northeast (vs. North Central)",
+                                   "Region: South (vs. North Central)",
+                                   "Year: 2016 (vs. 2011)",
+                                   "Year: 2021 (vs. 2011)",
+                                   "Control: Farm size (log acres)",
+                                   "Control: Number of crop categories",
+                                   "Intercept: Percent of land planted to organic seed (under 'average' conditions)"
+              ),
+              model.numbers = FALSE,
+              no.space = TRUE, 
+              header = FALSE, 
+              out = output_filepath)
+  } 
+}
 
+table_stargazer(acreage_lm, model_levels = 1, 'tables/models/full_lm.html')
+table_stargazer(acreage_lmer, model_levels = 2, 'tables/models/full_lmer.html')
+table_stargazer(c(acreage_2011, acreage_2016, acreage_2021), model_levels = 2, 'tables/models/yearly_lmer.html')
+table_stargazer(c(acreage_2011_lm, acreage_2016_lm, acreage_2021_lm), model_levels = 1, 'tables/models/yearly_lm.html')
 
-acreage_plot_f <- sjPlot::plot_model(acreage_b, show.values = T, 
-                                     value.size = 2,
-                                     bpe.style = "dot",
-                                     bpe.color = "black",
-                                     vline.color = "black",
-                                     line.size = .5,
-                                     group.terms = c(1,1,1,2,2,2),
-                                     colors = c("black", "darkgray"),
-                                     axis.labels = 
-                                     rev(c("Values organic seed",  
-                                     "Total Acres (log)",
-                                     "Certifier request", 
-                                     "Research funding\n(annual-avg.)", 
-                                     "Ratio of supply chain actors to growers",
-                                     "Median revenue of\nseed-supply chain")))  + 
-  theme_linedraw() +
-  labs(title = "", y = "") ; acreage_plot_f
-                                     
-acreage_plot_r <- sjPlot::plot_model(acreage_b, show.values = T, 
-                                     value.size = 2,
-                                     type = "re",
-                                     bpe.style = "dot",
-                                     bpe.color = "black",
-                                     vline.color = "black",
-                                     line.size = .5,
-                                     #group.terms = c(1,1,1,2,2,2),
-                                     colors = "darkgray",
-                                     axis.labels = 
-                                       rev(c("Crop type: Field",
-                                         "Crop type: Forage",
-                                         "Crop type: Vegetable",
-                                         "Region: North Central",
-                                         "Region: West",
-                                         "Region: Northeast",
-                                         "Region: South",
-                                         "Year: 2010",
-                                         "Year: 2015",
-                                         "Year: 2020"))) + 
-  theme_linedraw() +
-  labs(title = "", y = "Coefficient estimates") ; acreage_plot_r
+full_coefplot_fixedeff <- function(model, model_levels){
+  if(model_levels == 2){
+    p <- sjPlot::plot_model(model, 
+                            show.values = T,
+                            type = "est",
+                            value.size = 2,
+                            bpe.style = "dot",
+                            bpe.color = "black",
+                            vline.color = "black",
+                            line.size = .5,
+                            #group.terms = c(1,1,1,1,1,1,1),
+                            colors = c("black"),
+                            axis.labels = 
+                              rev(c("Legitimation: Organic seed impacts success", 
+                                    "Guidance: Certifiers request organic seed use", 
+                                    "Resource mobilization: Organic research funding (million USD)", 
+                                    "Entrepreneurship: Ratio of organic supply chain actors to growers",
+                                    "Knowledge development: Organically bred varieties",
+                                    "Control: Farm size (log acres)",
+                                    "Control: Number of crop categories"))
+    ) +
+      theme_minimal() +
+      labs(title = "")
+    return(p)
+  } else if (model_levels == 1){
+    p <- sjPlot::plot_model(model, 
+                            show.values = T,
+                            type = "est",
+                            value.size = 2,
+                            bpe.style = "dot",
+                            bpe.color = "black",
+                            vline.color = "black",
+                            line.size = .5,
+                            group.terms = c(rep(1,5),rep(2,7), 1,1),
+                            colors = c("black", "grey"),
+                            axis.labels = 
+                              rev(c("Legimitation: Organic seed impacts success", 
+                                    "Guidance: Certifiers request organic seed use", 
+                                    "Resource mobilization: Organic research funding (million USD)", 
+                                    "Entrepreneurship: Ratio of organic supply chain actors to growers",
+                                    "Knowledge development: Organically bred varieties",
+                                    "Crop type: Forage (vs. Field)",
+                                    "Crop type: Vegetable (vs. Field)",
+                                    "Region: West (vs. North Central)",
+                                    "Region: Northeast (vs. North Central)",
+                                    "Region: South (vs. North Central)",
+                                    "Year: 2016 (vs. 2011)",
+                                    "Year: 2021 (vs. 2011)",
+                                    "Control: Farm size (log acres)",
+                                    "Control: Number of crop categories"))
+    ) 
+      theme_minimal() +
+      labs(title = "")
+  }
+  return(p)
+}
 
-# Transformation is automatic for logistic
-increase_plot_f <- sjPlot::plot_model(increase_b, show.values = T, 
-                                      value.size = 2,
-                                     bpe.style = "dot",
-                                     bpe.color = "black",
-                                     vline.color = "black",
-                                     line.size = .5,
-                                     group.terms = c(1,1,1,2,2,2),
-                                     colors = c("black", "darkgray"),
-                                     axis.labels = 
-                                       rev(c("Values organic seed",  
-                                             "Total Acres (log)",
-                                             "Certifier request", 
-                                             "Research funding\n(annual-avg.)", 
-                                             "Ratio of supply chain actors to growers",
-                                             "Median revenue of\nseed-supply chain")),
-                                     axis.lim = c(.6, 2))  + 
-  theme_linedraw() +
-  labs(title = "", y = ""); increase_plot_f
+full_coefplot_fixedeff(acreage_lm, model_levels = 1)
+full_coefplot_fixedeff(acreage_lmer, model_levels = 2)
+full_coefplot_fixedeff(acreage_bayes, model_levels = 2)
 
-increase_plot_r <- sjPlot::plot_model(increase_b, show.values = T, 
-                                      value.size = 2,
-                                      type = "re",
-                                     bpe.style = "dot",
-                                     bpe.color = "black",
-                                     vline.color = "black",
-                                     line.size = .5,
-                                     #group.terms = c(1,1,1,2,2,2),
-                                     colors = "darkgray",
-                                     axis.labels = 
-                                       rev(c("Crop type: Field",
-                                             "Crop type: Forage",
-                                             "Crop type: Vegetable",
-                                             "Region: North Central",
-                                             "Region: West",
-                                             "Region: Northeast",
-                                             "Region: South",
-                                             "Year: 2010",
-                                             "Year: 2015",
-                                             "Year: 2020")),
-                                     axis.lim = c(.1, 10)) + 
-  theme_linedraw() +
-  labs(title = "", y = "Log of coefficient estimates") ; increase_plot_r
+yearly_coefplot_fixedeff <- function(model, year){
+  if(year %in% c(2011, 2016)){
+    p <- sjPlot::plot_model(model, 
+                            show.values = T,
+                            type = "est",
+                            value.size = 2,
+                            bpe.style = "dot",
+                            bpe.color = "black",
+                            vline.color = "black",
+                            line.size = .5,
+                            #group.terms = c(1,1,1,1,1,1,1),
+                            colors = c("black"),
+                            axis.labels = 
+                              rev(c("Legitimation: Organic seed impacts success", 
+                                    "Guidance: Certifiers request organic seed use", 
+                                    "Resource mobilization: Organic research funding (million USD)", 
+                                    "Entrepreneurship: Ratio of organic supply chain actors to growers",
+                                    "Control: Farm size (log acres)",
+                                    "Control: Number of crop categories"))
+    ) +
+      theme_minimal() +
+      labs(title = "")
+  } else if(year == 2021){
+    p <- sjPlot::plot_model(model, 
+                            show.values = T,
+                            type = "est",
+                            value.size = 2,
+                            bpe.style = "dot",
+                            bpe.color = "black",
+                            vline.color = "black",
+                            line.size = .5,
+                            #group.terms = c(1,1,1,1,1,1,1),
+                            colors = c("black"),
+                            axis.labels = 
+                              rev(c("Legitimation: Organic seed impacts success", 
+                                    "Guidance: Certifiers request organic seed use", 
+                                    "Resource mobilization: Organic research funding (million USD)", 
+                                    "Entrepreneurship: Ratio of organic supply chain actors to growers",
+                                    "Knowledge development: Organically bred varieties",
+                                    "Control: Farm size (log acres)",
+                                    "Control: Number of crop categories"))
+    ) +
+      theme_minimal() +
+      labs(title = "")
+  }
+  return(p)
+}
+yearly_coefplot_fixedeff(acreage_2011_lmer, year = 2011)
+yearly_coefplot_fixedeff(acreage_2016_lmer, year = 2011)
+yearly_coefplot_fixedeff(acreage_2021_lmer, year = 2021)
+
+full_coefplot_randomeff <- function(model){
+    p <- sjPlot::plot_model(model, 
+                            type = "re",
+                            value.size = 2,
+                            bpe.style = "dot",
+                            bpe.color = "black",
+                            vline.color = "black",
+                            line.size = .5,
+                            group.terms = c(1,1,1,2,2,2,2,3,3,3),
+                            colors = c("black", "darkgreen", "darkblue"),
+                            axis.labels = 
+                              rev(c("Crop type: Field",
+                                    "Crop type: Forage",
+                                    "Crop type: Vegetable",
+                                    "Region: North Central",
+                                    "Region: West",
+                                    "Region: Northeast",
+                                    "Region: South",
+                                    "Year: 2011",
+                                    "Year: 2016",
+                                    "Year: 2021"))
+    ) +
+      theme_minimal() +
+      labs(title = "")
+    return(p)
+}
+
+full_coefplot_randomeff(acreage_bayes)
+sjPlot::plot_model(acreage_lmer, type = "re")
+sjPlot::plot_model(acreage_bayes, type = "re")
 
 
 ggdraw() + 
