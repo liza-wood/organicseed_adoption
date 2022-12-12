@@ -2,7 +2,7 @@
 library(dplyr)
 library(stringr)
 
-setwd("~/Documents/Davis/R-Projects/organicseed_adoption//")
+setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
 codebook <- read.csv("data/codebook_3panel.csv")
 setwd("~/Dropbox/SOSInteractiveSurvey/")
 df11f <- readRDS("data2011_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGSeed)

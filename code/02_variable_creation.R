@@ -105,7 +105,7 @@ filter(df, survey_year == 2021) %>%
 
 df <- df %>% 
   mutate(year_range = case_when(
-    survey_year == 2011 ~ "2004-2008",
+    survey_year == 2011 ~ "2002-2008",
     survey_year == 2016 ~ "2009-2013",
     survey_year == 2021 ~ "2014-2018",
     T ~ NA_character_
