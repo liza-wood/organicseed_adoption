@@ -46,39 +46,30 @@ funds <- funds %>%
 ## Table 1: Funding only by years ----
 funds_yearonly <- funds %>% 
   group_by(year_range) %>% 
-  summarize(funding_amt = sum(funding_amt, na.rm = T))
-
-funds_yearonly$average[1] <- funds_yearonly$funding_amt[1]/7
-funds_yearonly$average[2] <- funds_yearonly$funding_amt[2]/5
-funds_yearonly$average[3] <- funds_yearonly$funding_amt[3]/5
+  summarize(funding_amt = sum(funding_amt, na.rm = T)) %>% 
+  mutate(annual_average = c(funding_amt[1]/7, funding_amt[2]/5, funding_amt[3]/5))
 
 ## Funding only by region  ----
 funds_regiononly <- funds %>% 
   group_by(Region) %>% 
-  summarize(funding_amt = sum(funding_amt))
-
-funds_regiononly$average[1] <- funds_regiononly$funding_amt[1]/7
-funds_regiononly$average[2] <- funds_regiononly$funding_amt[2]/5
-funds_regiononly$average[3] <- funds_regiononly$funding_amt[3]/5
+  summarize(funding_amt = sum(funding_amt)) 
 
 ## Funding by year and region----
 funds_year_region <- funds %>% 
   group_by(year_range, Region) %>% 
-  summarize(funding_amt = sum(funding_amt))
-
-funds_year_region$average[1] <- funds_year_region$funding_amt[1]/7
-funds_year_region$average[2] <- funds_year_region$funding_amt[2]/5
-funds_year_region$average[3] <- funds_year_region$funding_amt[3]/5
+  summarize(funding_amt = sum(funding_amt)) %>% 
+  ungroup() %>% 
+  mutate(annual_average = c(funding_amt[1:5]/7, funding_amt[6:10]/5, funding_amt[11:15]/5))
 
 ## Funding by year range, region, and crop ----
 
 funds_year_region_crop <- funds %>% 
   group_by(year_range, Region, maincrop) %>% 
-  summarize(funding_amt = sum(funding_amt, na.rm = T)) 
+  summarize(funding_amt = sum(funding_amt, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(annual_average = c(funding_amt[1:12]/7, funding_amt[13:30]/5, funding_amt[31:45]/5))
 
-funds_year_region_crop$average[1] <- funds_year_region_crop$funding_amt[1]/7
-funds_year_region_crop$average[2] <- funds_year_region_crop$funding_amt[2]/5
-funds_year_region_crop$average[3] <- funds_year_region_crop$funding_amt[3]/5
+
 
 # Remove multiple regions and crops ----
 funds_nomulti <- read.csv("~/Box/quantifying_seed_innovation/organicseed_funding_year_region_crop.csv") %>% 
@@ -93,11 +84,10 @@ funds_nomulti <- read.csv("~/Box/quantifying_seed_innovation/organicseed_funding
 
 funds_year_region_crop <- funds_nomulti %>% 
   group_by(year_range, Region, maincrop) %>% 
-  summarize(funding_amt = sum(funding_amt, na.rm = T)) 
+  summarize(funding_amt = sum(funding_amt, na.rm = T)) %>% 
+  ungroup() %>% 
+  mutate(annual_average = c(funding_amt[1:12]/7, funding_amt[13:24]/5, funding_amt[25:36]/5))
 
-funds_year_region_crop$average_annual_funding[1] <- funds_year_region_crop$funding_amt[1]/7
-funds_year_region_crop$average_annual_funding[2] <- funds_year_region_crop$funding_amt[2]/5
-funds_year_region_crop$average_annual_funding[3] <- funds_year_region_crop$funding_amt[3]/5
 
 # ---- SUPPLY CHAIN ----
 ## Patterns for matching later ----
