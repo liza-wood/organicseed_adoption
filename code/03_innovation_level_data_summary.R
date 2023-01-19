@@ -43,6 +43,8 @@ funds <- funds %>%
   filter(!is.na(year_range)) %>% 
   select(year, year_range, Region, maincrop, funding_amt)
 
+summary(funds$funding_amt)
+
 ## Table 1: Funding only by years ----
 funds_yearonly <- funds %>% 
   group_by(year_range) %>% 
@@ -68,8 +70,6 @@ funds_year_region_crop <- funds %>%
   summarize(funding_amt = sum(funding_amt, na.rm = T)) %>% 
   ungroup() %>% 
   mutate(annual_average = c(funding_amt[1:12]/7, funding_amt[13:30]/5, funding_amt[31:45]/5))
-
-
 
 # Remove multiple regions and crops ----
 funds_nomulti <- read.csv("~/Box/quantifying_seed_innovation/organicseed_funding_year_region_crop.csv") %>% 
@@ -193,6 +193,9 @@ valuechain_table <- full_join(market_table, allgrowers_table) %>%
     year %in% 2014:2018 ~ "2014-2018",
     T ~ NA_character_
   )) 
+valuechain_table %>% 
+  filter(!is.na(year_range)) %>% 
+  summary(ratio)
 
 ## Supply chain by year  ----
 supplychain_yearonly <- valuechain_table %>% 
@@ -276,9 +279,31 @@ supplychain_year_region <- valuechain_reg_pre02 %>%
   group_by(year_range, Region) 
 
 # Sales ----
+summary(dnb$sales)
+
+table(dnb$Region)
+dnb %>% 
+  group_by(Region) %>% 
+  summarize(regional_age = mean(year_started, na.rm = T))
+
 dnb_sales_reg <- dnb %>% 
   group_by(Region) %>% 
-  summarize(avg_annual_sales = round(mean(sales, na.rm = T)/1000000, 2))
+  summarize(dnb_regional_sales = mean(sales, na.rm = T))
+dnb$sales/100000
+log(dnb$sales/100000)
+ggplot(dnb, aes(x = year_started, y = sales/1000000, shape = Region)) +
+  geom_point(alpha = .5, size = 2, color = "black") +
+  labs(x = "Year founded", y = "2021 sales ($) in millions", shape = "") +
+  scale_shape_manual(values = c(1,15,2,3)) +
+  theme_linedraw() +
+  theme_minimal()
+ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/tables/figure4.png", height = 3, width = 5, dpi = 800)
+
+
+# Guidance via NOSB recommendations ----
+## https://www.ams.usda.gov/sites/default/files/media/NOSBRecommendationsLibrary.pdf
+nosb <- data.frame("year_range" = c("2002-2008","2009-2013", "2014-2018"),
+           "n_nosb_recs" = c(2,0,1))
 
 # Intellectual property ----
 pp <- read.csv('~/Box/quantifying_seed_innovation/uspto_plantpatents.csv') %>% 
@@ -323,19 +348,29 @@ ip_yearonly <- ip_reg %>%
   count()
 
 # re-running ossi because there are some that are marked both field and veg and then they end up with no crop and get removed.
-ip_year_region_region <- ip_reg %>% 
+ip_year_region <- ip_reg %>% 
   group_by(year_range, Region, maincrop) %>% 
-  count()
+  count() %>% 
+  rename("organicip_n" = n)
 
 # Combining them ----
 regional_summary <- left_join(funds_year_region_crop, supplychain_year_region) %>% 
-  left_join(ip_year_region_region) %>% left_join(dnb_sales_reg)
+  left_join(ip_year_region) %>% left_join(dnb_sales_reg) %>% left_join(nosb) %>% 
+  mutate(organicip_n = ifelse(is.na(organicip_n),0, organicip_n))
 
 # I am not saving this, but it should match exactly what came out of the sumary from quant, which was saved in the organicseed adoption Box
 
 ## Tables 1b and 1c ----
-write.csv(funds_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1b.csv", row.names = F)
-write.csv(supplychain_yearonly, "~/Documents/Davis/R-Projects/organicseed/tables/table1c.csv", row.names = F)
+write.csv(funds_yearonly, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1b.csv", row.names = F)
+write.csv(supplychain_yearonly, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1c.csv", row.names = F)
 
+df <- readRDS("~/Box/organicseed_adoption/df.rds") 
+
+survey_multilevel <- df %>% 
+  filter(Region != "International", !is.na(Region), maincrop != "Unknown") %>% 
+  left_join(regional_summary)
+
+## Saving data ----
+saveRDS(survey_multilevel, "~/Box/organicseed_adoption/df_multilevel.rds")
 
 

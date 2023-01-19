@@ -95,6 +95,7 @@ df$IncreasedOGSeed <- ifelse(df$OGseed_percent_maincrop == 100 &
                                is.na(df$IncreasedOGSeed), "Already at 100%", 
                              df$IncreasedOGSeed)
 
+table(df$IncreasedOGSeed)
 table(df$maincrop)
 table(df$maincrop, df$survey_year)
 
@@ -139,7 +140,31 @@ df$CertifierRequestn <- ifelse(df$CertifierRequest == "No", 0,
 ## Price
 ## Specific variety not available as organic seed
 ## Lack of desirable genetic traits
-rmv <- c("No answer", "partial complete", "skipped due to branching")
+
+# There are different levels
+table(df$NoOGSeedTreat[df$survey_year == 2011])
+table(df$NoOGSeedTreat[df$survey_year == 2016])
+table(df$NoOGSeedTreat[df$survey_year == 2021])
+
+df <- df %>% 
+  mutate(NoOGSeedTreat = ifelse(NoOGSeedTreat == "More than moderate factor",
+                                "Significant factor", NoOGSeedTreat),
+         NoOGSeedProcessor = ifelse(NoOGSeedProcessor == "More than moderate factor",
+                                "Significant factor", NoOGSeedProcessor),
+         NoOGSeedQuant = ifelse(NoOGSeedQuant == "More than moderate factor",
+                                "Significant factor", NoOGSeedQuant),
+         NoOGSeedSave = ifelse(NoOGSeedSave == "More than moderate factor",
+                                "Significant factor", NoOGSeedSave),
+         NoOGSeedQual = ifelse(NoOGSeedQual == "More than moderate factor",
+                                "Significant factor", NoOGSeedQual),
+         NoOGSeedPrice = ifelse(NoOGSeedPrice == "More than moderate factor",
+                                "Significant factor", NoOGSeedPrice),
+         NoOGSeedVar = ifelse(NoOGSeedVar == "More than moderate factor",
+                                "Significant factor", NoOGSeedVar),
+         NoOGSeedTrait = ifelse(NoOGSeedTrait == "More than moderate factor",
+                                "Significant factor", NoOGSeedTrait))
+
+rmv <- c("No answer", "partial complete", "skipped due to branching", "")
 levels_b <- c("Not a factor", "Slight factor", "Moderate factor", "Significant factor")
 
 df <- df %>% 
@@ -158,7 +183,8 @@ df <- df %>%
          barrier_availability = ifelse(NoOGSeedVar %in% rmv, NA, 
                                        as.numeric(factor(NoOGSeedVar, levels = levels_b))),
          barrier_lackdesiredTraits = ifelse(NoOGSeedTrait %in% rmv, NA, 
-                                            as.numeric(factor(NoOGSeedTrait, levels = levels_b))))
+                                            as.numeric(factor(NoOGSeedTrait, levels = levels_b))),
+         barrier_text = NoOGSeedText)
 df$barrier_seedTreatlackf = factor(df$barrier_seedTreatlack)
 levels(df$barrier_seedTreatlackf) = levels_b
 df$barrier_buyerReqf = factor(df$barrier_buyerReq)
@@ -184,7 +210,6 @@ df <- select(df, -contains("NoOG"))
 # Factor analysis of barriers ----
 ## So far this is not convincing
 mat <- df %>% 
-  filter(survey_year %in% c(2016,2021)) %>% 
   filter(!is.na(RespondentID)) %>% 
   tibble::column_to_rownames("RespondentID") %>% 
   dplyr::select(barrier_seedTreatlack:barrier_lackdesiredTraits) #%>%
@@ -218,34 +243,32 @@ fa = factanal(mat.nona,
               rotation="varimax")
 print(fa, digits=2, cutoff=.2, sort=TRUE)
 
-# For now I am getting rid of the 5th factor because it is so sparse
 loadings <- as.data.frame(fa$loadings[1:8, 1:3])
 loadings$max <- apply(X=loadings, MARGIN=1, FUN=which.max)
 
 #Factor 1
 f <- loadings %>% filter(max == 1) %>% 
   row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only .65
+#ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) 
 f1 <- mat %>% select(f) %>% 
-  mutate(barrier_f_quant = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_quant)
+  mutate(barrier_f_traits = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_traits)
 
 #Factor 2
 f <- loadings %>% filter(max == 2) %>% 
   row.names() ; f
-#ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # only 1
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .57
 f2 <- mat %>% select(f) %>% 
-  mutate(barrier_f_treatment = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_treatment)
+  mutate(barrier_f_availability = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_availability)
 
 #Factor 3
 f <- loadings %>% filter(max == 3) %>% 
   row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .36
+ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .39
 f3 <- mat %>% select(f) %>% 
-  mutate(barrier_f_quality = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_quality)
-
+  mutate(barrier_f_misc = rowMeans(., na.rm = T)) %>% 
+  select(barrier_f_misc)
 
 # These are no good; not using them
 

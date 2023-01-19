@@ -1,8 +1,9 @@
 library(usmap)
+library(tidyverse)
 us_states_og <- usmap::us_map()
 us_states_og$full <- tools::toTitleCase(us_states_og$full)
 
-setwd("~/Box/osa_networks/")
+setwd("~/Box/osa_networks/data_combined/")
 df11 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2011SurveyData.csv") %>% 
   slice(-c(1:2)) %>% 
   select(`In.which.state.do.you.farm...i..Please.fill.in....i.`)
@@ -11,12 +12,11 @@ df16 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2016SurveyData.csv") %>%
   slice(-c(1:2)) %>% 
   select(`X.1`, `X.8`) 
 colnames(df16) <- c("State", "Zip")
-df21 <- read.csv("~/Dropbox/SOSInteractiveSurvey/data2021_cleaned.csv") %>% 
+df21 <- read.csv("~/Dropbox/SOSInteractiveSurvey/data2021_cleaned.csv") %>%
   select(Q04A)
 colnames(df21) <- "Zip"
 
-# Need to figure out how to randomly sample for each state
-
+# I made these lists from online databases
 us.latlong <- read.csv("data_combined/zipcodes/us-zip.csv") %>% 
   mutate(country = "USA") %>% 
   select(-city) %>% 
@@ -233,9 +233,3 @@ ggdraw() +
   draw_label("D", x = .55, y = .48)
 ggsave("tables/figure1.png", height = 6, width = 10, dpi = 800)
 
-
-
-
-
-
-  

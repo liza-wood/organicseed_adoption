@@ -5,13 +5,14 @@ library(stringr)
 setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
 codebook <- read.csv("data/codebook_3panel.csv")
 setwd("~/Dropbox/SOSInteractiveSurvey/")
-df11f <- readRDS("data2011_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGSeed)
+df11f <- readRDS("data2011_cleaned.rds") %>% 
+  cbind(select(read.csv("2011SurveyData.csv", skip = 2, header = T), 
+               NoOGSeedTreat, NoOGSeedProcessor,     
+               NoOGSeedQuant, NoOGSeedSave, NoOGSeedQual,          
+               NoOGSeedPrice, NoOGSeedVar , NoOGSeedTrait, SeedInterest)) %>% 
+  select(codebook$qcode_11_16, IncreasedOGSeed)
 df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGVegSeed,
                                                     IncreasedOGFieldSeed, IncreasedOGForageSeed,
-                                                    NoOGSeedTreat, NoOGSeedProcessor,
-                                                    NoOGSeedQuant, NoOGSeedSave, 
-                                                    NoOGSeedQual,NoOGSeedPrice,
-                                                    NoOGSeedVar, NoOGSeedTrait,
                                                     AddStepsTimely, AddStepsContract)
 df21f <- readRDS("data2021_cleaned.rds")
 zipcode <- data.table::fread("zipcode.csv")
