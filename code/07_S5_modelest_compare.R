@@ -149,7 +149,7 @@ fullmodel_fx <- function(data, model_type){
                   family = "beta",
                   control.compute = list(cpo=TRUE, waic=TRUE),
                   control.family = list(beta.censor.value = cens)
-                  )
+    )
   } else if(model_type == "beta inla multi-level"){
     cens <- 0.05
     model <- inla(eval(parse(text=multilevel_prop_inla)), 
@@ -237,58 +237,52 @@ sum_beta_m <- as.data.frame(sum_beta_m) %>%
 summarytable <- full_join(sum_lmer, sum_bayeslmer) %>% full_join(sum_glmer) %>% full_join(sum_beta_m)
 summarytable2 <- summarytable[,c(4,1:3,5:8,18:21,22:23,29,24,26)]
 
+coefs <- c("Perceived importance of organic seed" = 
+             "legitimation", 
+           "Seed quality distrust barrier" =
+             "barrier_distrustQuality_s",
+           "Buyer requirement barrier" = 
+             "barrier_buyerReq_s",
+           "Certifiers request organic seed use" =
+             "CertifierRequestn", 
+           "Limited seed traits barrier" =
+             "barrier_lackdesiredTraits_s",
+           "Organic research funding" = 
+             "funding_100thous", 
+           "Number of registered organically bred varieties" =
+             "organicip_10",
+           "Ratio of organic growers to supply chain actors" =
+             "ratio",
+           "Seed availability barrier" = 
+             "barrier_availability_s",
+           "Organic seed company sales" = 
+             "sales_mill",
+           "Saves own seed" = "SeedSourceOwn_s",
+           "Farm size (log acres)" = "acreage_log",
+           "Number of crop categories" = "cropcat_n")
+
 jtools::plot_coefs(acreage_lmer, acreage_bayeslmer,
                    legend.title = "", 
                    model.names = c("Freq lmer", "Bayesian lmer"), 
                    colors = c("darkblue", "darkorange"),
-                   coefs = c("Perceived importance of organic seed" = "legitimation", 
-                             "Seed quality distrust barrier" = "barrier_distrustQuality_s",
-                             "Buyer requirement barrier" = "barrier_buyerReq_s",
-                             "Certifiers request organic seed use" = "CertifierRequestn", 
-                             "Limited seed traits barrier" = "barrier_lackdesiredTraits_s",
-                             "Organic research funding" = "funding_100thous", 
-                             "Number of registered organically bred varieties" = "organicip_10",
-                             "Ratio of organic growers to supply chain actors" = "ratio",
-                             "Seed availability barrier" = "barrier_availability_s",
-                             "Organic seed company sales" = "sales_mill",
-                             "Saves own seed" = "SeedSourceOwn_s",
-                             "Farm size (log acres)" = "acreage_log",
-                             "Number of crop categories" = "cropcat_n")) +
+                   coefs = coefs) +
   labs(title = "lmer") +
   theme(legend.position = "bottom")
 ggsave(filename = "tables/figureS5_modellmer.png", width = 6, height = 4.5)
 
-jtools::plot_coefs(acreage_glmer, exp = T,
+jtools::plot_coefs(acreage_glmer, 
+                   exp = T,
                    legend.title = "", 
                    model.names = "Freq GLM", 
                    colors = "darkgreen",
-                   coefs = c("Perceived importance of organic seed" = "legitimation", 
-                             "Seed quality distrust barrier" = "barrier_distrustQuality_s",
-                             "Buyer requirement barrier" = "barrier_buyerReq_s",
-                             "Certifiers request organic seed use" = "CertifierRequestn", 
-                             "Limited seed traits barrier" = "barrier_lackdesiredTraits_s",
-                             "Organic research funding" = "funding_100thous", 
-                             "Number of registered organically bred varieties" = "organicip_10",
-                             "Ratio of organic growers to supply chain actors" = "ratio",
-                             "Seed availability barrier" = "barrier_availability_s",
-                             "Organic seed company sales" = "sales_mill",
-                             "Saves own seed" = "SeedSourceOwn_s",
-                             "Farm size (log acres)" = "acreage_log",
-                             "Number of crop categories" = "cropcat_n")) +
+                   coefs = coefs) +
   labs(title = "glmer")
 ggsave(filename = "tables/figureS5_modelglmer.png", width = 6, height = 3.5)
-
-params <- c("Perceived importance of organic seed", "Seed quality distrust barrier",
-"Buyer requirement barrier", "Certifiers request organic seed use",
-"Limited seed traits barrier", "Organic research funding", 
-"Number of registered organically bred varieties",
-"Ratio of organic growers to supply chain actors", 
-"Seed availability barrier", "Organic seed company sales", "Saves own seed", "Farm size (log acres)", "Number of crop categories")
 
 mod <- acreage_beta_multi$summary.fixed %>% 
   select(mean, sd, `0.025quant`,`0.975quant`) %>% 
   slice(-1) %>% 
-  mutate(parameter = factor(params, levels = rev(params))) %>% 
+  mutate(parameter = factor(names(coefs), levels = rev(names(coefs)))) %>% 
   rename("lower" = "0.025quant", "upper" = "0.975quant")
 
 ggplot(mod, aes(x=parameter, y=mean)) +
@@ -310,187 +304,234 @@ ggplot(mod, aes(x=parameter, y=mean)) +
 
 ggsave(filename = "tables/figureS5_modelbeta.png", width = 6, height = 3.5)
 
-# Comparing one level ----
-sum_lm <- summary(acreage_lm)
-sum_lm <- sum_lm$coefficients
-sum_bayeslm <- data.frame(sjPlot::plot_model(acreage_bayeslm)[[1]])
-sum_glm <- summary(acreage_glm)
-sum_glm <- sum_glm$coefficients
-sum_beta <- summary(acreage_beta)
-sum_beta <- sum_beta$fixed
 
 # yearly models ----
-yearlymodel_fx <- function(data, model_type = "lm", year){
+dvs_core_noIP <- "legitimation + 
+                 barrier_distrustQuality_s +
+                 barrier_buyerReq_s +
+                 #barrier_insuffQuantity_s +
+                 CertifierRequestn + 
+                 #n_nosb_recs_s +
+                 barrier_lackdesiredTraits_s +
+                 funding_100thous + 
+                 #organicip_10 +
+                 ratio +
+                 barrier_availability_s +
+                 sales_mill + 
+                 #barrier_saveOwn_s +
+                 SeedSourceOwn_s +
+                 acreage_log +  
+                 cropcat_n + "
+subsyst_onelevel_noyear <- "maincrop +
+                     Region"
+subsyst_multilevel_noyear <- "(1|maincrop) +
+                     (1|Region)"
+
+subsyst_multilevel_inla_noyear <- "f(maincrop, model = 'iid') +
+                            f(Region, model = 'iid')"
+iv_perc <- "OGseed_percent_maincrop ~ "
+iv_prop <- "OGseed_percent_maincrop_prop ~ "
+
+onelevel_prop_11_16 <- paste0(iv_prop, dvs_core_noIP, subsyst_onelevel_noyear)
+onelevel_prop_21 <- paste0(iv_prop, dvs_core, subsyst_onelevel_noyear)
+onelevel_prop_11_16 <- paste0(iv_prop, dvs_core_noIP, subsyst_onelevel_noyear)
+onelevel_prop_21 <- paste0(iv_prop, dvs_core, subsyst_onelevel_noyear)
+onelevel_perc_11_16 <- paste0(iv_perc, dvs_core_noIP, subsyst_onelevel_noyear)
+onelevel_perc_21 <- paste0(iv_perc, dvs_core, subsyst_onelevel_noyear)
+multilevel_prop_11_16 <- paste0(iv_prop, dvs_core_noIP, subsyst_multilevel_noyear)
+multilevel_prop_21 <- paste0(iv_prop, dvs_core, subsyst_multilevel_noyear)
+multilevel_perc_11_16 <- paste0(iv_perc, dvs_core_noIP, subsyst_multilevel_noyear)
+multilevel_perc_21 <- paste0(iv_perc, dvs_core, subsyst_multilevel_noyear)
+multilevel_prop_inla_11_16 <- paste0(iv_prop, dvs_core_noIP, subsyst_multilevel_inla_noyear)
+multilevel_prop_inla_21 <- paste0(iv_prop, dvs_core, subsyst_multilevel_inla_noyear)
+
+yearlymodel_fx <- function(data, model_type, year){
   if(year %in% c(2011, 2016)){
-    if(model_type == "bayes"){
-      model <- brm(OGseed_percent_maincrop_prop ~ 
-                     legitimation + 
-                     barrier_distrustQuality_s +
-                     barrier_buyerReq_s +
-                     #barrier_insuffQuantity_s +
-                     CertifierRequestn + 
-                     #n_nosb_recs_s +
-                     barrier_lackdesiredTraits_s +
-                     funding_100thous + 
-                     #organicip_10 +
-                     ratio +
-                     barrier_availability_s +
-                     sales_mill + 
-                     (1|maincrop) +
-                     (1|Region) +
-                     #(1|survey_year) +
-                     barrier_saveOwn_s +
-                     acreage_log +  
-                     cropcat_n, 
-                   data = data,
-                   family = zero_one_inflated_beta(
-                     link = "logit",
-                     link_phi = "log",
-                     link_zoi = "logit",
-                     link_coi = "logit"
-                   ))
+    if(model_type == "bayes multi-level"){
+      model <- brm(eval(parse(text = multilevel_perc_11_16)), 
+                   data = data)
+    } else if(model_type == "bayes one-level"){
+      model <- brm(eval(parse(text = onelevel_perc_11_16)), 
+                   data = data)
+    } else if(model_type == "beta inla one-level"){
+      cens <- 0.05
+      model <- inla(eval(parse(text = onelevel_prop_11_16)), 
+                    data = data,
+                    family = "beta",
+                    control.compute = list(cpo=TRUE, waic=TRUE),
+                    control.family = list(beta.censor.value = cens)
+      )
+    } else if(model_type == "beta inla multi-level"){
+      cens <- 0.05
+      model <- inla(eval(parse(text = multilevel_prop_inla_11_16)), 
+                    data = data,
+                    family = "beta",
+                    control.compute = list(cpo=TRUE, waic=TRUE),
+                    control.family = list(beta.censor.value = cens)
+      )
+    } else if(model_type == "binomial one-level"){
+      model <- glm(eval(parse(text = onelevel_prop_11_16)), 
+                   family = quasibinomial(link = 'logit'),
+                   data = data)
+    } else if(model_type == "binomial multi-level"){
+      model <- glmer(eval(parse(text = multilevel_prop_11_16)), 
+                     family = binomial(link = 'logit'),
+                     data = data)
     } else if(model_type == "lm"){
-      model <- lm(OGseed_percent_maincrop ~ 
-                    legitimation + 
-                    CertifierRequestn + 
-                    funding_million + 
-                    ratio +
-                    #organicip +
-                    maincrop +
-                    Region +
-                    acreage_log +  
-                    cropcat_n, 
+      model <- lm(eval(parse(text = onelevel_perc_11_16)), 
                   data = data)
+    } else if (model_type == "lmer"){
+      model <- lmer(eval(parse(text = multilevel_perc_11_16)), 
+                    data = data)
     } else if (model_type == "tobit"){
-      model <- censReg::censReg(OGseed_percent_maincrop ~ 
-                                  legitimation + 
-                                  CertifierRequestn + 
-                                  funding_million + 
-                                  ratio +
-                                  #organicip +
-                                  maincrop +
-                                  Region +
-                                  acreage_log +  
-                                  cropcat_n,
+      model <- censReg::censReg(eval(parse(text = onelevel_perc_11_16)),
                                 right = 100,
                                 left = 0,
-                                data = dfm1)
-    } else if (model_type == "lmer"){
-      model <- lmer(OGseed_percent_maincrop ~ 
-                      legitimation + 
-                      CertifierRequestn + 
-                      funding_million + 
-                      ratio +
-                      #organicip +
-                      (1|maincrop) +
-                      (1|Region) +
-                      acreage_log +  
-                      cropcat_n, 
-                    data = data)
-    }
+                                data = data)
+    } 
   } else if(year == 2021){
-    if(model_type == "bayes"){
-      model <- brm(OGseed_percent_maincrop_prop ~ 
-                     legitimation + 
-                     barrier_distrustQuality_s +
-                     barrier_buyerReq_s +
-                     #barrier_insuffQuantity_s +
-                     CertifierRequestn + 
-                     #n_nosb_recs_s +
-                     barrier_lackdesiredTraits_s +
-                     funding_100thous + 
-                     organicip_10 +
-                     ratio +
-                     barrier_availability_s +
-                     sales_mill + 
-                     (1|maincrop) +
-                     (1|Region) +
-                     #(1|survey_year) +
-                     barrier_saveOwn_s +
-                     acreage_log +  
-                     cropcat_n, 
-                   data = data,
-                   family = zero_one_inflated_beta(
-                     link = "logit",
-                     link_phi = "log",
-                     link_zoi = "logit",
-                     link_coi = "logit"
-                   ))
+    if(model_type == "bayes multi-level"){
+      model <- brm(eval(parse(text = multilevel_perc_21)), 
+                   data = data)
+    } else if(model_type == "bayes one-level"){
+      model <- brm(eval(parse(text = onelevel_perc_21)), 
+                   data = data)
+    } else if(model_type == "beta inla one-level"){
+      cens <- 0.05
+      model <- inla(eval(parse(text = onelevel_prop_21)), 
+                    data = data,
+                    family = "beta",
+                    control.compute = list(cpo=TRUE, waic=TRUE),
+                    control.family = list(beta.censor.value = cens)
+      )
+    } else if(model_type == "beta inla multi-level"){
+      cens <- 0.05
+      model <- inla(eval(parse(text = multilevel_prop_inla_21)), 
+                    data = data,
+                    family = "beta",
+                    control.compute = list(cpo=TRUE, waic=TRUE),
+                    control.family = list(beta.censor.value = cens)
+      )
+    } else if(model_type == "binomial one-level"){
+      model <- glm(eval(parse(text = onelevel_prop_21)), 
+                   family = quasibinomial(link = 'logit'),
+                   data = data)
+    } else if(model_type == "binomial multi-level"){
+      model <- glmer(eval(parse(text = multilevel_prop_21)), 
+                     family = binomial(link = 'logit'),
+                     data = data)
     } else if(model_type == "lm"){
-      model <- lm(OGseed_percent_maincrop ~ 
-                    legitimation + 
-                    CertifierRequestn + 
-                    funding_million + 
-                    ratio +
-                    organicip +
-                    maincrop +
-                    Region +
-                    acreage_log +  
-                    cropcat_n, 
+      model <- lm(eval(parse(text = onelevel_perc_21)), 
                   data = data)
+    } else if (model_type == "lmer"){
+      model <- lmer(eval(parse(text = multilevel_perc_21)), 
+                    data = data)
     } else if (model_type == "tobit"){
-      model <- censReg::censReg(OGseed_percent_maincrop ~ 
-                                  legitimation + 
-                                  CertifierRequestn + 
-                                  funding_million + 
-                                  ratio +
-                                  organicip +
-                                  maincrop +
-                                  Region +
-                                  acreage_log +  
-                                  cropcat_n,
+      model <- censReg::censReg(eval(parse(text = onelevel_perc_21)),
                                 right = 100,
                                 left = 0,
-                                data = dfm1)
-    } else if (model_type == "lmer"){
-      model <- lmer(OGseed_percent_maincrop ~ 
-                      legitimation + 
-                      CertifierRequestn + 
-                      funding_million + 
-                      ratio +
-                      organicip +
-                      (1|maincrop) +
-                      (1|Region) +
-                      acreage_log +  
-                      cropcat_n, 
-                    data = data)
-    }
+                                data = data)
+    } 
   }
-  
   return(model)
 }
+
 df2011 <- filter(dfm1, survey_year == 2011)
 df2016 <- filter(dfm1, survey_year == 2016)
 df2021 <- filter(dfm1, survey_year == 2021)
 
-acreage_2011_bayes <- yearlymodel_fx(data = df2011, model_type = "bayes", year = 2011)
-acreage_2016_bayes <- yearlymodel_fx(data = df2016, model_type = "bayes", year = 2016)
-acreage_2021_bayes <- yearlymodel_fx(data = df2021, model_type = "bayes", year = 2021)
+acreage_2011_bayes <- yearlymodel_fx(data = df2011, 
+                                     model_type = "bayes multi-level", 
+                                     year = 2011)
+acreage_2016_bayes <- yearlymodel_fx(data = df2016, 
+                                     model_type = "bayes multi-level", 
+                                     year = 2016)
+acreage_2021_bayes <- yearlymodel_fx(data = df2021, 
+                                     model_type = "bayes multi-level", 
+                                     year = 2021)
+acreage_2011_beta <- yearlymodel_fx(data = df2011, 
+                                    model_type = "beta inla multi-level", 
+                                    year = 2011)
+acreage_2016_beta <- yearlymodel_fx(data = df2016, 
+                                    model_type = "beta inla multi-level", 
+                                    year = 2016)
+acreage_2021_beta <- yearlymodel_fx(data = df2021, 
+                                    model_type = "beta inla multi-level", 
+                                    year = 2021)
+acreage_2011_glmer <- yearlymodel_fx(data = df2011, 
+                                     model_type = "binomial multi-level", 
+                                     year = 2011)
+acreage_2016_glmer <- yearlymodel_fx(data = df2016, 
+                                     model_type = "binomial multi-level", 
+                                     year = 2016)
+acreage_2021_glmer <- yearlymodel_fx(data = df2021, 
+                                     model_type = "binomial multi-level", 
+                                     year = 2021)
 
 # This is the one I want for fixed effects:
-jtools::plot_coefs(acreage_bayes, acreage_2011_bayes, 
-                   acreage_2016_bayes, acreage_2021_bayes,
+jtools::plot_coefs(acreage_2011_bayes, 
+                   acreage_2016_bayes, 
+                   acreage_2021_bayes,
                    legend.title = "", 
-                   model.names = c("All years", "2010", "2015", "2020"), 
-                   colors = c("black", greens[5], reds[5], blues[5]),  
-                   coefs = c("Perceived importance of organic seed" = "legitimation", 
-                             "Seed quality distrust barrier" = "barrier_distrustQuality_s",
-                             "Buyer requirement barrier" = "barrier_buyerReq_s",
-                             "Certifiers request organic seed use" = "CertifierRequestn", 
-                             "Limited seed traits barrier" = "barrier_lackdesiredTraits_s",
-                             "Organic research funding" = "funding_100thous", 
-                             "Number of registered organically bred varieties" = "organicip_10",
-                             "Ratio of organic growers to supply chain actors" = "ratio",
-                             "Seed availability barrier" = "barrier_availability_s",
-                             "Organic seed company sales" = "sales_mill",
-                             "Saves own seed" = "barrier_saveOwn_s",
-                             "Farm size (log acres)" = "acreage_log",
-                             "Number of crop categories" = "cropcat_n")) +
-  theme(legend.position = "bottom")
-ggsave("tables/figure5a.jpeg", width = 9, height = 5)
+                   model.names = c("2010", "2015", "2020"), 
+                   colors = c(greens[5], reds[5], blues[5]),  
+                   coefs = coefs) +
+  #theme(legend.position = "bottom") +
+  labs(title = "Bayes lmer")
+ggsave(filename = "tables/figureS5_modellmer_yrly.png", width = 8, height = 4.5)
 
+jtools::plot_coefs(acreage_2011_glmer, 
+                   acreage_2016_glmer, 
+                   acreage_2021_glmer,
+                   exp = T,
+                   legend.title = "", 
+                   model.names = c("2010", "2015", "2020"), 
+                   colors = c(greens[5], reds[5], blues[5]),  
+                   coefs = coefs) +
+  #theme(legend.position = "bottom") +
+  labs(title = "glmer")
+ggsave(filename = "tables/figureS5_modelglmer_yrly.png", width = 8, height = 4.5)
+
+mod1 <- rbind(acreage_2011_beta$summary.fixed, 
+              acreage_2016_beta$summary.fixed) %>% 
+  slice(-c(1, 14)) %>% 
+  select(mean, sd, `0.025quant`,`0.975quant`) %>% 
+  mutate(parameter = rep(names(coefs[-7]), 2))
+mod <- acreage_2021_beta$summary.fixed %>% 
+  slice(-1) %>% 
+  select(mean, sd, `0.025quant`,`0.975quant`) %>% 
+  mutate(parameter = factor(names(coefs), levels = rev(names(coefs)))) %>% 
+  rbind(mod1) %>% 
+  rename("lower" = "0.025quant", "upper" = "0.975quant") %>% 
+  mutate(year = c(rep(2021, 13), rep(2011, 12), rep(2016, 12)))
+
+ggplot(mod, aes(x = mean, 
+                y = parameter)) +
+  ggstance::geom_pointrangeh(aes(xmin = lower, 
+                                 xmax = upper,
+                                 color = factor(year, 
+                                                levels = c("2021", "2016", "2011")), 
+                                 shape = factor(year, 
+                                                levels = c("2021", "2016", "2011"))),
+                             position = ggstance::position_dodgev(height = .6), 
+                             fill = "white", fatten = 3, size = 0.8) +
+  geom_vline(xintercept = 0, linetype = 2, linewidth = 0.25) + 
+  scale_colour_manual(values = c(greens[5], reds[5], blues[5]),
+                      limits = levels(factor(mod$year))) + 
+  scale_shape_manual(limits = levels(factor(mod$year)), 
+                     values = c(21, 22, 23)) +
+  theme_nice(legend.pos = "right") +
+  drop_y_gridlines() + 
+  theme(axis.title.y = element_blank(), 
+        axis.text.y = element_text(size = 10), 
+        #legend.position="none",
+        panel.grid.major.x = element_line(linetype = "solid")) + 
+  labs(x = "Intercept", shape = "", color = "", title = "beta")
+ggsave(filename = "tables/figureS5_modelbeta_yrly.png", width = 8, height = 4.5)
+
+# Random effects ----
 # Nothing will automatically make what I want for random effects, so here it goes:
-out <- sjPlot::plot_model(acreage_bayes, type = "re")
+out <- sjPlot::plot_model(acreage_bayeslmer, type = "re")
 ranefdf_full <- data.frame(out[[1]]) %>% 
   mutate(term = c("Field", "Forage", "Vegetables", 
                   "North Central", "West", "Northeast", "South",
