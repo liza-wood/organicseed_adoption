@@ -3,6 +3,10 @@ library(tidyverse)
 us_states_og <- usmap::us_map()
 us_states_og$full <- tools::toTitleCase(us_states_og$full)
 
+greens <- colorRampPalette(c("lightgrey", "#55752f"))(8) # 2014-2018
+reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
+blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
+
 setwd("~/Box/osa_networks/data_combined/")
 df11 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2011SurveyData.csv") %>% 
   slice(-c(1:2)) %>% 
@@ -17,11 +21,11 @@ df21 <- read.csv("~/Dropbox/SOSInteractiveSurvey/data2021_cleaned.csv") %>%
 colnames(df21) <- "Zip"
 
 # I made these lists from online databases
-us.latlong <- read.csv("data_combined/zipcodes/us-zip.csv") %>% 
+us.latlong <- read.csv("zipcodes/us-zip.csv") %>% 
   mutate(country = "USA") %>% 
   select(-city) %>% 
   rename("State" = state)
-ca.latlong <- read.csv("data_combined/zipcodes/ca-zip.csv") %>% 
+ca.latlong <- read.csv("zipcodes/ca-zip.csv") %>% 
   mutate(country = "Canada") %>% 
   select(-city) %>% 
   rename("State" = state)
@@ -46,7 +50,7 @@ statecounts11 <- df11 %>%
 df11_random_locations <- data.frame()
 for(i in statecounts11$State){
   onestate_count <- filter(statecounts11, State == i)
-  if(onestate_count %in% "PW"){
+  if(onestate_count$State %in% "PW"){
     next
   }
   onestate_loc16 <- filter(df16, State == i)
@@ -110,8 +114,8 @@ df21 <- df21 %>%
     State %in% southern ~ "South",
     State %in% northeast ~ "Northeast",
     T ~ NA_character_
-  ))# %>% 
-  #filter(!is.na(Region))
+  )) %>% 
+  filter(!is.na(Region))
 
 region_text <- function(df){
   n.by.state <- df %>% 
@@ -140,7 +144,7 @@ make_map <- function(df, mapdf, colors, year_title){
   # This one is finnicky but works
   us_states <- left_join(us_states_og, mapdf, by = c("abbr" = "State")) %>% 
     rename("State" = "full") %>% 
-    mutate(State = trimws(State))
+    mutate(State = trimws(State)) 
   
   # For the states that weren't in the dataset
   us_states <- us_states %>% 
@@ -212,24 +216,14 @@ make_map <- function(df, mapdf, colors, year_title){
 }
 
 df11mapdf <- region_text(df11_random_locations)
-map10 <- make_map(df11_random_locations, df11mapdf, greens[c(6,3,4,8)], "2010")
+map10 <- make_map(df11_random_locations, df11mapdf, greens[c(2,6,4,8)], "2010")
 
 df16mapdf <- region_text(df16)
-map15 <- make_map(df16, df16mapdf, reds[c(6,3,4,8)], "2015")
+map15 <- make_map(df16, df16mapdf, reds[c(6,2,4,8)], "2015")
 
 df21mapdf <- region_text(df21)
-map20 <- make_map(df21, df21mapdf, blues[c(6,3,4,8)], "2020")
+map20 <- make_map(df21, df21mapdf, blues[c(6,2,4,8)], "2020")
 
 cowplot::plot_grid(map10, map15, map20, nrow = 1)
-ggdraw() + 
-  draw_plot(map10, x = 0, y = .5, width = .49, height = .5) +
-  draw_label("A", x = .05, y = .98) +
-  draw_plot(pbarrier, x = .5, y = .5, width = 0.49, height = .5) +
-  draw_label("B", x = .5, y = .98) +
-  draw_plot(legend, x = 0, y = 0, width = 0.14, height = .5 ) +
-  draw_plot(pacreage, x = .15, y = 0, width = 0.34, height = .5) +
-  draw_label("C", x = .15, y = .48) +
-  draw_plot(pincrease, x= .5, y = 0, width = 0.49, height = .5) +
-  draw_label("D", x = .55, y = .48)
-ggsave("tables/figure1.png", height = 6, width = 10, dpi = 800)
+ggsave("tables/figure2.png", height = 6, width = 10, dpi = 800)
 

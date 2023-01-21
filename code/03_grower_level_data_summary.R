@@ -1,7 +1,7 @@
 library(VIM)
 library(tidyverse)
 library(lubridate)
-
+library(ggplot2)
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
 df <- readRDS("~/Box/organicseed_adoption/df.rds") 
 # Let's narrow this down to the variables of interest
@@ -19,7 +19,7 @@ df <- df %>%
          cropcat_n, 
          Region, # regional variables (region and seed production)
          contains("barrier"), # barriers
-         SeedSourceOwn,
+         noncommercial_seedsource,
          contains("AddSteps")) 
 
 summary(df$OGseed_percent_maincrop)
@@ -29,6 +29,7 @@ summary(df$barrier_availability)
 summary(df$barrier_lackdesiredTraits)
 summary(df$barrier_saveOwn)
 summary(df$SeedSourceOwn)
+summary(df$noncommercial_seedsource)
 summary(df$barrier_buyerReq)
 summary(df$barrier_distrustQuality)
 summary(df$TotalAcreage)
@@ -60,7 +61,7 @@ variable_df <- data.frame(
                 "      Lack of desirable genetic traits",
                 "      Processor (buyer) requires or supplies varieties that are not available organically",
                 "      Distrust of organic seed quality",
-                "      Saves own seed",
+                "Percent of seeds from own farm or other farms",
                 "Total Acreage",
                 "      Vegetable Crop Acreage",
                 "      Field Crop Acreage",
@@ -79,7 +80,7 @@ variable_df <- data.frame(
            round(mean(df11$barrier_lackdesiredTraits, na.rm = T), 2),
            round(mean(df11$barrier_buyerReq, na.rm = T), 2),
            round(mean(df11$barrier_distrustQuality, na.rm = T), 2),
-           round(mean(df11$barrier_saveOwn, na.rm = T), 2),
+           round(mean(df11$noncommercial_seedsource, na.rm = T), 2),
            round(mean(df11$TotalAcreage[df11$TotalAcreage != 0], na.rm = T), 2),
            round(mean(df11$VegiAcreage[df11$VegiAcreage != 0], na.rm = T), 2),
            round(mean(df11$FieldAcreage[df11$FieldAcreage != 0], na.rm = T), 2),
@@ -98,12 +99,12 @@ variable_df <- data.frame(
           round(mean(df16$barrier_lackdesiredTraits, na.rm = T), 2),
           round(mean(df16$barrier_buyerReq, na.rm = T), 2),
           round(mean(df16$barrier_distrustQuality, na.rm = T), 2),
-          round(mean(df16$barrier_saveOwn, na.rm = T), 2),
+          round(mean(df16$noncommercial_seedsource, na.rm = T), 2),
           round(mean(df16$TotalAcreage[df16$TotalAcreage != 0], na.rm = T), 2),
           round(mean(df16$VegiAcreage[df16$VegiAcreage != 0], na.rm = T), 2),
           round(mean(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 2),
           round(mean(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
-          round(mean(df16$cropcat_n), 2),
+          round(mean(df16$cropcat_n, na.rm = T), 2),
           nrow(df16)
           ),
   
@@ -117,12 +118,12 @@ variable_df <- data.frame(
           round(mean(df21$barrier_lackdesiredTraits, na.rm = T), 2),
           round(mean(df21$barrier_buyerReq, na.rm = T), 2),
           round(mean(df21$barrier_distrustQuality, na.rm = T), 2),
-          round(mean(df21$barrier_saveOwn, na.rm = T), 2),
+          round(mean(df21$noncommercial_seedsource, na.rm = T), 2),
           round(mean(df21$TotalAcreage[df21$TotalAcreage != 0], na.rm = T), 2),
           round(mean(df21$VegiAcreage[df21$VegiAcreage != 0], na.rm = T), 2),
           round(mean(df21$FieldAcreage[df21$FieldAcreage != 0], na.rm = T), 2),
           round(mean(df21$ForageAcreage[df21$ForageAcreage != 0], na.rm = T), 2),
-          round(mean(df21$cropcat_n), 2),
+          round(mean(df21$cropcat_n, na.rm = T), 2),
           nrow(df21)
              )
 )
@@ -274,9 +275,9 @@ df %>%
 
 # Sentiment ----
 df %>% 
-  filter(!is.na(OGSeedOGIntegrityf)) %>% 
+  filter(!is.na(OGVarietiesSuccessf)) %>% 
   ggplot(aes(fill = factor(survey_year),
-             x = OGSeedOGIntegrityf)) +
+             x = OGVarietiesSuccessf)) +
   geom_bar(position = "dodge") +
   #geom_text(position=position_dodge(width=0.9), size = 3, hjust = 1.2, vjust = .5) +
   coord_flip() +

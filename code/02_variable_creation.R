@@ -132,6 +132,9 @@ df$OGVarietiesSuccessn <- as.numeric(df$OGVarietiesSuccessf)
 df$CertifierRequestn <- ifelse(df$CertifierRequest == "No", 0,
                                ifelse(df$CertifierRequest == "Yes", 1, NA))
 
+# Seed sources
+df$noncommercial_seedsource <- df$SeedSourceFarm + df$SeedSourceOwn
+
 ## Lack of seed treatments, such as pelleting or priming
 ## Processor (buyer) requires or supplies varieties that are not available organically
 ## Insufficient quantity of seed

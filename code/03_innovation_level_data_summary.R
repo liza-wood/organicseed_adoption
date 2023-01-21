@@ -1,6 +1,6 @@
 library(tidyverse)
 library(lubridate)
-setwd("~/Dropbox/SOSInteractiveSurvey/")
+setwd("~/Box/quantifying_seed_innovation/")
 
 assign_yr_range <- function(year_var){
   x <- ifelse(year_var >= 2002 & year_var <= 2008, "2002-2008",
@@ -30,7 +30,7 @@ shape_nocrops_pre2002 <- data.frame("year_range" = rep(year_range2, each = 4),
                                     "id" = ids)
 # ---- FUNDING ----
 ## Setting up funds at year range, region, and crop ----
-funds <- read.csv('~/Box/quantifying_seed_innovation/organicseed_funding.csv') %>% 
+funds <- read.csv('organicseed_funding.csv') %>% 
   rename("funding_amt" = award_dollars) %>% 
   filter()
 funds <- funds %>% 
@@ -72,7 +72,7 @@ funds_year_region_crop <- funds %>%
   mutate(annual_average = c(funding_amt[1:12]/7, funding_amt[13:30]/5, funding_amt[31:45]/5))
 
 # Remove multiple regions and crops ----
-funds_nomulti <- read.csv("~/Box/quantifying_seed_innovation/organicseed_funding_year_region_crop.csv") %>% 
+funds_nomulti <- read.csv("organicseed_funding_year_region_crop.csv") %>% 
   rename("funding_amt" = award_dollars) %>% 
   mutate(year_range = case_when(
     year %in% 2002:2008 ~ "2002-2008",
@@ -104,15 +104,15 @@ veg_pattern <- paste(veg_pattern$variety, collapse = "|") %>%
   str_replace_all("wsquash|ssquash", "squash")
 
 ## Reading in datasets ----
-allgrowers <- read.csv('~/Box/quantifying_seed_innovation/nop_allgrowers.csv') %>% 
+allgrowers <- read.csv('nop_allgrowers.csv') %>% 
   mutate(year_range = assign_yr_range(cert_year),
          year_range = ifelse(cert_year <= 2001, "pre-2002", year_range)) %>% 
   filter(!is.na(year_range))
-seedproducers <- read.csv('~/Box/quantifying_seed_innovation/nop_seedsupplychain.csv') %>% 
+seedproducers <- read.csv('nop_seedsupplychain.csv') %>% 
   mutate(year_range = assign_yr_range(cert_year),
          year_range = ifelse(cert_year <= 2001, "pre-2002", year_range)) %>% 
   filter(!is.na(year_range))
-dnb <- read.csv('~/Box/quantifying_seed_innovation/dnb.csv') %>% 
+dnb <- read.csv('dnb.csv') %>% 
   filter(Region != "Outside US" & !is.na(Region)) %>% 
   mutate(year_range = assign_yr_range(year_started),
          year_range = ifelse(year_started <= 2001, "pre-2002", year_range)) %>% 
@@ -306,7 +306,7 @@ nosb <- data.frame("year_range" = c("2002-2008","2009-2013", "2014-2018"),
            "n_nosb_recs" = c(2,0,1))
 
 # Intellectual property ----
-pp <- read.csv('~/Box/quantifying_seed_innovation/uspto_plantpatents.csv') %>% 
+pp <- read.csv('uspto_plantpatents.csv') %>% 
   filter(Region != "International" & !is.na(Region)) %>% 
   filter(ornamental == F & organic == T) %>% 
   select(WKU, year_issued, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
@@ -315,7 +315,7 @@ pp <- read.csv('~/Box/quantifying_seed_innovation/uspto_plantpatents.csv') %>%
   select(-year_issued) %>% 
   filter(!is.na(year_range)) %>% 
   select(-id)
-pvp <- read.csv('~/Box/quantifying_seed_innovation/pvp.csv') %>% 
+pvp <- read.csv('pvp.csv') %>% 
   filter(Region != "International" & !is.na(Region)) %>% 
   filter(ornamental == F & organic == T) %>% 
   select(`Application..`, year_issued, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
@@ -324,7 +324,7 @@ pvp <- read.csv('~/Box/quantifying_seed_innovation/pvp.csv') %>%
   select(-year_issued) %>% 
   filter(!is.na(year_range)) %>% 
   select(-id)
-ossi <- read.csv('~/Box/quantifying_seed_innovation/ossi.csv') %>% 
+ossi <- read.csv('ossi.csv') %>% 
   filter(Region != "International" & !is.na(Region)) %>% 
   filter(organic == T) %>% 
   select(variety_name, year_pledge, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
@@ -372,5 +372,3 @@ survey_multilevel <- df %>%
 
 ## Saving data ----
 saveRDS(survey_multilevel, "~/Box/organicseed_adoption/df_multilevel.rds")
-
-

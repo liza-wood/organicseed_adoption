@@ -40,6 +40,8 @@ df.full <- df %>%
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
+         OGseed_percent_maincrop_binary = ifelse(OGseed_percent_maincrop >= 50, 1, 
+                                                 ifelse(OGseed_percent_maincrop < 50, 0, NA)),
          acreage_log = c(scale(log(TotalAcreage), scale = F)), 
          cropcat_n = c(scale(cropcat_n, scale = F)),
          funding_100thous = c(scale(annual_average/100000, scale = F)),
@@ -59,6 +61,7 @@ df.full <- df %>%
 
 # 2. Quick summaries of each variable ----
 summary(df.full$OGseed_percent_maincrop_prop)
+table(df.full$OGseed_percent_maincrop_binary)
 summary(df.full$funding_100thous)
 summary(df.full$sales_mill)
 summary(df.full$organicip_10)
@@ -71,6 +74,7 @@ summary(df.full$SeedSourceOwn_s)
 dfm1 <- select(df.full, 
                OGseed_percent_maincrop, 
                OGseed_percent_maincrop_prop, 
+               OGseed_percent_maincrop_binary,
                maincrop,
                CertifierRequestn,
                acreage_log, 
@@ -128,12 +132,14 @@ subsyst_multilevel_inla <- "f(maincrop, model = 'iid') +
                             f(survey_year, model = 'iid')"
 iv_perc <- "OGseed_percent_maincrop ~ "
 iv_prop <- "OGseed_percent_maincrop_prop ~ "
+iv_binary <- "OGseed_percent_maincrop_binary ~ "
 
 onelevel_prop <- paste0(iv_prop, dvs_core, subsyst_onelevel)
 onelevel_perc <- paste0(iv_perc, dvs_core, subsyst_onelevel)
 multilevel_prop <- paste0(iv_prop, dvs_core, subsyst_multilevel)
 multilevel_perc <- paste0(iv_perc, dvs_core, subsyst_multilevel)
 multilevel_prop_inla <- paste0(iv_prop, dvs_core, subsyst_multilevel_inla)
+multilevel_bin_inla <- paste0(iv_binary, dvs_core, subsyst_multilevel_inla)
 
 fullmodel_fx <- function(data, model_type){
   if(model_type == "bayes multi-level"){
@@ -151,12 +157,26 @@ fullmodel_fx <- function(data, model_type){
                   control.family = list(beta.censor.value = cens)
     )
   } else if(model_type == "beta inla multi-level"){
-    cens <- 0.05
+    cens <- 0.01
     model <- inla(eval(parse(text=multilevel_prop_inla)), 
                   data = data,
                   family = "beta",
                   control.compute = list(cpo=TRUE, waic=TRUE),
                   control.family = list(beta.censor.value = cens)
+    )
+  } else if(model_type == "normal inla multi-level"){
+    cens <- 0.05
+    model <- inla(eval(parse(text=multilevel_prop_inla)), 
+                  data = data,
+                  family = "gaussian",
+                  control.compute = list(dic=TRUE, cpo=TRUE, waic=TRUE)
+    )
+  } else if(model_type == "binomial inla multi-level"){
+    cens <- 0.05
+    model <- inla(eval(parse(text=multilevel_bin_inla)), 
+                  data = data,
+                  family = "binomial",
+                  control.compute = list(dic=TRUE, cpo=TRUE, waic=TRUE)
     )
   } else if(model_type == "binomial one-level"){
     model <- glm(onelevel_prop, 
@@ -192,12 +212,16 @@ acreage_bayeslm <- fullmodel_fx(data = dfm1, model_type = "bayes one-level")
 summary(acreage_bayeslm)
 acreage_bayeslmer <- fullmodel_fx(data = dfm1, model_type = "bayes multi-level")
 summary(acreage_bayeslmer)
+acreage_bayeslmer <- fullmodel_fx(data = dfm1, model_type = "normal inla multi-level")
+summary(acreage_bayeslmer)
 
 # Binary approaches ----
 ## This doesn't seem to default to 0-1
 acreage_glm <- fullmodel_fx(data = dfm1, model_type = "binomial one-level")
 summary(acreage_glm) # Set to quasibinomial to make it a little happer with non-integer DVs
 acreage_glmer <- fullmodel_fx(data = dfm1, model_type = "binomial multi-level")
+summary(acreage_glmer) # Doesn't accept quasibinomial as a family
+acreage_glmer <- fullmodel_fx(data = dfm1, model_type = "binomial inla multi-level")
 summary(acreage_glmer) # Doesn't accept quasibinomial as a family
 
 # Beta approaches ----
@@ -207,6 +231,20 @@ which(acreage_beta$cpo$failure > 0)
 acreage_beta_multi <- fullmodel_fx(data = dfm1, model_type = "beta inla multi-level")
 summary(acreage_beta_multi)
 which(acreage_beta_multi$cpo$failure > 0)
+
+acreage_beta_multi$waic$waic
+acreage_glmer$waic$waic
+acreage_bayeslmer$waic$waic
+
+plot(acreage_beta_multi, plot.fixed.effects=FALSE, plot.lincomb=FALSE, plot.random.effects=FALSE,
+     plot.hyperparameters=FALSE, plot.predictor=FALSE, plot.q=FALSE, plot.cpo=TRUE,
+     single=FALSE)
+plot(acreage_lmer, plot.fixed.effects=FALSE, plot.lincomb=FALSE, plot.random.effects=FALSE,
+     plot.hyperparameters=FALSE, plot.predictor=FALSE, plot.q=FALSE, plot.cpo=TRUE,
+     single=FALSE)
+plot(acreage_glmer, plot.fixed.effects=FALSE, plot.lincomb=FALSE, plot.random.effects=FALSE,
+     plot.hyperparameters=FALSE, plot.predictor=FALSE, plot.q=FALSE, plot.cpo=TRUE,
+     single=FALSE)
 
 # Comparing multi-level ----
 sum_lmer <- summary(acreage_lmer)
@@ -529,152 +567,3 @@ ggplot(mod, aes(x = mean,
   labs(x = "Intercept", shape = "", color = "", title = "beta")
 ggsave(filename = "tables/figureS5_modelbeta_yrly.png", width = 8, height = 4.5)
 
-# Random effects ----
-# Nothing will automatically make what I want for random effects, so here it goes:
-out <- sjPlot::plot_model(acreage_bayeslmer, type = "re")
-ranefdf_full <- data.frame(out[[1]]) %>% 
-  mutate(term = c("Field", "Forage", "Vegetables", 
-                  "North Central", "West", "Northeast", "South",
-                  "2011", "2016", "2021")) %>% 
-  rename("conf.low.inner" = "conf.low50",
-         "conf.high.inner" = "conf.high50") %>% 
-  select(facet, term, estimate, `conf.low`, `conf.low.inner`, `conf.high.inner`, `conf.high`) %>% 
-  mutate(model = "All years")
-ranef_table_yrly <- function(lmer_model, year_in_model){
-  out <- sjPlot::plot_model(lmer_model, type = "re")
-  ranefdf <- data.frame(out[[1]]) %>% 
-    mutate(term = c("Field", "Forage", "Vegetables", 
-                    "North Central", "West", "Northeast", "South")) %>% 
-    rename("conf.low.inner" = "conf.low50",
-           "conf.high.inner" = "conf.high50") %>% 
-    select(facet, term, estimate, `conf.low`, `conf.low.inner`, `conf.high.inner`, `conf.high`) %>%
-    mutate(model = case_when(
-      year_in_model == "All years" ~ "All years",
-      year_in_model == "2011" ~ "2010",
-      year_in_model == "2016" ~ "2015",
-      year_in_model == "2021" ~ "2020",
-    ))
-  return(ranefdf)
-}
-ranefdf11 <- ranef_table_yrly(acreage_2011_bayes, 2011)
-ranefdf16 <- ranef_table_yrly(acreage_2016_bayes, 2016)
-ranefdf21 <- ranef_table_yrly(acreage_2021_bayes, 2021)
-
-ranefdf <- rbind(ranefdf_full, ranefdf11, ranefdf16, ranefdf21)
-ranefdf$model <- factor(ranefdf$model, c("All years", "2010", "2015", "2020"))
-pd <- position_dodge(width=0.75)
-ggplot(ranefdf, aes(x = estimate, 
-                    y = factor(term, rev(unique(ranefdf$term))))) +
-  #geom_point(size=3,  position = pd, fill = "white", shape = c(rep(1,10), rep(2, 7),
-  #                                                             rep(24,7), rep(25,7))) +
-  ggstance::geom_pointrangeh(aes(xmin = conf.low, 
-                                 xmax = conf.high,
-                                 color = factor(model, rev(c("All years", "2020", "2015", "2010"))), 
-                                 shape = factor(model, rev(c("All years", "2020", "2015", "2010")))),
-                             position = ggstance::position_dodgev(height = .6), 
-                             fill = "white", fatten = 3, size = 0.8) +
-  #geom_errorbar(aes(xmin=`conf.high`,xmax=`conf.low`), width=0.1, position = pd) +
-  geom_vline(xintercept = 0, linetype = 2, size = 0.25) + 
-  scale_colour_manual(values = c("black", greens[5], reds[5], blues[5]),
-                      limits = levels(ranefdf$model)) + 
-  scale_shape_manual(limits = levels(ranefdf$model), 
-                     values = 21:24) +
-  theme_nice(legend.pos = "right") + 
-  drop_y_gridlines() + 
-  theme(axis.title.y = element_blank(), 
-        axis.text.y = element_text(size = 10), 
-        #legend.position="none",
-        panel.grid.major.x = element_line(linetype = "solid")) + 
-  labs(x = "Intercept", shape = "", color = "")
-ggsave("tables/figure5b.jpeg", width = 8, height = 4)
-
-# Making a table ----
-summary(acreage_bayes)
-out <- sjPlot::plot_model(acreage_bayes)
-fixefdf_full <- data.frame(out[[1]]) %>% 
-  mutate(Variable = c("Perceived importance of organic seed", 
-                      "Seed quality distrust barrier",
-                      "Buyer requirement barrier",
-                      "Certifiers request organic seed use", 
-                      "Limited seed traits barrier",
-                      "Organic research funding",
-                      "Number of registered organically bred varieties",
-                      "Ratio of organic growers to supply chain actors",
-                      "Seed availability barrier",
-                      "Organic seed company sales",
-                      "Saves own seed",
-                      "Farm size (log acres)",
-                      "Number of crop categories", "phi")) %>% 
-  mutate(`Effect size` = round(estimate, 2),
-         `Upper CI` = round(conf.high, 2),
-         `Lower CI` = round(conf.low, 2)) %>% 
-  select(Variable, `Effect size`, `Upper CI`, `Lower CI`)
-
-out <- sjPlot::plot_model(acreage_2011_bayes)
-summary(acreage_2011_bayes)
-fixefdf_2011 <- data.frame(out[[1]]) %>% 
-  mutate(Variable = c("Perceived importance of organic seed", 
-                      "Seed quality distrust barrier",
-                      "Buyer requirement barrier",
-                      "Certifiers request organic seed use", 
-                      "Limited seed traits barrier",
-                      "Organic research funding",
-                      #"Number of registered organically bred varieties",
-                      "Ratio of organic growers to supply chain actors",
-                      "Seed availability barrier",
-                      "Organic seed company sales",
-                      "Saves own seed",
-                      "Farm size (log acres)",
-                      "Number of crop categories")) %>% 
-  mutate(`Effect size` = round(estimate, 2),
-         `Upper CI` = round(conf.high, 2),
-         `Lower CI` = round(conf.low, 2)) %>% 
-  select(Variable, `Effect size`, `Upper CI`, `Lower CI`)
-
-out <- sjPlot::plot_model(acreage_2016_bayes)
-fixefdf_2016 <- data.frame(out[[1]]) %>% 
-  mutate(Variable = c("Perceived importance of organic seed", 
-                      "Seed quality distrust barrier",
-                      "Buyer requirement barrier",
-                      "Certifiers request organic seed use", 
-                      "Limited seed traits barrier",
-                      "Organic research funding",
-                      #"Number of registered organically bred varieties",
-                      "Ratio of organic growers to supply chain actors",
-                      "Seed availability barrier",
-                      "Organic seed company sales",
-                      "Saves own seed",
-                      "Farm size (log acres)",
-                      "Number of crop categories")) %>% 
-  mutate(`Effect size` = round(estimate, 2),
-         `Upper CI` = round(conf.high, 2),
-         `Lower CI` = round(conf.low, 2)) %>% 
-  select(Variable, `Effect size`, `Upper CI`, `Lower CI`)
-
-out <- sjPlot::plot_model(acreage_2021_bayes)
-fixefdf_2021 <- data.frame(out[[1]]) %>% 
-  mutate(Variable = c("Perceived importance of organic seed", 
-                      "Seed quality distrust barrier",
-                      "Buyer requirement barrier",
-                      "Certifiers request organic seed use", 
-                      "Limited seed traits barrier",
-                      "Organic research funding",
-                      "Number of registered organically bred varieties",
-                      "Ratio of organic growers to supply chain actors",
-                      "Seed availability barrier",
-                      "Organic seed company sales",
-                      "Saves own seed",
-                      "Farm size (log acres)",
-                      "Number of crop categories")) %>% 
-  mutate(`Effect size` = round(estimate, 2),
-         `Upper CI` = round(conf.high, 2),
-         `Lower CI` = round(conf.low, 2)) %>% 
-  select(Variable, `Effect size`, `Upper CI`, `Lower CI`)
-
-ranef(acreage_bayes)$Region
-ranef(acreage_bayes)$maincrop
-ranef(acreage_bayes)$survey_year
-
-text <- df %>% 
-  filter(!(barrier_text %in% c("", "-2", "-1"))) %>% 
-  select(survey_year, contains('barrier_'))

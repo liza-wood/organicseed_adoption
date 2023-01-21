@@ -7,26 +7,27 @@ output: pdf_document
 
 $$
 \begin{aligned}
-  \operatorname{Percent Organic Seed}_{i}  &\sim N \left(\mu, \sigma^2 \right) \\
-    \mu &=\alpha_{j[i],k[i],l[i]} + \beta_{1}(\operatorname{Values}) + \beta_{2}(\operatorname{Acreage}) + \beta_{3}(\operatorname{CertifierRequest}) \\
-    \alpha_{j}  &\sim N \left(\gamma_{0}^{\alpha} + \gamma_{1}^{\alpha}(\operatorname{Funding}) + \gamma_{2}^{\alpha}(\operatorname{Growers:Suppliers}) + \gamma_{3}^{\alpha}(\operatorname{Revenue}), \sigma^2_{\alpha_{j}} \right)
+  \operatorname{Organic seed proportion of acreage}_{i}  &\sim N \left(\mu, \sigma^2 \right) \\
+    \mu &=\alpha_{j[i],k[i],l[i]} + \beta_{1}(\operatorname{Value organic seed}) +  \\
+                                  &\ \beta_{2}(\operatorname{Distrust quality}) + \\
+                                  &\ \beta_{3}(\operatorname{Buyer requirements}) + \\
+                                  &\ \beta_{4}(\operatorname{Certifier request}) + \\
+                                  &\ \beta_{5}(\operatorname{Lacks desirable traits}) + \\
+                                  &\ \beta_{6}(\operatorname{Availability}) + \\
+                                  &\ \beta_{7}(\operatorname{Non-commercial seed sourcing}) + \\
+                                  &\ \beta_{8}(\operatorname{Farm size}) + \\
+                                  &\ \beta_{9}(\operatorname{Crop diversity}) \\
+    \alpha_{j}  &\sim N (\gamma_{0}^{\alpha} + \gamma_{1}^{\alpha}(\operatorname{Research funding}) + \\
+                                             &\ \gamma_{2}^{\alpha}(\operatorname{Organic IP}) + \\
+                                             &\ \gamma_{3}^{\alpha}(\operatorname{Grower to supplier ratio}) + \\
+                                             &\ \gamma_{4}^{\alpha}(\operatorname{Sales}), \\
+                                             &\ \sigma^2_{\alpha_{j}})
     \text{, for Region j = 1,} \dots \text{,J} \\
     \alpha_{k}  &\sim N \left(\mu_{\alpha_{k}}, \sigma^2_{\alpha_{k}} \right)
-    \text{, for Year k = 1,} \dots \text{,K} \\
+    \text{, for survey\_year k = 1,} \dots \text{,K} \\
     \alpha_{l}  &\sim N \left(\mu_{\alpha_{l}}, \sigma^2_{\alpha_{l}} \right)
-    \text{, for Crop l = 1,} \dots \text{,L}
+    \text{, for maincrop l = 1,} \dots \text{,L}
 \end{aligned}
 $$
-$$
-\begin{aligned}
-  \operatorname{IncreasedOrganicSeed}_{i}  &\sim \operatorname{Binomial}(n = 1, \operatorname{prob}_{\operatorname{IncreasedOrganicSeed} = 1} = \widehat{P}) \\
-    \log\left[\frac{\hat{P}}{1 - \hat{P}} \right] &=\alpha_{j[i],k[i],l[i]} + \beta_{1}(\operatorname{Values}) + \beta_{2}(\operatorname{Acreage}) + \beta_{3}(\operatorname{CertifierRequest}) \\
-    \alpha_{j}  &\sim N \left(\gamma_{0}^{\alpha} + \gamma_{1}^{\alpha}(\operatorname{Funding}) + \gamma_{2}^{\alpha}(\operatorname{Growers:Suppliers}) + \gamma_{3}^{\alpha}(\operatorname{Revenue}), \sigma^2_{\alpha_{j}} \right)
-    \text{, for Region j = 1,} \dots \text{,J} \\
-    \alpha_{k}  &\sim N \left(\mu_{\alpha_{k}}, \sigma^2_{\alpha_{k}} \right)
-    \text{, for Year k = 1,} \dots \text{,K} \\
-    \alpha_{l}  &\sim N \left(\mu_{\alpha_{l}}, \sigma^2_{\alpha_{l}} \right)
-    \text{, for Crop l = 1,} \dots \text{,L}
-\end{aligned}
-$$
+
 
