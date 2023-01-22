@@ -20,6 +20,16 @@ getzipcode <- zipcode$state
 names(getzipcode) <- zipcode$zip
 df21f$State <- unname(getzipcode[as.character(df21f[,"Q04A"])])
 
+# Up stream I see a few errors, I think the one who said certified in 205 means 2005
+df21f$Q01A[df21f$YearsCertified > 100 & !is.na(df21f$YearsCertified)]
+df21f$YearsCertified[df21f$Q01A == 205] <- 2021-2005
+df21f$Q01A[df21f$Q01A == 205] <- 2005
+# As for the 1908, which is probable when they established, I am going to assign them the upper limit for certification in their state
+yrs <- df21f$Q01A[df21f$State %in% c("IA", "Iowa", "IOWA")] 
+yrs <- as.numeric(str_remove_all(yrs, "No answer"))
+sort(yrs)
+df21f$YearsCertified[df21f$Q01A == 1908] <- 2021-1994
+df21f$Q01A[df21f$Q01A == 1908] <- 1994
 
 for(i in 1:ncol(df21f)){
   for(j in 1:nrow(codebook)){

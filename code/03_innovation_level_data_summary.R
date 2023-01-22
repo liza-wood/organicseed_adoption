@@ -169,7 +169,7 @@ seedproducers_table <- seedproducers %>%
   rename(year = cert_year) %>% 
   right_join(years) %>% 
   mutate(seedproducers_n = ifelse(is.na(seedproducers_n), 0, seedproducers_n)) %>% 
-  arrange(year)
+  arrange(year) 
 
 seedproducers_table$seedproducers_n_building <- NA
 for(i in 1:nrow(seedproducers_table)){
@@ -195,10 +195,11 @@ valuechain_table <- full_join(market_table, allgrowers_table) %>%
   )) 
 valuechain_table %>% 
   filter(!is.na(year_range)) %>% 
-  summary(ratio)
+  summary()
 
 ## Supply chain by year  ----
 supplychain_yearonly <- valuechain_table %>% 
+  filter(!(is.na(year_range))) %>% 
   group_by(year_range) %>% 
   summarize(supplychain_n_avg = mean(seedproducers_n + company_n),
             grower_n_avg = mean(grower_n),
@@ -276,7 +277,12 @@ valuechain_reg_pre02 <- full_join(market_reg_pre02, allgrowers_year_reg_pre02) %
 
 supplychain_year_region <- valuechain_reg_pre02 %>% 
   filter(year_range != "pre-2002" & !is.na(year_range)) %>% 
-  group_by(year_range, Region) 
+  group_by(year_range, Region) %>% 
+  mutate(supplychain_n_avg = case_when(
+    year_range == "2002-2008" ~ (company_n + seedproducers_n)/7,
+    year_range == "2009-2013" ~ (company_n + seedproducers_n)/5,
+    year_range == "2014-2018" ~ (company_n + seedproducers_n)/5))
+  
 
 # Sales ----
 summary(dnb$sales)

@@ -20,7 +20,8 @@ df <- df %>%
          Region, # regional variables (region and seed production)
          contains("barrier"), # barriers
          noncommercial_seedsource,
-         contains("AddSteps")) 
+         contains("AddSteps"),
+         YearsCertified) 
 
 summary(df$OGseed_percent_maincrop)
 table(df$CertifierRequest[df$IncreasedOGSeed != "Already at 100%"])
@@ -34,10 +35,10 @@ summary(df$barrier_buyerReq)
 summary(df$barrier_distrustQuality)
 summary(df$TotalAcreage)
 summary(df$cropcat_n)
+summary(df$YearsCertified)
 
 table(is.na(df$barrier_availability), df$survey_year)
 table(is.na(df$TotalAcreage), df$survey_year)
-
 
 # Where are the NAs in the data?
 aggr(df, col=c('navyblue','red'), 
@@ -67,6 +68,7 @@ variable_df <- data.frame(
                 "      Field Crop Acreage",
                 "      Forage Crop Acreage",
                 "Number of crop categories",
+                "Years certified",
                 "Number of respondents"
                 ),
                 
@@ -86,6 +88,7 @@ variable_df <- data.frame(
            round(mean(df11$FieldAcreage[df11$FieldAcreage != 0], na.rm = T), 2),
            round(mean(df11$ForageAcreage[df11$ForageAcreage != 0], na.rm = T), 2),
            round(mean(df11$cropcat_n), 2),
+           round(mean(df11$YearsCertified, na.rm = T), 2),
            nrow(df11)
            ),
            
@@ -105,6 +108,7 @@ variable_df <- data.frame(
           round(mean(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 2),
           round(mean(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
           round(mean(df16$cropcat_n, na.rm = T), 2),
+          round(mean(df16$YearsCertified, na.rm = T), 2),
           nrow(df16)
           ),
   
@@ -124,6 +128,7 @@ variable_df <- data.frame(
           round(mean(df21$FieldAcreage[df21$FieldAcreage != 0], na.rm = T), 2),
           round(mean(df21$ForageAcreage[df21$ForageAcreage != 0], na.rm = T), 2),
           round(mean(df21$cropcat_n, na.rm = T), 2),
+          round(mean(df21$YearsCertified, na.rm = T), 2),
           nrow(df21)
              )
 )

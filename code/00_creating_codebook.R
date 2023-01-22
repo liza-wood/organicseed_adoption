@@ -33,12 +33,12 @@ codebook21 <- read.csv("question_labels.csv") %>% select(Name, Label)
 df11f <- readRDS("data2011_cleaned.rds")
 df16f <- readRDS("data2016_cleaned.rds")
 df21f <- readRDS("data2021_cleaned.rds")
-
 zipcode <- data.table::fread("zipcode.csv")
 getzipcode <- zipcode$state
 names(getzipcode) <- zipcode$zip
 df21f$State <- unname(getzipcode[as.character(df21f[,"Q04A"])])
 df21$State <- unname(getzipcode[as.character(df21[,"Q04A"])])
+
 
 df11_combined <- data.frame(cleaned_colnames = colnames(df11f)) %>% 
   full_join(codebook11, by = c("cleaned_colnames" = "Rcode")) %>% 
