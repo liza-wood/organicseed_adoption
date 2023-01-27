@@ -24,8 +24,6 @@ $$
                                              &\ \sigma^2_{\alpha_{j}})
     \text{, for Region j = 1,} \dots \text{,J} \\
     \alpha_{k}  &\sim N \left(\mu_{\alpha_{k}}, \sigma^2_{\alpha_{k}} \right)
-    \text{, for survey\_year k = 1,} \dots \text{,K} \\
-    \alpha_{l}  &\sim N \left(\mu_{\alpha_{l}}, \sigma^2_{\alpha_{l}} \right)
     \text{, for maincrop l = 1,} \dots \text{,L}
 \end{aligned}
 $$

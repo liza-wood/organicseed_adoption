@@ -37,6 +37,21 @@ summary(df$TotalAcreage)
 summary(df$cropcat_n)
 summary(df$YearsCertified)
 
+df %>% 
+  mutate(size_cat = case_when(
+    TotalAcreage <= 7 ~ "Small (0-7)",
+    TotalAcreage > 7 & TotalAcreage <= 64 ~ "Medium (8-64)",
+    TotalAcreage > 64 & TotalAcreage <= 225 ~ "Large (65-225)",
+    TotalAcreage >225 ~ "Extra large (225+)"
+  )) %>% 
+  group_by(size_cat) %>% 
+  summarize(mean = mean(OGseed_percent_maincrop, na.rm =T),
+            sd = sd(OGseed_percent_maincrop, na.rm =T),
+            count = n())
+ggplot(df, aes(x = TotalAcreage, y = OGseed_percent_maincrop)) +
+  geom_point() +
+  scale_x_log10()
+
 table(is.na(df$barrier_availability), df$survey_year)
 table(is.na(df$TotalAcreage), df$survey_year)
 
