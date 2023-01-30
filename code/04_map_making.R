@@ -225,5 +225,5 @@ df21mapdf <- region_text(df21)
 map20 <- make_map(df21, df21mapdf, blues[c(6,2,4,8)], "2020")
 
 cowplot::plot_grid(map10, map15, map20, nrow = 1)
-ggsave("tables/figure2.png", height = 6, width = 10, dpi = 800)
+ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/tables/figure2.png", height = 2.5, width = 9, dpi = 800)
 

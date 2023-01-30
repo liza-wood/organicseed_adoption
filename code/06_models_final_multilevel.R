@@ -84,6 +84,7 @@ ranefdf_full <- data.frame(out[[1]]) %>%
          "conf.high.inner" = "conf.high50") %>% 
   select(facet, term, estimate, `conf.low`, `conf.low.inner`, `conf.high.inner`, `conf.high`) %>% 
   mutate(model = "All years")
+
 ranef_table_yrly <- function(lmer_model, year_in_model){
   out <- sjPlot::plot_model(lmer_model, type = "re")
   ranefdf <- data.frame(out[[1]]) %>% 
@@ -138,7 +139,3 @@ ggplot(ranefdf, aes(x = estimate,
   labs(x = "Intercept", shape = "", color = "")
 ggsave("tables/figure5b.jpeg", width = 8, height = 4)
 
-
-text <- df %>% 
-  filter(!(barrier_text %in% c("", "-2", "-1"))) %>% 
-  select(survey_year, contains('barrier_'))
