@@ -4,6 +4,13 @@ library(lubridate)
 library(ggplot2)
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
 df <- readRDS("~/Box/organicseed_adoption/df.rds") 
+
+ggplot(df, aes(x = TotalAcreage, y = OGseed_percent_maincrop, color = maincrop)) +
+  geom_point(alpha = .5, position = "jitter") +
+  geom_smooth(method = "lm") +
+  facet_wrap(~Region) +
+  ylim(c(0,100)) +
+  xlim(c(0, 5000))
 # Let's narrow this down to the variables of interest
 df <- df %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
