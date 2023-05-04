@@ -5,13 +5,6 @@ library(ggplot2)
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
 df <- readRDS("~/Box/organicseed_adoption/df.rds") 
 
-ggplot(df, aes(x = TotalAcreage, y = OGseed_percent_maincrop, color = maincrop)) +
-  geom_point(alpha = .5, position = "jitter") +
-  geom_smooth(method = "lm") +
-  facet_wrap(~Region) +
-  ylim(c(0,100)) +
-  xlim(c(0, 5000))
-# Let's narrow this down to the variables of interest
 df <- df %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
   select(maincrop, OGseed_percent_maincrop, IncreasedOGSeed,
@@ -160,7 +153,7 @@ round(table(df11$IncreasedOGSeed)[1]/sum(table(df11$IncreasedOGSeed)[1:3]), 2)
 round(table(df16$IncreasedOGSeed)[1]/sum(table(df16$IncreasedOGSeed)[1:3]), 2)
 round(table(df21$IncreasedOGSeed)[1]/sum(table(df21$IncreasedOGSeed)[1:3]), 2)
 
-write.csv(variable_df, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1a.csv", row.names = F)
+write.csv(variable_df, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table2a.csv", row.names = F)
 # Other parts of table 1 are in 03_innovation_level_data: line 33 for funding and supplychain_yearonly for supply chain
 
 # FIGURES FOR PAPER -----
@@ -193,6 +186,27 @@ df %>%
   geom_col(aes(y = avg_percent), width = .65, position = "dodge") +
   geom_point(size = 1) +
   geom_text(position=position_dodge(width=0.9), size = 2.5, hjust = 0,vjust = -.6) +
+  scale_fill_manual(values = c(greens[5], reds[5], blues[5])) + 
+  theme_linedraw() +
+  theme_minimal() +
+  facet_wrap(~maincrop) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(angle=45,hjust=1)) +
+  labs(#x = "Survey year", 
+    y = "Average percent of land\nplanted to organic seed", 
+    #title = "Organic seed use by organic growers",
+    fill = "")
+
+df %>% 
+  mutate(survey_year = case_when(
+    survey_year == 2011 ~ 2010,
+    survey_year == 2016 ~ 2015,
+    survey_year == 2021 ~ 2020,
+  )) %>% 
+  ggplot(aes(x = Region,
+             y = OGseed_percent_maincrop,
+             fill = factor(survey_year)))+
+  geom_boxplot() +
   scale_fill_manual(values = c(greens[5], reds[5], blues[5])) + 
   theme_linedraw() +
   theme_minimal() +

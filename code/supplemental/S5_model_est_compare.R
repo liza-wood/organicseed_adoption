@@ -34,18 +34,21 @@ blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
 ## Make 4 different equations
 
 # Linear approaches ----
+## Frequentist
 acreage_lm <- fullmodel_fx(data = dfm1, model_type = "lm")
 summary(acreage_lm)
 acreage_lmer <- fullmodel_fx(data = dfm1, model_type = "lmer")
 summary(acreage_lmer)
 
-# Horrible
+## Bayesian 
 acreage_bayeslm <- fullmodel_fx(data = dfm1, model_type = "bayes one-level")
 summary(acreage_bayeslm)
 acreage_bayeslmer <- fullmodel_fx(data = dfm1, model_type = "bayes multi-level")
 summary(acreage_bayeslmer)
-acreage_bayeslmer <- fullmodel_fx(data = dfm1, model_type = "normal inla multi-level")
-summary(acreage_bayeslmer)
+
+## INLA
+acreage_inlalmer <- fullmodel_fx(data = dfm1, model_type = "normal inla multi-level")
+summary(acreage_inlalmer)
 
 # Binary approaches ----
 ## This doesn't seem to default to 0-1

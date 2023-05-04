@@ -1,16 +1,16 @@
-dvs_core <- "legitimation + 
-                 barrier_distrustQuality_s +
+dvs_core <- "legitimation_user + 
+                 #barrier_distrustQuality_s +
                  #ratio +
-                 supplychain_n_avg_s +
-                 barrier_buyerReq_s +
+                 entrants_supplychain_n_avg_s +
+                 #barrier_buyerReq_s +
                  #barrier_insuffQuantity_s +
                  CertifierRequestn + 
-                 funding_100thous + 
+                 resources_funding_100thous + 
                  #n_nosb_recs_s +
-                 barrier_lackdesiredTraits_s +
-                 organicip_10 +
-                 barrier_availability_s +
-                 sales_mill + 
+                 #barrier_lackdesiredTraits_s +
+                 knowledge_organicip_10 +
+                 #barrier_availability_s +
+                 #sales_mill + 
                  #barrier_saveOwn_s +
                  #SeedSourceOwn_s +
                  noncommercial_seedsource_s +
@@ -77,11 +77,11 @@ fullmodel_fx <- function(data, model_type){
                   control.compute = list(dic=TRUE, cpo=TRUE, waic=TRUE)
     )
   } else if(model_type == "binomial one-level"){
-    model <- glm(onelevel_prop, 
+    model <- glm(eval(parse(text=onelevel_prop)), 
                  family = quasibinomial(link = 'logit'),
                  data = data)
   } else if(model_type == "binomial multi-level"){
-    model <- glmer(multilevel_prop, 
+    model <- glmer(eval(parse(text=multilevel_prop)), 
                    family = binomial(link = 'logit'),
                    data = data)
   } else if(model_type == "lm"){
@@ -99,33 +99,48 @@ fullmodel_fx <- function(data, model_type){
   return(model)
 }
 
-dvs_core_noIP <- "legitimation + 
-                 barrier_distrustQuality_s +
+dvs_core_noIP <- "legitimation_user + 
+                 #barrier_distrustQuality_s +
                  #ratio +
-                 supplychain_n_avg_s +
-                 barrier_buyerReq_s +
+                 entrants_supplychain_n_avg_s +
+                 #barrier_buyerReq_s +
                  #barrier_insuffQuantity_s +
                  CertifierRequestn + 
-                 funding_100thous + 
+                 resources_funding_100thous + 
                  #n_nosb_recs_s +
-                 barrier_lackdesiredTraits_s +
-                 #organicip_10 +
-                 barrier_availability_s +
-                 sales_mill + 
+                 #barrier_lackdesiredTraits_s +
+                 #knowledge_organicip_10 +
+                 #barrier_availability_s +
+                 #sales_mill + 
                  #barrier_saveOwn_s +
                  #SeedSourceOwn_s +
                  noncommercial_seedsource_s +
                  acreage_log +  
                  cropcat_n + 
                  years_certified_s + "
+
+subsyst_onelevel_noyear <- "maincrop +
+                     Region"
+
 subsyst_multilevel_noyear <- "(1|maincrop) +
                      (1|Region)"
-iv_perc <- "OGseed_percent_maincrop ~ "
-iv_prop <- "OGseed_percent_maincrop_prop ~ "
 
-multilevel_perc_11_16 <- paste0(iv_perc, dvs_core_noIP, subsyst_multilevel_noyear)
+subsyst_multilevel_inla_noyear <- "f(maincrop, model = 'iid') +
+                            f(Region, model = 'iid')"
+
+onelevel_prop_21 <- paste0(iv_prop, dvs_core, subsyst_onelevel_noyear)
+onelevel_perc_21 <- paste0(iv_perc, dvs_core, subsyst_onelevel_noyear)
+multilevel_prop_21 <- paste0(iv_prop, dvs_core, subsyst_multilevel_noyear)
 multilevel_perc_21 <- paste0(iv_perc, dvs_core, subsyst_multilevel_noyear)
-multilevel_perc_16_21 <- paste0(iv_perc, dvs_core, subsyst_multilevel_noyear)
+multilevel_prop_inla_21 <- paste0(iv_prop, dvs_core, subsyst_multilevel_inla_noyear)
+multilevel_bin_inla_21 <- paste0(iv_binary, dvs_core, subsyst_multilevel_inla_noyear)
+
+onelevel_prop_11_16 <- paste0(iv_prop, dvs_core_noIP, subsyst_onelevel_noyear)
+onelevel_perc_11_16 <- paste0(iv_perc, dvs_core_noIP, subsyst_onelevel_noyear)
+multilevel_prop_11_16 <- paste0(iv_prop, dvs_core_noIP, subsyst_multilevel_noyear)
+multilevel_perc_11_16 <- paste0(iv_perc, dvs_core_noIP, subsyst_multilevel_noyear)
+multilevel_prop_inla_11_16 <- paste0(iv_prop, dvs_core_noIP, subsyst_multilevel_inla_noyear)
+multilevel_bin_inla_11_16 <- paste0(iv_binary, dvs_core_noIP, subsyst_multilevel_inla_noyear)
 
 
 yearlymodel_fx <- function(data, model_type, year){
@@ -220,27 +235,27 @@ yearlymodel_fx <- function(data, model_type, year){
 }
 
 coefs <- c("Perceived importance of organic seed" = 
-             "legitimation", 
-           "Seed quality distrust barrier" =
-             "barrier_distrustQuality_s",
+             "legitimation_user", 
+           #"Seed quality distrust barrier" =
+           #  "barrier_distrustQuality_s",
            #"Ratio of organic growers to supply chain actors" =
            #  "ratio",
            "Number of new organic seed supply entrants" =
-             "supplychain_n_avg_s",
-           "Buyer requirement barrier" = 
-             "barrier_buyerReq_s",
+             "entrants_supplychain_n_avg_s",
+           #"Buyer requirement barrier" = 
+           #  "barrier_buyerReq_s",
            "Certifiers request organic seed use" =
              "CertifierRequestn", 
            "Organic research funding" = 
-             "funding_100thous", 
-           "Limited seed traits barrier" =
-             "barrier_lackdesiredTraits_s",
+             "resources_funding_100thous", 
+           #"Limited seed traits barrier" =
+           #  "barrier_lackdesiredTraits_s",
            "Number of registered organically bred varieties" =
-             "organicip_10",
-           "Seed availability barrier" = 
-             "barrier_availability_s",
-           "Organic seed company sales" = 
-             "sales_mill",
+             "knowledge_organicip_10",
+           #"Seed availability barrier" = 
+           #  "barrier_availability_s",
+           #"Organic seed company sales" = 
+           #  "sales_mill",
            "Non-commerical seed sources" = "noncommercial_seedsource_s", #"SeedSourceOwn_s",
            "Farm size (log acres)" = "acreage_log",
            "Number of crop categories" = "cropcat_n",

@@ -2,6 +2,8 @@ library(tidyverse)
 library(lubridate)
 setwd("~/Box/quantifying_seed_innovation/")
 
+# This is essentially take from quantifying script
+
 assign_yr_range <- function(year_var){
   x <- ifelse(year_var >= 2002 & year_var <= 2008, "2002-2008",
               ifelse(year_var >= 2009 & year_var <= 2013, "2009-2013",
@@ -30,20 +32,13 @@ shape_nocrops_pre2002 <- data.frame("year_range" = rep(year_range2, each = 4),
                                     "id" = ids)
 # ---- FUNDING ----
 ## Setting up funds at year range, region, and crop ----
-funds <- read.csv('organicseed_funding.csv') %>% 
+funds <- read.csv('funding/organicseed_funding.csv') %>% 
   rename("funding_amt" = award_dollars) %>% 
   filter()
+funds$year_range <- assign_yr_range(funds$year) 
 funds <- funds %>% 
-  mutate(year_range = case_when(
-    year %in% 2002:2008 ~ "2002-2008",
-    year %in% 2009:2013 ~ "2009-2013",
-    year %in% 2014:2018 ~ "2014-2018",
-    T ~ NA_character_
-  )) %>% 
   filter(!is.na(year_range)) %>% 
   select(year, year_range, Region, maincrop, funding_amt)
-
-summary(funds$funding_amt)
 
 ## Table 1: Funding only by years ----
 funds_yearonly <- funds %>% 
@@ -64,7 +59,6 @@ funds_year_region <- funds %>%
   mutate(annual_average = c(funding_amt[1:5]/7, funding_amt[6:10]/5, funding_amt[11:15]/5))
 
 ## Funding by year range, region, and crop ----
-
 funds_year_region_crop <- funds %>% 
   group_by(year_range, Region, maincrop) %>% 
   summarize(funding_amt = sum(funding_amt, na.rm = T)) %>% 
@@ -72,7 +66,7 @@ funds_year_region_crop <- funds %>%
   mutate(annual_average = c(funding_amt[1:12]/7, funding_amt[13:30]/5, funding_amt[31:45]/5))
 
 # Remove multiple regions and crops ----
-funds_nomulti <- read.csv("organicseed_funding_year_region_crop.csv") %>% 
+funds_nomulti <- read.csv("funding/organicseed_funding_year_region_crop.csv") %>% 
   rename("funding_amt" = award_dollars) %>% 
   mutate(year_range = case_when(
     year %in% 2002:2008 ~ "2002-2008",
@@ -97,22 +91,22 @@ southern <- c("Texas", "Oklahoma", "Arkansas", "Louisiana", "Kentucky", "Tenness
 northeast <- c("West Virginia", "Maryland", "Delaware", "New Jersey", "Pennsylvania", "New York", "Connecticut", "Rhode Island", "Massachusetts", "Vermont", "New Hampshire", "Maine")
 field_pattern <- "[Cc]orn|[Ss]oy|[Cc]otton|[Ww]heat|[Aa]maranth|[Bb]arley|[Rr]ye|[Ss]pelt|[Bb]uckwheat|[Oo]at|[Mm]illet|[Qq]uinoa|[Tt]riticale|[Rr]ice|[Ss]orghum"
 forage_pattern <- "[Hh]ay|[Pp]asture|[Aa]lfalfa|[Cc]lover|[Gg]rass|[Ff]ieldpea|[Vv]etch|[Ss]ilage"
-veg_pattern <- read.csv("~/Box/osa_networks/data_combined/crop_family_manual.csv") %>%
+veg_pattern <- read.csv("~/Box/osa_networks/data_combined/indices/crop_family_manual.csv") %>%
   filter(cat == "Vegetables") %>% 
   mutate(variety = textstem::lemmatize_words(variety))
 veg_pattern <- paste(veg_pattern$variety, collapse = "|") %>% 
   str_replace_all("wsquash|ssquash", "squash")
 
 ## Reading in datasets ----
-allgrowers <- read.csv('nop_allgrowers.csv') %>% 
+allgrowers <- read.csv('nop/nop_allgrowers.csv') %>% 
   mutate(year_range = assign_yr_range(cert_year),
          year_range = ifelse(cert_year <= 2001, "pre-2002", year_range)) %>% 
   filter(!is.na(year_range))
-seedproducers <- read.csv('nop_seedsupplychain.csv') %>% 
+seedproducers <- read.csv('nop/nop_seedsupplychain.csv') %>% 
   mutate(year_range = assign_yr_range(cert_year),
          year_range = ifelse(cert_year <= 2001, "pre-2002", year_range)) %>% 
   filter(!is.na(year_range))
-dnb <- read.csv('dnb.csv') %>% 
+dnb <- read.csv('dnb/dnb.csv') %>% 
   filter(Region != "Outside US" & !is.na(Region)) %>% 
   mutate(year_range = assign_yr_range(year_started),
          year_range = ifelse(year_started <= 2001, "pre-2002", year_range)) %>% 
@@ -160,6 +154,7 @@ for(i in 1:nrow(allgrowers_table)){
       allgrowers_table$grower_n_building[i-1]
   }  
 }
+
 years <- data.frame(year = min(seedproducers$cert_year):2018)
 seedproducers_table <- seedproducers %>% 
   #filter(cert_year >= 2002 & cert_year <= 2018) %>% 
@@ -285,9 +280,7 @@ supplychain_year_region <- valuechain_reg_pre02 %>%
   
 
 # Sales ----
-summary(dnb$sales)
 
-table(dnb$Region)
 dnb %>% 
   group_by(Region) %>% 
   summarize(regional_age = mean(year_started, na.rm = T))
@@ -295,8 +288,7 @@ dnb %>%
 dnb_sales_reg <- dnb %>% 
   group_by(Region) %>% 
   summarize(dnb_regional_sales = mean(sales, na.rm = T))
-dnb$sales/100000
-log(dnb$sales/100000)
+
 ggplot(dnb, aes(x = year_started, y = sales/1000000, shape = Region)) +
   geom_point(alpha = .5, size = 2, color = "black") +
   labs(x = "Year founded", y = "2021 sales ($) in millions", shape = "") +
@@ -312,7 +304,7 @@ nosb <- data.frame("year_range" = c("2002-2008","2009-2013", "2014-2018"),
            "n_nosb_recs" = c(2,0,1))
 
 # Intellectual property ----
-pp <- read.csv('uspto_plantpatents.csv') %>% 
+pp <- read.csv('ip/uspto_plantpatents.csv') %>% 
   filter(Region != "International" & !is.na(Region)) %>% 
   filter(ornamental == F & organic == T) %>% 
   select(WKU, year_issued, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
@@ -321,7 +313,7 @@ pp <- read.csv('uspto_plantpatents.csv') %>%
   select(-year_issued) %>% 
   filter(!is.na(year_range)) %>% 
   select(-id)
-pvp <- read.csv('pvp.csv') %>% 
+pvp <- read.csv('ip/pvp.csv') %>% 
   filter(Region != "International" & !is.na(Region)) %>% 
   filter(ornamental == F & organic == T) %>% 
   select(`Application..`, year_issued, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
@@ -330,7 +322,7 @@ pvp <- read.csv('pvp.csv') %>%
   select(-year_issued) %>% 
   filter(!is.na(year_range)) %>% 
   select(-id)
-ossi <- read.csv('ossi.csv') %>% 
+ossi <- read.csv('ip/ossi.csv') %>% 
   filter(Region != "International" & !is.na(Region)) %>% 
   filter(organic == T) %>% 
   select(variety_name, year_pledge, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
@@ -364,11 +356,16 @@ regional_summary <- left_join(funds_year_region_crop, supplychain_year_region) %
   left_join(ip_year_region) %>% left_join(dnb_sales_reg) %>% left_join(nosb) %>% 
   mutate(organicip_n = ifelse(is.na(organicip_n),0, organicip_n))
 
-# I am not saving this, but it should match exactly what came out of the sumary from quant, which was saved in the organicseed adoption Box
+# I am saving this, but it should match exactly what came out of the sumary from quant, which was saved in the organicseed adoption Box
+
+subsystem_summary <- select(regional_summary, year_range, Region, maincrop, annual_average, supplychain_n_avg, ratio_building, organicip_n, dnb_regional_sales)
+write.csv(regional_summary, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/supplemental_subsystem_summary.csv", row.names = F)
 
 ## Tables 1b and 1c ----
-write.csv(funds_yearonly, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1b.csv", row.names = F)
-write.csv(supplychain_yearonly, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1c.csv", row.names = F)
+table2b <- left_join(funds_yearonly, supplychain_yearonly) %>% 
+  left_join(ip_yearonly) %>% 
+  rename(n_ip = n)
+write.csv(table2b, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table2b.csv", row.names = F)
 
 df <- readRDS("~/Box/organicseed_adoption/df.rds") 
 
