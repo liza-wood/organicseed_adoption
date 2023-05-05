@@ -8,8 +8,8 @@ output: pdf_document
 $$
 \begin{aligned}
   \operatorname{OGseed\_percent\_maincrop}_{i}  &\sim N \left(\mu, \sigma^2 \right) \\
-    \mu &=\alpha_{j[i],k[i]} + \beta_{1}(\operatorname{legitimation\_user}) + \beta_{2}(\operatorname{entrants\_supplychain\_n\_avg\_s}) + \beta_{3}(\operatorname{CertifierRequestn}) + \beta_{4}(\operatorname{resources\_funding\_100thous}) + \beta_{5}(\operatorname{knowledge\_organicip\_10}) + \beta_{6}(\operatorname{noncommercial\_seedsource\_s}) + \beta_{7}(\operatorname{acreage\_\log}) + \beta_{8}(\operatorname{cropcat\_n}) + \beta_{9}(\operatorname{years\_certified\_s}) \\
-    \alpha_{j}  &\sim N \left(\mu_{\alpha_{j}}, \sigma^2_{\alpha_{j}} \right)
+    \mu &=\alpha_{j[i],k[i]} + \beta_{1}(\operatorname{legitimation\_user}) + \beta_{2}(\operatorname{CertifierRequestn}) + \beta_{3}(\operatorname{noncommercial\_seedsource\_s}) + \beta_{4}(\operatorname{acreage\_\log}) + \beta_{5}(\operatorname{cropcat\_n}) + \beta_{6}(\operatorname{years\_certified\_s}) \\
+    \alpha_{j}  &\sim N \left(\gamma_{0}^{\alpha} + \gamma_{1}^{\alpha}(\operatorname{entrants\_supplychain\_n\_avg\_s}) + \gamma_{2}^{\alpha}(\operatorname{resources\_funding\_100thous}) + \gamma_{3}^{\alpha}(\operatorname{knowledge\_organicip\_10}), \sigma^2_{\alpha_{j}} \right)
     \text{, for Region j = 1,} \dots \text{,J} \\
     \alpha_{k}  &\sim N \left(\mu_{\alpha_{k}}, \sigma^2_{\alpha_{k}} \right)
     \text{, for maincrop k = 1,} \dots \text{,K}

@@ -1,6 +1,6 @@
 ## Drivers of organic seed adoption, 2002-2021
 
-This repository houses code for the draft of CH1: Alternative sustainability transition pathways: Assessing innovation system functions' affect on adoption in the organic seed niche. The data of focus in this repository include invidual-level data based on OSA's organic grower surveys (2011, 2016, 2021), combined with innovation system quantification across that time period (2002-2021). Systems-level data collection is housed in the [quantifying_seed_innovation repository](https://github.com/liza-wood/quantifying_seed_innovation).
+This repository houses code for the draft of CH1: Alternative sustainability transition pathways: Assessing innovation system functions' affect on adoption in the organic seed niche. The data of focus in this repository include individual-level data based on Organic Seed Alliance's State of Organic Seed organic grower surveys (2011, 2016, 2021), combined with innovation system quantification across that time period (2002-2021). Systems-level data collection is housed in the [quantifying_seed_innovation repository](https://github.com/liza-wood/quantifying_seed_innovation).
 
 ### Data storage:
 
@@ -23,13 +23,12 @@ Organic producer survey data from the 2011, 2016, and 2021 SOS reports are store
          looking for the crop that has the largest  proportion. I also experiment 
          with factor analysis of challenges.
       03_grower_level_data_summary: using cleaned data from the previous script, I
-         create tables summarizing key variables of (Table 1 and 2 and Figure 3)
+         create tables summarizing key variables of (Table 2 and Figure 3)
       03_innovation_level_data_summary: Similar to the summary in the quantifying_
-         seed_innovation summary.R, I bring together data on research funding, 
-         intellectual property, organic entrants, and seed company sales to 
-         summarize the innovation system, separate from the organic growers. 
-         I also create Figure 4. At the end of the script I generate the data
-         file: df_multilevel.rds
+         seed_innovation combined_summary.R, I bring together data on research funding, 
+         intellectual property, organic entrants, and seed company sales (Figure 4) 
+         to summarize the innovation system, separate from the organic growers. 
+         At the end of the script I generate the data file: df_multilevel.rds
       04_map_making: Using combined individual and systems-level data I generate
          maps to visualize how the data were sampled and how they can represented
          at the national/regional scale (Figure 2)
@@ -39,7 +38,7 @@ Organic producer survey data from the 2011, 2016, and 2021 SOS reports are store
          script, and of every crop that a producer grows, using df.long. 
       06_models_final_multilevel: Based on S5, I went with the Bayesian linear 
          model and ull in functions from the functions_model.R script to run 
-         the model and generate Figures 5a and 5b (which is really S8)
+         the model and generate Figures 5 (which is really S8)
       07_S5_modelest_compare: Here I compare different models based on likelihood: 
          linear, binomial, and beta. I use this supplemental material to inform the 
          final model.

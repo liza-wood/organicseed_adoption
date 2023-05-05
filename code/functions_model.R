@@ -24,6 +24,9 @@ subsyst_multilevel <- "(1|maincrop) +
                      (1|Region) +
                      (1|survey_year)"
 
+controls <-   ", control = list(adapt_delta = 0.8),
+chains = 4, iter = 2000, warmup = 2000,
+cores = 4, seed = 12345)"
 subsyst_multilevel_inla <- "f(maincrop, model = 'iid') +
                             f(Region, model = 'iid') +
                             f(survey_year, model = 'iid')"
@@ -41,7 +44,7 @@ multilevel_bin_inla <- paste0(iv_binary, dvs_core, subsyst_multilevel_inla)
 
 fullmodel_fx <- function(data, model_type){
   if(model_type == "bayes multi-level"){
-    model <- brm(eval(parse(text=multilevel_perc)), 
+    model <- brm(eval(parse(text=paste0(multilevel_perc, controls))), 
                  data = data)
   } else if(model_type == "bayes one-level"){
     model <- brm(eval(parse(text=onelevel_perc)), 
