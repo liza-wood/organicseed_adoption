@@ -21,14 +21,13 @@ $$
 \begin{aligned}
   \operatorname{Organic\ seed\ acreage\ (percent)}_{i}  &\sim N \left(\mu, \sigma^2 \right) \\
     \mu &=\alpha_{j[i],k[i]} + \\
-                                  &\ \beta_{1}(\operatorname{Value\ organic\ seed}) +  \\
-                                  &\ \beta_{2}(\operatorname{Certifier\ request}) + \\
-                                  &\ \beta_{3}(\operatorname{Non\ commercial\ seed\ sourcing}) + \\
-                                  &\ \beta_{4}(\operatorname{Farm\ size}) + \\
-                                  &\ \beta_{5}(\operatorname{Crop\ diversity}) \\
+                                  &\ \beta_{1}(\operatorname{Farm\ size}) + \\ 
+                                  &\ \beta_{2}(\operatorname{Non\ commercial\ seed\ sourcing}) + \\
+                                  &\ \beta_{3}(\operatorname{Value\ organic\ seed}) +  \\
+                                  &\ \beta_{4}(\operatorname{Certifier\ request}) + \\
     \alpha_{j}  &\sim N (\gamma_{0}^{\alpha} + \\
-                                            &\ \gamma_{1}^{\alpha}(\operatorname{Research\ funding}) + \\
-                                             &\ \gamma_{2}^{\alpha}(\operatorname{Supplier\ entrants}) + \\
+                                                 &\ \gamma_{1}^{\alpha}(\operatorname{Supplier\ entrants}) + \\
+                                            &\ \gamma_{2}^{\alpha}(\operatorname{Research\ funding}) + \\
                                              &\ \gamma_{3}^{\alpha}(\operatorname{Organic\ IP}), \\
                                              &\ \sigma^2_{\alpha_{j}})
     \text{, for Region j = 1,} \dots \text{,J} \\
