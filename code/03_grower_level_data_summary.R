@@ -24,6 +24,17 @@ df <- df %>%
          contains("AddSteps"),
          YearsCertified) 
 
+table(df$survey_year)
+
+df11 <- filter(df, survey_year == 2011)
+df16 <- filter(df, survey_year == 2016)
+df21 <- filter(df, survey_year == 2021)
+
+# Figure 2 grower text:
+df %>% 
+  group_by(survey_year, Region) %>% 
+  count()
+
 # ---- Text summaries ----
 summary(df$OGseed_percent_maincrop)
 table(df$CertifierRequest[df$IncreasedOGSeed != "Already at 100%"])
@@ -46,149 +57,89 @@ aggr(df, col=c('navyblue','red'),
 
 
 # ---- Table 2a: Make a table of basic distributions of each variable ----
-df11 <- filter(df, survey_year == 2011)
-df16 <- filter(df, survey_year == 2016)
-df21 <- filter(df, survey_year == 2021)
 
 variable_df <- data.frame(
-  Questions = c("Last year, what approximate percentage of total acreage of [crops] was planted with certified organic seed?",
-                #"Over the last 3 years have you increased or decreased the percentage of organic seed that you use in for your [crops]",
-                "Organic seed is important to the success of organic food production",
-                "Has your certifier requested that you take greater steps to source organic seed? (% 'Yes' for those who are not already compliant)",
-                "Please indicate the degree to which the following was a factor to NOT use organic seed:",
-                "      Specific variety not available as organic seed",
-                "      Lack of desirable genetic traits",
-                "      Processor (buyer) requires or supplies varieties that are not available organically",
-                "      Distrust of organic seed quality",
-                "Percent of seeds from own farm or other farms",
-                "Total Acreage",
+  Questions = c("Adoption: Last year, what approximate percentage of total acreage of [crops] was planted with certified organic seed? (% acreage)",
+                "Operational resources: Total Acreage",
                 "      Vegetable Crop Acreage",
                 "      Field Crop Acreage",
                 "      Forage Crop Acreage",
-                "Number of crop categories",
-                "Years certified",
-                "Number of respondents"
+                "Operational practice: Non-commercial seed sourcing (% seeds)",
+                "Attitudes/Legitimacy: Varieties bred for organic system management are important to the overall success of organic agriculture (1-5)",
+                "Guidance: Has your certifier requested that you take greater steps to source organic seed? (% 'Yes' of those who are not already 100% compliant)",
+                "Years certified organic"
                 ),
                 
   mean2011 = c(
            round(mean(df11$OGseed_percent,na.rm = T), 2),
-           #round(table(df11$IncreasedOGSeed)[3]/sum(table(df11$IncreasedOGSeed)[c(2,3)]), 2),
-           round(mean(df11$OGVarietiesSuccessn, na.rm = T), 2),
-           round(table(df11$CertifierRequest[df11$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df11$IncreasedOGSeed)[c(2,3)]), 2),
-           "",
-           round(mean(df11$barrier_availability, na.rm = T), 2),
-           round(mean(df11$barrier_lackdesiredTraits, na.rm = T), 2),
-           round(mean(df11$barrier_buyerReq, na.rm = T), 2),
-           round(mean(df11$barrier_distrustQuality, na.rm = T), 2),
-           round(mean(df11$noncommercial_seedsource, na.rm = T), 2),
            round(mean(df11$TotalAcreage[df11$TotalAcreage != 0], na.rm = T), 2),
            round(mean(df11$VegiAcreage[df11$VegiAcreage != 0], na.rm = T), 2),
            round(mean(df11$FieldAcreage[df11$FieldAcreage != 0], na.rm = T), 2),
            round(mean(df11$ForageAcreage[df11$ForageAcreage != 0], na.rm = T), 2),
-           round(mean(df11$cropcat_n), 2),
-           round(mean(df11$YearsCertified, na.rm = T), 2),
-           nrow(df11)
+           round(mean(df11$noncommercial_seedsource, na.rm = T), 2),
+           round(mean(df11$OGVarietiesSuccessn, na.rm = T), 2),
+           round(table(df11$CertifierRequest[df11$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df11$IncreasedOGSeed)[c(2,3)]), 2),
+           round(mean(df11$YearsCertified, na.rm = T), 2)
            ),
            
   mean2016 = c(
-          round(mean(df16$OGseed_percent,na.rm = T), 2),
-          #round(table(df16$IncreasedOGSeed)[3]/sum(table(df16$IncreasedOGSeed)[c(2,3)]), 2),
-          round(mean(df16$OGVarietiesSuccessn, na.rm = T), 2),
-          round(table(df16$CertifierRequest[df16$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df16$IncreasedOGSeed)[c(2,3)]), 2),
-          "",
-          round(mean(df16$barrier_availability, na.rm = T), 2),
-          round(mean(df16$barrier_lackdesiredTraits, na.rm = T), 2),
-          round(mean(df16$barrier_buyerReq, na.rm = T), 2),
-          round(mean(df16$barrier_distrustQuality, na.rm = T), 2),
-          round(mean(df16$noncommercial_seedsource, na.rm = T), 2),
-          round(mean(df16$TotalAcreage[df16$TotalAcreage != 0], na.rm = T), 2),
-          round(mean(df16$VegiAcreage[df16$VegiAcreage != 0], na.rm = T), 2),
-          round(mean(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 2),
-          round(mean(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
-          round(mean(df16$cropcat_n, na.rm = T), 2),
-          round(mean(df16$YearsCertified, na.rm = T), 2),
-          nrow(df16)
-          ),
-  
-  mean2021 = c(
-          round(mean(df21$OGseed_percent,na.rm = T), 2),
-          #round(table(df21$IncreasedOGSeed)[3]/sum(table(df21$IncreasedOGSeed)[c(2,3)]), 2),
-          round(mean(df21$OGVarietiesSuccessn, na.rm = T), 2),
-          round(table(df21$CertifierRequest[df21$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df21$IncreasedOGSeed)[c(2,3)]), 2),
-          "",
-          round(mean(df21$barrier_availability, na.rm = T), 2),
-          round(mean(df21$barrier_lackdesiredTraits, na.rm = T), 2),
-          round(mean(df21$barrier_buyerReq, na.rm = T), 2),
-          round(mean(df21$barrier_distrustQuality, na.rm = T), 2),
-          round(mean(df21$noncommercial_seedsource, na.rm = T), 2),
-          round(mean(df21$TotalAcreage[df21$TotalAcreage != 0], na.rm = T), 2),
-          round(mean(df21$VegiAcreage[df21$VegiAcreage != 0], na.rm = T), 2),
-          round(mean(df21$FieldAcreage[df21$FieldAcreage != 0], na.rm = T), 2),
-          round(mean(df21$ForageAcreage[df21$ForageAcreage != 0], na.rm = T), 2),
-          round(mean(df21$cropcat_n, na.rm = T), 2),
-          round(mean(df21$YearsCertified, na.rm = T), 2),
-          nrow(df21)
-             ),
-  sd2011 = c(
-    round(sd(df11$OGseed_percent,na.rm = T), 2),
-    #round(table(df11$IncreasedOGSeed)[3]/sum(table(df11$IncreasedOGSeed)[c(2,3)]), 2),
-    round(sd(df11$OGVarietiesSuccessn, na.rm = T), 2),
-    NA,
-    "",
-    round(sd(df11$barrier_availability, na.rm = T), 2),
-    round(sd(df11$barrier_lackdesiredTraits, na.rm = T), 2),
-    round(sd(df11$barrier_buyerReq, na.rm = T), 2),
-    round(sd(df11$barrier_distrustQuality, na.rm = T), 2),
-    round(sd(df11$noncommercial_seedsource, na.rm = T), 2),
-    round(sd(df11$TotalAcreage[df11$TotalAcreage != 0], na.rm = T), 2),
-    round(sd(df11$VegiAcreage[df11$VegiAcreage != 0], na.rm = T), 2),
-    round(sd(df11$FieldAcreage[df11$FieldAcreage != 0], na.rm = T), 2),
-    round(sd(df11$ForageAcreage[df11$ForageAcreage != 0], na.rm = T), 2),
-    round(sd(df11$cropcat_n), 2),
-    round(sd(df11$YearsCertified, na.rm = T), 2),
-    nrow(df11)
+           round(mean(df16$OGseed_percent,na.rm = T), 2),
+           round(mean(df16$TotalAcreage[df16$TotalAcreage != 0], na.rm = T), 2),
+           round(mean(df16$VegiAcreage[df16$VegiAcreage != 0], na.rm = T), 2),
+           round(mean(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 2),
+           round(mean(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
+           round(mean(df16$noncommercial_seedsource, na.rm = T), 2),
+           round(mean(df16$OGVarietiesSuccessn, na.rm = T), 2),
+           round(table(df16$CertifierRequest[df16$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df16$IncreasedOGSeed)[c(2,3)]), 2),
+          round(mean(df16$YearsCertified, na.rm = T), 2)
   ),
   
+  mean2021 = c(
+    round(mean(df21$OGseed_percent,na.rm = T), 2),
+    round(mean(df21$TotalAcreage[df21$TotalAcreage != 0], na.rm = T), 2),
+    round(mean(df21$VegiAcreage[df21$VegiAcreage != 0], na.rm = T), 2),
+    round(mean(df21$FieldAcreage[df21$FieldAcreage != 0], na.rm = T), 2),
+    round(mean(df21$ForageAcreage[df21$ForageAcreage != 0], na.rm = T), 2),
+    round(mean(df21$noncommercial_seedsource, na.rm = T), 2),
+    round(mean(df21$OGVarietiesSuccessn, na.rm = T), 2),
+    round(table(df21$CertifierRequest[df21$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df21$IncreasedOGSeed)[c(2,3)]), 2),
+    round(mean(df21$YearsCertified, na.rm = T), 2)
+  ),
+    sd2011 = c(
+           round(sd(df11$OGseed_percent,na.rm = T), 2),
+           round(sd(df11$TotalAcreage[df11$TotalAcreage != 0], na.rm = T), 2),
+           round(sd(df11$VegiAcreage[df11$VegiAcreage != 0], na.rm = T), 2),
+           round(sd(df11$FieldAcreage[df11$FieldAcreage != 0], na.rm = T), 2),
+           round(sd(df11$ForageAcreage[df11$ForageAcreage != 0], na.rm = T), 2),
+           round(sd(df11$noncommercial_seedsource, na.rm = T), 2),
+           round(sd(df11$OGVarietiesSuccessn, na.rm = T), 2),
+           round(table(df11$CertifierRequest[df11$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df11$IncreasedOGSeed)[c(2,3)]), 2),
+           round(sd(df11$YearsCertified, na.rm = T), 2)
+           ),
+           
   sd2016 = c(
-    round(sd(df16$OGseed_percent,na.rm = T), 2),
-    #round(table(df16$IncreasedOGSeed)[3]/sum(table(df16$IncreasedOGSeed)[c(2,3)]), 2),
-    round(sd(df16$OGVarietiesSuccessn, na.rm = T), 2),
-    NA,
-    "",
-    round(sd(df16$barrier_availability, na.rm = T), 2),
-    round(sd(df16$barrier_lackdesiredTraits, na.rm = T), 2),
-    round(sd(df16$barrier_buyerReq, na.rm = T), 2),
-    round(sd(df16$barrier_distrustQuality, na.rm = T), 2),
-    round(sd(df16$noncommercial_seedsource, na.rm = T), 2),
-    round(sd(df16$TotalAcreage[df16$TotalAcreage != 0], na.rm = T), 2),
-    round(sd(df16$VegiAcreage[df16$VegiAcreage != 0], na.rm = T), 2),
-    round(sd(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 2),
-    round(sd(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
-    round(sd(df16$cropcat_n, na.rm = T), 2),
-    round(sd(df16$YearsCertified, na.rm = T), 2),
-    nrow(df16)
+           round(sd(df16$OGseed_percent,na.rm = T), 2),
+           round(sd(df16$TotalAcreage[df16$TotalAcreage != 0], na.rm = T), 2),
+           round(sd(df16$VegiAcreage[df16$VegiAcreage != 0], na.rm = T), 2),
+           round(sd(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 2),
+           round(sd(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
+           round(sd(df16$noncommercial_seedsource, na.rm = T), 2),
+           round(sd(df16$OGVarietiesSuccessn, na.rm = T), 2),
+           round(table(df16$CertifierRequest[df16$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df16$IncreasedOGSeed)[c(2,3)]), 2),
+          round(sd(df16$YearsCertified, na.rm = T), 2)
   ),
   
   sd2021 = c(
     round(sd(df21$OGseed_percent,na.rm = T), 2),
-    #round(table(df21$IncreasedOGSeed)[3]/sum(table(df21$IncreasedOGSeed)[c(2,3)]), 2),
-    round(sd(df21$OGVarietiesSuccessn, na.rm = T), 2),
-    NA,
-    "",
-    round(sd(df21$barrier_availability, na.rm = T), 2),
-    round(sd(df21$barrier_lackdesiredTraits, na.rm = T), 2),
-    round(sd(df21$barrier_buyerReq, na.rm = T), 2),
-    round(sd(df21$barrier_distrustQuality, na.rm = T), 2),
-    round(sd(df21$noncommercial_seedsource, na.rm = T), 2),
     round(sd(df21$TotalAcreage[df21$TotalAcreage != 0], na.rm = T), 2),
     round(sd(df21$VegiAcreage[df21$VegiAcreage != 0], na.rm = T), 2),
     round(sd(df21$FieldAcreage[df21$FieldAcreage != 0], na.rm = T), 2),
     round(sd(df21$ForageAcreage[df21$ForageAcreage != 0], na.rm = T), 2),
-    round(sd(df21$cropcat_n, na.rm = T), 2),
-    round(sd(df21$YearsCertified, na.rm = T), 2),
-    nrow(df21)
+    round(sd(df21$noncommercial_seedsource, na.rm = T), 2),
+    round(sd(df21$OGVarietiesSuccessn, na.rm = T), 2),
+    round(table(df21$CertifierRequest[df21$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df21$IncreasedOGSeed)[c(2,3)]), 2),
+    round(sd(df21$YearsCertified, na.rm = T), 2)
   )
-  
 )
 
 variable_df$stats2011 <- paste0(variable_df$mean2011, " (",
@@ -209,6 +160,78 @@ round(table(df21$IncreasedOGSeed)[1]/sum(table(df21$IncreasedOGSeed)[1:3]), 2)
 write.csv(variable_df, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table2a.csv", row.names = F)
 # Other parts of table 1 are in 03_innovation_level_data: line 33 for funding and supplychain_yearonly for supply chain
 
+
+sm_table <- data.frame(
+  'Questions' = c("Please indicate the degree to which the following was a factor to NOT use organic seed:",
+                   "      Specific variety not available as organic seed",
+                   "      Lack of desirable genetic traits",
+                   "      Processor (buyer) requires or supplies varieties that are not available organically",
+                   "      Distrust of organic seed quality"),
+  'mean2011' = c("", round(mean(df11$barrier_availability, na.rm = T), 2),
+                 round(mean(df11$barrier_lackdesiredTraits, na.rm = T), 2),
+                 round(mean(df11$barrier_buyerReq, na.rm = T), 2),
+                 round(mean(df11$barrier_distrustQuality, na.rm = T), 2)),
+  'mean2016' = c("", round(mean(df16$barrier_availability, na.rm = T), 2),
+                 round(mean(df16$barrier_lackdesiredTraits, na.rm = T), 2),
+                 round(mean(df16$barrier_buyerReq, na.rm = T), 2),
+                 round(mean(df16$barrier_distrustQuality, na.rm = T), 2)),
+  'mean2021' = c("", round(mean(df21$barrier_availability, na.rm = T), 2),
+                 round(mean(df21$barrier_lackdesiredTraits, na.rm = T), 2),
+                 round(mean(df21$barrier_buyerReq, na.rm = T), 2),
+                 round(mean(df21$barrier_distrustQuality, na.rm = T), 2)),
+  'sd2011' = c("", round(sd(df11$barrier_availability, na.rm = T), 2),
+                 round(sd(df11$barrier_lackdesiredTraits, na.rm = T), 2),
+                 round(sd(df11$barrier_buyerReq, na.rm = T), 2),
+                 round(sd(df11$barrier_distrustQuality, na.rm = T), 2)),
+  'sd2016' = c("", round(sd(df16$barrier_availability, na.rm = T), 2),
+                 round(sd(df16$barrier_lackdesiredTraits, na.rm = T), 2),
+                 round(sd(df16$barrier_buyerReq, na.rm = T), 2),
+                 round(sd(df16$barrier_distrustQuality, na.rm = T), 2)),
+  'sd2021' = c("", round(sd(df21$barrier_availability, na.rm = T), 2),
+                 round(sd(df21$barrier_lackdesiredTraits, na.rm = T), 2),
+                 round(sd(df21$barrier_buyerReq, na.rm = T), 2),
+                 round(sd(df21$barrier_distrustQuality, na.rm = T), 2))
+)
+
+sm_table$stats2011 <- paste0(sm_table$mean2011, " (",
+                                sm_table$sd2011, ")")
+sm_table$stats2016 <- paste0(sm_table$mean2016, " (",
+                                sm_table$sd2016, ")")
+sm_table$stats2021 <- paste0(sm_table$mean2021, " (",
+                                sm_table$sd2021, ")")
+
+sm_table <- select(sm_table, Questions, stats2011, stats2016, 
+                      stats2021)
+
+# ---- Text summaries ----
+##
+operation_subsys <- df %>% 
+  group_by(survey_year, Region, maincrop) %>% 
+  summarize(avg_acre = mean(TotalAcreage, na.rm = T),
+            median_acre = median(TotalAcreage, na.rm = T),
+            avg_src = mean(noncommercial_seedsource, na.rm = T),
+            median_src = median(noncommercial_seedsource, na.rm = T),
+            avg_cert = mean(CertifierRequestn, na.rm = T),
+            median_cert = median(CertifierRequestn, na.rm = T))
+
+operation_crop <- df %>% 
+  group_by(survey_year, maincrop) %>% 
+  summarize(avg_acre = mean(TotalAcreage, na.rm = T),
+            median_acre = median(TotalAcreage, na.rm = T),
+            avg_src = mean(noncommercial_seedsource, na.rm = T),
+            median_src = median(noncommercial_seedsource, na.rm = T),
+            avg_cert = mean(CertifierRequestn, na.rm = T),
+            median_cert = median(CertifierRequestn, na.rm = T))
+
+operation_reg <- df %>% 
+  group_by(survey_year, Region) %>% 
+  summarize(avg_acre = mean(TotalAcreage, na.rm = T),
+            median_acre = median(TotalAcreage, na.rm = T),
+            avg_src = mean(noncommercial_seedsource, na.rm = T),
+            median_src = median(noncommercial_seedsource, na.rm = T),
+            avg_cert = mean(CertifierRequestn, na.rm = T),
+            median_cert = median(CertifierRequestn, na.rm = T))
+
 ## Figure prep ----
 greens <- colorRampPalette(c("lightgrey", "#55752f"))(8) # 2014-2018
 reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
@@ -216,7 +239,7 @@ blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
 oranges <- colorRampPalette(c("lightgrey", "#cc7000"))(8)
 purples <- colorRampPalette(c("lightgrey", "#702963"))(8)
 
-# ---- Figure 3. Organic seed adoption ----
+# ---- Figure S5. Organic seed adoption ----
 ##
 ### Option a: Average adoption ----
 df %>% 
@@ -252,7 +275,7 @@ df %>%
     #title = "Organic seed use by organic growers",
     fill = "")
 
-ggsave("figures/figure3_opta.png", height = 3.5, width = 7, dpi = 800)
+ggsave("figures/s5_figure_opta.png", height = 3.5, width = 7, dpi = 800)
 
 ### Option b: Distribution of adoption ----
 df %>% 
@@ -279,7 +302,7 @@ df %>%
     #title = "Organic seed use by organic growers",
     fill = "", color = "")
 
-ggsave("figures/figure3_optb.png", height = 3.5, width = 7, dpi = 800)
+ggsave("figures/s5_figure_opta.png", height = 3.5, width = 7, dpi = 800)
 
 
 # ---- Supplemental figures ----

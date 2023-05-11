@@ -12,14 +12,14 @@ df.full <- df %>%
          OGVarietiesSuccessn, # legitimation
          CertifierRequestn, # guidance of the search
          annual_average, # knowledge development/resource mobilization
-         #ratio_building, # entrepreneurial activities 
+         ratio_building, # entrepreneurial activities 
          supplychain_n_avg,
          dnb_regional_sales, # sales would be market formation?
          organicip_n, # knowledge development
          n_nosb_recs,
          maincrop, survey_year, Region, # system level features
          TotalAcreage, cropcat_n, # operation controls
-         #contains('barrier_'),
+         contains('barrier_'),
          SeedSourceOwn,
          noncommercial_seedsource,
          YearsCertified
@@ -30,21 +30,22 @@ df.full <- df %>%
          OGseed_percent_maincrop_binary = ifelse(OGseed_percent_maincrop >= 50, 1, 
                                                  ifelse(OGseed_percent_maincrop < 50, 0, NA)),
          acreage_log = c(scale(log(TotalAcreage), scale = F)), 
+         cropcat_n_untransformed = cropcat_n,
          cropcat_n = c(scale(cropcat_n, scale = F)),
          resources_funding_100thous = c(scale(annual_average/100000, scale = F)),
          legitimation_user = c(scale(OGVarietiesSuccessn, scale = F)),
-         #ratio = c(scale(ratio_building, scale = F)), # entrepreneurial activities 
+         ratio = c(scale(ratio_building, scale = F)), # entrepreneurial activities 
          entrants_supplychain_n_avg_s = c(scale(supplychain_n_avg, scale = F)),
          market_sales_mill = c(scale(dnb_regional_sales/1000000, scale = F)),
          knowledge_organicip_10 = c(scale(organicip_n/10, scale = F)), # knowledge development
-         #guidance_n_nosb_recs_s = c(scale(n_nosb_recs, scale = F)),
+         guidance_n_nosb_recs_s = c(scale(n_nosb_recs, scale = F)),
          survey_year = factor(survey_year),
-         #barrier_availability_s = c(scale(barrier_availability, scale = F)),
-         #barrier_distrustQuality_s = c(scale(barrier_distrustQuality, scale = F)),
-         #barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = F)),
-         #barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = F)),
-         #barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = F)),
-         #barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = F)),
+         barrier_availability_s = c(scale(barrier_availability, scale = F)),
+         barrier_distrustQuality_s = c(scale(barrier_distrustQuality, scale = F)),
+         barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = F)),
+         barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = F)),
+         barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = F)),
+         barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = F)),
          SeedSourceOwn_s = c(scale(SeedSourceOwn/10, scale = F)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource/10, scale = F)),
          years_certified_s = c(scale(YearsCertified, scale = F)))
@@ -53,7 +54,7 @@ summary(df.full$acreage_log)
 summary(df.full$cropcat_n)
 summary(df.full$resources_funding_100thous)
 summary(df.full$legitimation_user)
-#summary(df.full$ratio)
+summary(df.full$ratio)
 summary(df.full$entrants_supplychain_n_avg_s)
 summary(df.full$noncommercial_seedsource_s)
 summary(df.full$years_certified_s)
@@ -66,12 +67,12 @@ dfm1 <- select(df.full,
                maincrop,
                CertifierRequestn,
                acreage_log, 
-               cropcat_n,
+               #cropcat_n,
                resources_funding_100thous,
                legitimation_user,
                #n_nosb_recs_s,
-               #ratio, 
-               entrants_supplychain_n_avg_s,
+               ratio, 
+               #entrants_supplychain_n_avg_s,
                #sales_mill,
                knowledge_organicip_10,
                #barrier_availability_s,

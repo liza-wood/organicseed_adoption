@@ -286,7 +286,12 @@ supplychain_year_region <- valuechain_reg_pre02 %>%
   mutate(supplychain_n_avg = case_when(
     year_range == "2002-2008" ~ (company_n + seedproducers_n)/7,
     year_range == "2009-2013" ~ (company_n + seedproducers_n)/5,
-    year_range == "2014-2018" ~ (company_n + seedproducers_n)/5))
+    year_range == "2014-2018" ~ (company_n + seedproducers_n)/5)) %>% 
+  mutate(grower_n_avg = case_when(
+    year_range == "2002-2008" ~ grower_n/7,
+    year_range == "2009-2013" ~ grower_n/5,
+    year_range == "2014-2018" ~ grower_n/5)) %>% 
+  mutate(ratio_avg = grower_n_avg/supplychain_n_avg)
   
 # ---- Company market formation ----
 ##
@@ -307,7 +312,7 @@ ggplot(dnb, aes(x = year_started, y = sales/1000000, shape = Region)) +
   scale_shape_manual(values = c(1,15,2,3)) +
   theme_linedraw() +
   theme_minimal()
-ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure4.png", height = 3, width = 5, dpi = 800)
+ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/s2_figure.png", height = 3, width = 5, dpi = 800)
 
 
 # ---- Guidance via NOSB recommendations ----
@@ -384,12 +389,13 @@ regional_summary <- left_join(funds_year_region_crop,
 
 subsystem_summary <- select(regional_summary, year_range, 
                             Region, maincrop, annual_average,
-                            supplychain_n_avg, ratio_building,
-                            organicip_n, dnb_regional_sales)
-write.csv(regional_summary, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/supplemental_subsystem_summary.csv", row.names = F)
+                            grower_n_avg,
+                            supplychain_n_avg, ratio_avg,
+                            organicip_n)
+write.csv(subsystem_summary, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/supplemental_subsystem_summary.csv", row.names = F)
 
 # ---- Tables 1b and 1c ----
-table2b <- left_join(funds_yearonly, supplychain_yearonly) %>% 
+table2b <- left_join(funds_yearonly, supplier_yearonly) %>% 
   left_join(ip_yearonly) %>% 
   rename(n_ip = n) 
 mean(dnb$sales)

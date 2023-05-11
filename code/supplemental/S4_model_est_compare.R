@@ -23,7 +23,6 @@ blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
 # Considering acreage as the dependent variable 
 ## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 
-
 # Selecting models ----
 # Overall, nothing is horribly different from one another. When I run the 2016 on its own, I get a singularity problem, so I might prefer the Bayesian approach. 
 # I would like to make coefficient plots of all four models: All years, then 2011, 2016, and 2018. 
@@ -56,10 +55,11 @@ acreage_glm <- fullmodel_fx(data = dfm1, model_type = "binomial one-level")
 summary(acreage_glm) # Set to quasibinomial to make it a little happer with non-integer DVs
 acreage_glmer <- fullmodel_fx(data = dfm1, model_type = "binomial multi-level")
 summary(acreage_glmer) # Doesn't accept quasibinomial as a family
-acreage_glmer <- fullmodel_fx(data = dfm1, model_type = "binomial inla multi-level")
-summary(acreage_glmer) # Doesn't accept quasibinomial as a family
+acreage_inlaglmer <- fullmodel_fx(data = dfm1, model_type = "binomial inla multi-level")
+summary(acreage_inlaglmer) # Doesn't accept quasibinomial as a family
 
 # Beta approaches ----
+# (https://inla.r-inla-download.org/r-inla.org/doc/likelihood/beta.pdf)
 acreage_beta <- fullmodel_fx(data = dfm1, model_type = "beta inla one-level")
 summary(acreage_beta)
 which(acreage_beta$cpo$failure > 0)
@@ -67,9 +67,10 @@ acreage_beta_multi <- fullmodel_fx(data = dfm1, model_type = "beta inla multi-le
 summary(acreage_beta_multi)
 which(acreage_beta_multi$cpo$failure > 0)
 
+# WAIC is lowest in lmer when comparing all 3 within the INLA framework
 acreage_beta_multi$waic$waic
-acreage_glmer$waic$waic
-acreage_bayeslmer$waic$waic
+acreage_inlaglmer$waic$waic
+acreage_inlalmer$waic$waic
 
 # 
 plot(acreage_beta_multi, plot.fixed.effects=FALSE, 

@@ -1,7 +1,7 @@
 dvs_core <- "legitimation_user + 
                  #barrier_distrustQuality_s +
-                 #ratio +
-                 entrants_supplychain_n_avg_s +
+                 ratio +
+                 #entrants_supplychain_n_avg_s +
                  #barrier_buyerReq_s +
                  #barrier_insuffQuantity_s +
                  CertifierRequestn + 
@@ -14,8 +14,8 @@ dvs_core <- "legitimation_user +
                  #barrier_saveOwn_s +
                  #SeedSourceOwn_s +
                  noncommercial_seedsource_s +
-                 acreage_log +  
-                 cropcat_n + 
+                 acreage_log +
+                 #cropcat_n + 
                  years_certified_s + "
 subsyst_onelevel <- "maincrop +
                      Region +
@@ -24,9 +24,10 @@ subsyst_multilevel <- "(1|maincrop) +
                      (1|Region) +
                      (1|survey_year)"
 
-controls <-   ", control = list(adapt_delta = 0.8),
-chains = 4, iter = 2000, warmup = 2000,
-cores = 4, seed = 12345)"
+controls <-   ", 
+control = list(adapt_delta = 0.8),
+chains = 4, iter = 2000, warmup = 1000,
+cores = 4, seed = 12345"
 subsyst_multilevel_inla <- "f(maincrop, model = 'iid') +
                             f(Region, model = 'iid') +
                             f(survey_year, model = 'iid')"
@@ -44,7 +45,7 @@ multilevel_bin_inla <- paste0(iv_binary, dvs_core, subsyst_multilevel_inla)
 
 fullmodel_fx <- function(data, model_type){
   if(model_type == "bayes multi-level"){
-    model <- brm(eval(parse(text=paste0(multilevel_perc, controls))), 
+    model <- brm(eval(parse(text=multilevel_perc, controls)), 
                  data = data)
   } else if(model_type == "bayes one-level"){
     model <- brm(eval(parse(text=onelevel_perc)), 
@@ -104,8 +105,8 @@ fullmodel_fx <- function(data, model_type){
 
 dvs_core_noIP <- "legitimation_user + 
                  #barrier_distrustQuality_s +
-                 #ratio +
-                 entrants_supplychain_n_avg_s +
+                 ratio +
+                 #entrants_supplychain_n_avg_s +
                  #barrier_buyerReq_s +
                  #barrier_insuffQuantity_s +
                  CertifierRequestn + 
@@ -118,8 +119,8 @@ dvs_core_noIP <- "legitimation_user +
                  #barrier_saveOwn_s +
                  #SeedSourceOwn_s +
                  noncommercial_seedsource_s +
-                 acreage_log +  
-                 cropcat_n + 
+                 acreage_log +
+                 #cropcat_n + 
                  years_certified_s + "
 
 subsyst_onelevel_noyear <- "maincrop +
@@ -237,29 +238,29 @@ yearlymodel_fx <- function(data, model_type, year){
   return(model)
 }
 
-coefs <- c("Perceived importance of organic seed" = 
+coefs <- c("Attitudes/Legitimation: Value organic seed" = 
              "legitimation_user", 
            #"Seed quality distrust barrier" =
            #  "barrier_distrustQuality_s",
-           #"Ratio of organic growers to supply chain actors" =
-           #  "ratio",
-           "Number of new organic seed supply entrants" =
-             "entrants_supplychain_n_avg_s",
+           "Entrepreneurship: Entrant ratio (organic growers:supply chain actors)" =
+             "ratio",
+           #"Entrepreneurship: Number of new organic seed supply entrants" =
+           #  "entrants_supplychain_n_avg_s",
            #"Buyer requirement barrier" = 
            #  "barrier_buyerReq_s",
-           "Certifiers request organic seed use" =
+           "Guidance: Certifiers request organic seed use" =
              "CertifierRequestn", 
-           "Organic research funding" = 
+           "Resources: Organic research funding" = 
              "resources_funding_100thous", 
            #"Limited seed traits barrier" =
            #  "barrier_lackdesiredTraits_s",
-           "Number of registered organically bred varieties" =
+           "Knowledge: Number of registered organically bred varieties" =
              "knowledge_organicip_10",
            #"Seed availability barrier" = 
            #  "barrier_availability_s",
            #"Organic seed company sales" = 
            #  "sales_mill",
-           "Non-commerical seed sources" = "noncommercial_seedsource_s", #"SeedSourceOwn_s",
-           "Farm size (log acres)" = "acreage_log",
-           "Number of crop categories" = "cropcat_n",
-           "Years certified organic" = "years_certified_s")
+           "Operational practice: Non-commerical seed sources" = "noncommercial_seedsource_s", #"SeedSourceOwn_s",
+           "Operational resources: Farm size (log acres)" = "acreage_log",
+           #"Operational complexity: Number of crop categories" = "cropcat_n",
+           "Control: Years certified organic" = "years_certified_s")
