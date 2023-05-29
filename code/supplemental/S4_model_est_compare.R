@@ -232,18 +232,20 @@ jtools::plot_coefs(acreage_2011_glmer,
   labs(title = "glmer")
 ggsave(filename = "tables/figureS5_modelglmer_yrly.png", width = 8, height = 4.5)
 
+nparam11 <- nrow(acreage_2011_beta$summary.fixed)
+nparam21 <- nrow(acreage_2021_beta$summary.fixed)
 mod1 <- rbind(acreage_2011_beta$summary.fixed, 
               acreage_2016_beta$summary.fixed) %>% 
-  slice(-c(1, 14)) %>% 
+  slice(-c(1, 9)) %>% 
   select(mean, sd, `0.025quant`,`0.975quant`) %>% 
-  mutate(parameter = rep(names(coefs[-7]), 2))
+  mutate(parameter = rep(names(coefs[-5]), 2))
 mod <- acreage_2021_beta$summary.fixed %>% 
   slice(-1) %>% 
   select(mean, sd, `0.025quant`,`0.975quant`) %>% 
   mutate(parameter = factor(names(coefs), levels = rev(names(coefs)))) %>% 
   rbind(mod1) %>% 
   rename("lower" = "0.025quant", "upper" = "0.975quant") %>% 
-  mutate(year = c(rep(2021, 13), rep(2011, 12), rep(2016, 12)))
+  mutate(year = c(rep(2021, nparam21-1), rep(2011, nparam11-1), rep(2016, nparam11-1)))
 
 ggplot(mod, aes(x = mean, 
                 y = parameter)) +
@@ -266,6 +268,6 @@ ggplot(mod, aes(x = mean,
         axis.text.y = element_text(size = 10), 
         #legend.position="none",
         panel.grid.major.x = element_line(linetype = "solid")) + 
-  labs(x = "Intercept", shape = "", color = "", title = "beta")
+  labs(x = "Intercept", shape = "", color = "", title = "Multi-level model with beta distribution")
 ggsave(filename = "tables/figureS5_modelbeta_yrly.png", width = 8, height = 4.5)
 

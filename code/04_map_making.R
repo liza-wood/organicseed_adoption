@@ -7,6 +7,23 @@ greens <- colorRampPalette(c("lightgrey", "#55752f"))(8) # 2014-2018
 reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
 blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
 
+mako <- viridis::mako(n=9)
+#[1] "#0B0405FF" "#2B1C35FF" "#3E356BFF" "#3B5698FF" "#357BA2FF" "#359EAAFF" "#49C1ADFF" #"#96DDB5FF"
+#[9] "#DEF5E5FF"
+magma <- viridis::magma(n = 9)
+#[1] "#000004FF" "#1D1147FF" "#51127CFF" "#822681FF" "#B63679FF" "#E65164FF" "#FB8861FF" #"#FEC287FF"
+#[9] "#FCFDBFFF"
+#virid <- viridis::viridis(n=9)
+#[1] "#440154FF" "#472D7BFF" "#3B528BFF" "#2C728EFF" "#21908CFF" "#27AD81FF" "#5DC863FF" #"#AADC32FF"
+#[9] "#FDE725FF"
+inferno <- viridis::inferno(n=9)
+[1] "#000004FF" "#210C4AFF" "#56106EFF" "#89226AFF" "#BB3754FF" "#E35932FF" "#F98C0AFF"
+[8] "#F9C932FF" "#FCFFA4FF"
+turbo <- viridis::turbo(n=9)
+#[1] "#30123BFF" "#466BE3FF" "#28BBECFF" "#31F299FF" "#A2FC3CFF" "#EDD03AFF" "#FB8022FF"
+#[8] "#D23105FF" "#7A0403FF"
+
+
 setwd("~/Box/osa_networks/data_combined/")
 df11 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2011SurveyData.csv") %>% 
   slice(-c(1:2)) %>% 
@@ -188,17 +205,17 @@ make_map <- function(df, mapdf, colors, year_title){
                            paste(counts[4,1], counts[4,2], sep = ": "))
   
   p <- ggplot() +
-    geom_polygon(data = us_states, color = "white", size = 0.1,
+    geom_polygon(data = us_states, fill = "white", size = 0.2,
                  aes(x = x, y = y, 
-                     fill = factor(Regionn), group = group,
+                     color = factor(Regionn), group = group,
                      text = paste0("N:", Regionn, "\n",
                                    "Response rate: ", 
                                    RegionPercent))) + 
     geom_point(data = transformed, aes(x = x, y = y), colour = "black", 
                alpha = .5,shape=20, size = 1) +
-    scale_fill_manual(values = colors) + 
+    scale_color_manual(values = colors) + 
     labs(title = year_title,
-         fill = "",
+         color = "",
          x = "", y = "") + 
     theme_light(base_size = 10)  +
     theme(
@@ -216,7 +233,7 @@ make_map <- function(df, mapdf, colors, year_title){
 }
 
 df11mapdf <- region_text(df11_random_locations)
-map10 <- make_map(df11_random_locations, df11mapdf, greens[c(2,6,4,8)], "2010")
+map10 <- make_map(df11_random_locations, df11mapdf, rep("black",4), "2010")
 
 df16mapdf <- region_text(df16)
 map15 <- make_map(df16, df16mapdf, reds[c(6,2,4,8)], "2015")
@@ -226,4 +243,3 @@ map20 <- make_map(df21, df21mapdf, blues[c(6,2,4,8)], "2020")
 
 cowplot::plot_grid(map10, map15, map20, nrow = 1)
 ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure2.png", height = 2.5, width = 9, dpi = 800)
-

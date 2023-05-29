@@ -238,7 +238,7 @@ yearlymodel_fx <- function(data, model_type, year){
   return(model)
 }
 
-coefs <- c("Attitudes/Legitimation: Value organic seed" = 
+coefs <- c("Attitudes: Value organic seed" = 
              "legitimation_user", 
            #"Seed quality distrust barrier" =
            #  "barrier_distrustQuality_s",
@@ -248,19 +248,19 @@ coefs <- c("Attitudes/Legitimation: Value organic seed" =
            #  "entrants_supplychain_n_avg_s",
            #"Buyer requirement barrier" = 
            #  "barrier_buyerReq_s",
-           "Guidance: Certifiers request organic seed use" =
+           "Regualatory guidance: Certifiers request organic seed use" =
              "CertifierRequestn", 
-           "Resources: Organic research funding" = 
+           "Resource mobilization: Organic research funding ($M)" = 
              "resources_funding_100thous", 
            #"Limited seed traits barrier" =
            #  "barrier_lackdesiredTraits_s",
-           "Knowledge: Number of registered organically bred varieties" =
+           "Knowledge development: Number of registered organic varieties" =
              "knowledge_organicip_10",
            #"Seed availability barrier" = 
            #  "barrier_availability_s",
            #"Organic seed company sales" = 
            #  "sales_mill",
-           "Operational practice: Non-commerical seed sources" = "noncommercial_seedsource_s", #"SeedSourceOwn_s",
-           "Operational resources: Farm size (log acres)" = "acreage_log",
+           "Seed saved (%)" = "noncommercial_seedsource_s", #"SeedSourceOwn_s",
+           "Farm size (log acres)" = "acreage_log",
            #"Operational complexity: Number of crop categories" = "cropcat_n",
            "Control: Years certified organic" = "years_certified_s")

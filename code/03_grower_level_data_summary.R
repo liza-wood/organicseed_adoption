@@ -37,8 +37,8 @@ df %>%
 
 # ---- Text summaries ----
 summary(df$OGseed_percent_maincrop)
-table(df$CertifierRequest[df$IncreasedOGSeed != "Already at 100%"])
-summary(df$CertifierRequestn[df$IncreasedOGSeed != "Already at 100%"])
+table(df$CertifierRequestn[df$IncreasedOGSeed != "Already at 100%" | df$OGseed_percent_maincrop != 100])
+summary(df$CertifierRequestn[df$IncreasedOGSeed != "Already at 100%" | df$OGseed_percent_maincrop != 100])
 summary(df$barrier_availability)
 summary(df$barrier_lackdesiredTraits)
 summary(df$barrier_saveOwn)
@@ -66,8 +66,8 @@ variable_df <- data.frame(
                 "      Forage Crop Acreage",
                 "Operational practice: Non-commercial seed sourcing (% seeds)",
                 "Attitudes/Legitimacy: Varieties bred for organic system management are important to the overall success of organic agriculture (1-5)",
-                "Guidance: Has your certifier requested that you take greater steps to source organic seed? (% 'Yes' of those who are not already 100% compliant)",
-                "Years certified organic"
+                "Guidance: Has your certifier requested that you take greater steps to source organic seed? (% 'Yes' of those who are not already 100% compliant)"#,
+                #"Years certified organic"
                 ),
                 
   mean2011 = c(
@@ -78,8 +78,7 @@ variable_df <- data.frame(
            round(mean(df11$ForageAcreage[df11$ForageAcreage != 0], na.rm = T), 2),
            round(mean(df11$noncommercial_seedsource, na.rm = T), 2),
            round(mean(df11$OGVarietiesSuccessn, na.rm = T), 2),
-           round(table(df11$CertifierRequest[df11$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df11$IncreasedOGSeed)[c(2,3)]), 2),
-           round(mean(df11$YearsCertified, na.rm = T), 2)
+           round(table(df11$CertifierRequest[df11$IncreasedOGSeed != "Already at 100%" | df11$OGseed_percent_maincrop != 100])[2]/length(df11$CertifierRequestn[!is.na(df11$CertifierRequestn)]), 2)
            ),
            
   mean2016 = c(
@@ -90,8 +89,7 @@ variable_df <- data.frame(
            round(mean(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
            round(mean(df16$noncommercial_seedsource, na.rm = T), 2),
            round(mean(df16$OGVarietiesSuccessn, na.rm = T), 2),
-           round(table(df16$CertifierRequest[df16$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df16$IncreasedOGSeed)[c(2,3)]), 2),
-          round(mean(df16$YearsCertified, na.rm = T), 2)
+           round(table(df16$CertifierRequest[df16$IncreasedOGSeed != "Already at 100%" | df16$OGseed_percent_maincrop != 100])[2]/length(df16$CertifierRequestn[!is.na(df16$CertifierRequestn)]), 2)
   ),
   
   mean2021 = c(
@@ -102,8 +100,7 @@ variable_df <- data.frame(
     round(mean(df21$ForageAcreage[df21$ForageAcreage != 0], na.rm = T), 2),
     round(mean(df21$noncommercial_seedsource, na.rm = T), 2),
     round(mean(df21$OGVarietiesSuccessn, na.rm = T), 2),
-    round(table(df21$CertifierRequest[df21$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df21$IncreasedOGSeed)[c(2,3)]), 2),
-    round(mean(df21$YearsCertified, na.rm = T), 2)
+    round(table(df21$CertifierRequest[df21$IncreasedOGSeed != "Already at 100%" | df21$OGseed_percent_maincrop != 100])[2]/length(df21$CertifierRequestn[!is.na(df21$CertifierRequestn)]), 2)
   ),
     sd2011 = c(
            round(sd(df11$OGseed_percent,na.rm = T), 2),
@@ -113,8 +110,7 @@ variable_df <- data.frame(
            round(sd(df11$ForageAcreage[df11$ForageAcreage != 0], na.rm = T), 2),
            round(sd(df11$noncommercial_seedsource, na.rm = T), 2),
            round(sd(df11$OGVarietiesSuccessn, na.rm = T), 2),
-           round(table(df11$CertifierRequest[df11$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df11$IncreasedOGSeed)[c(2,3)]), 2),
-           round(sd(df11$YearsCertified, na.rm = T), 2)
+           round(table(df11$CertifierRequest[df11$IncreasedOGSeed != "Already at 100%" | df11$OGseed_percent_maincrop != 100])[2]/length(df11$CertifierRequestn[!is.na(df11$CertifierRequestn)]), 2)
            ),
            
   sd2016 = c(
@@ -125,8 +121,8 @@ variable_df <- data.frame(
            round(sd(df16$ForageAcreage[df16$ForageAcreage != 0], na.rm = T), 2),
            round(sd(df16$noncommercial_seedsource, na.rm = T), 2),
            round(sd(df16$OGVarietiesSuccessn, na.rm = T), 2),
-           round(table(df16$CertifierRequest[df16$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df16$IncreasedOGSeed)[c(2,3)]), 2),
-          round(sd(df16$YearsCertified, na.rm = T), 2)
+           round(table(df16$CertifierRequest[df16$IncreasedOGSeed != "Already at 100%" | df16$OGseed_percent_maincrop != 100])[2]/length(df16$CertifierRequestn[!is.na(df16$CertifierRequestn)]), 2)#,
+          #round(sd(df16$YearsCertified, na.rm = T), 2)
   ),
   
   sd2021 = c(
@@ -137,8 +133,7 @@ variable_df <- data.frame(
     round(sd(df21$ForageAcreage[df21$ForageAcreage != 0], na.rm = T), 2),
     round(sd(df21$noncommercial_seedsource, na.rm = T), 2),
     round(sd(df21$OGVarietiesSuccessn, na.rm = T), 2),
-    round(table(df21$CertifierRequest[df21$IncreasedOGSeed != "Already at 100%"])[2]/sum(table(df21$IncreasedOGSeed)[c(2,3)]), 2),
-    round(sd(df21$YearsCertified, na.rm = T), 2)
+    round(table(df21$CertifierRequest[df21$IncreasedOGSeed != "Already at 100%" | df21$OGseed_percent_maincrop != 100])[2]/length(df21$CertifierRequestn[!is.na(df21$CertifierRequestn)]), 2)
   )
 )
 

@@ -27,6 +27,7 @@ df2011 <- filter(dfm1, survey_year == 2011)
 df2016 <- filter(dfm1, survey_year == 2016)
 df2021 <- filter(dfm1, survey_year == 2021)
 
+brm(OGseed_percent_maincrop ~ acreage_log, data = df2011)
 # For the equation ----
 modelforeq <- lmer(eval(parse(text=multilevel_perc_21)),
                    data = df2021)
@@ -45,12 +46,12 @@ acreage_2021_bayes <- yearlymodel_fx(data = df2021,
 coef_order <- c("Operational resources: Farm size (log acres)",
                 #"Operational complexity: Number of crop categories",
                 "Operational practice: Non-commerical seed sources",
-                "Attitudes/Legitimation: Value organic seed",
+                "Attitudes: Value organic seed",
            #"Entrepreneurship: Number of new organic seed supply entrants",
            "Entrepreneurship: Entrant ratio (organic growers:supply chain actors)",
-           "Guidance: Certifiers request organic seed use",
-           "Resources: Organic research funding",
-           "Knowledge: Number of registered organically bred varieties",
+           "Regulatory guidance: Certifiers request organic seed use",
+           "Resource mobilization: Organic research funding ($M)",
+           "Knowledge development: Number of registered organic varieties",
            "Control: Years certified organic",
            "Intercept")
 
@@ -62,14 +63,14 @@ prep_data_fx <- function(model, year){
   colnames(sumdf)[c(3,4)] <- c('LCI', 'UCI')
   sumdf <- sumdf %>% 
     mutate(term = case_when(
-      term == "legitimation_user" ~ "Attitudes/Legitimation: Value organic seed",
+      term == "legitimation_user" ~ "Attitudes: Value organic seed",
      # term == "entrants_supplychain_n_avg_s" ~ "Entrepreneurship: Number of new organic seed supply entrants",
      term == "ratio" ~ "Entrepreneurship: Entrant ratio (organic growers:supply chain actors)",
-      term == "CertifierRequestn" ~ "Guidance: Certifiers request organic seed use",
-      term == "resources_funding_100thous" ~ "Resources: Organic research funding", 
-      term == "knowledge_organicip_10" ~ "Knowledge: Registered organic varieties", 
-      term == "noncommercial_seedsource_s" ~ "Operational practice: Non-commerical seed sources", 
-      term == "acreage_log" ~ "Operational resources: Farm size (log acres)", 
+      term == "CertifierRequestn" ~ "Regulatory guidance: Certifiers request organic seed use",
+      term == "resources_funding_100thous" ~ "Resource mobilization: Organic research funding ($M)", 
+      term == "knowledge_organicip_10" ~ "Knowledge development: Number of registered organic varieties", 
+      term == "noncommercial_seedsource_s" ~ "Seed saved (%)", 
+      term == "acreage_log" ~ "Farm size (log acres)", 
      # term == "cropcat_n" ~ "Operational complexity: Number of crop categories", 
       term == "years_certified_s" ~ "Control: Years certified organic", 
       T ~ term)) 
@@ -85,7 +86,7 @@ model_df <- rbind(prep_data_fx(acreage_2011_bayes, 2010),
 
 manual_coef_plot <- function(df){
   df %>% 
-    filter(term != "Intercept") %>% 
+    filter(!(term %in% c("Intercept", "Control: Years certified organic"))) %>% 
     ggplot(aes(x = Estimate, 
                y = term)) +
     ggstance::geom_pointrangeh(aes(xmin = LCI, 
@@ -221,12 +222,11 @@ scenario11_model1 <- acreage_2011_bayes %>%
                                            years_certified_s = median(df2011$years_certified_s),
                                            legitimation_user = 5,
                                            noncommercial_seedsource_s = quantile(dfm1$noncommercial_seedsource_s)[4],
-                                           #noncommercial_seedsource_s = median(df2011$noncommercial_seedsource_s),
+                                        
                                            resources_funding_100thous = median(unique(df2011$resources_funding_100thous)),
                                            #entrants_supplychain_n_avg_s = median(unique(df2011$entrants_supplychain_n_avg_s)),
                                            ratio = median(unique(df2011$ratio)),
                                            #cropcat_n = quantile(unique(dfm1$cropcat_n))[4],
-                                           #cropcat_n = median(unique(df2011$cropcat_n)),
                                            knowledge_organicip_10 = median(unique(df2011$knowledge_organicip_10))),
               re_formula = NA)%>% #Conditional effects for a single typical hypothetical group
   mutate(model = 'Alternative')
@@ -237,7 +237,7 @@ scenario11_model2 <- acreage_2011_bayes %>%
                                            years_certified_s = median(df2011$years_certified_s),
                                            legitimation_user = 4,
                                            noncommercial_seedsource_s = quantile(dfm1$noncommercial_seedsource_s)[2],
-                                           #noncommercial_seedsource_s = median(df2011$noncommercial_seedsource_s),
+                                      
                                            resources_funding_100thous = median(unique(df2011$resources_funding_100thous)),
                                            #entrants_supplychain_n_avg_s = median(unique(df2011$entrants_supplychain_n_avg_s)),
                                            ratio = median(unique(df2011$ratio)),
@@ -383,13 +383,14 @@ mean(scenario_models21$.epred[scenario_models21$model == "Alternative"])
 # 80 v 100 = 20
 mean(scenario_models21$.epred[scenario_models21$model == "Alternative"]) - mean(scenario_models21$.epred[scenario_models21$model == "Traditional"])
 
+mako9 <- viridis::mako(n = 9)
 scenario_models_allyrs %>% 
   mutate(model = factor(model, c("Traditional", "Alternative"))) %>% 
   ggplot(aes(y = .epred)) +
   stat_halfeye(alpha = .8, aes(fill = model, color = model)) +
   coord_flip() +
   scale_color_manual(values = c("black", "black")) +
-  scale_fill_manual(values = c("gray70", "gray40")) +
+  scale_fill_manual(values = c(mako9[3], mako9[7])) +
   ylim(0, 100)+
   ylab("Predicted acreage (%) planted to organic seed") +
   xlab("Posterior distribution") +
