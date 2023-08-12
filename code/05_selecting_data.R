@@ -22,7 +22,8 @@ df.full <- df %>%
          contains('barrier_'),
          SeedSourceOwn,
          noncommercial_seedsource,
-         YearsCertified
+         YearsCertified,
+         og_sale_increase
   ) %>% 
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
@@ -48,7 +49,8 @@ df.full <- df %>%
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = F)),
          SeedSourceOwn_s = c(scale(SeedSourceOwn/10, scale = F)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource/10, scale = F)),
-         years_certified_s = c(scale(YearsCertified, scale = F)))
+         years_certified_s = c(scale(YearsCertified, scale = F)),
+         og_sale_increase_s = c(scale(og_sale_increase, scale = F)))
 
 summary(df.full$acreage_log)
 summary(df.full$cropcat_n)

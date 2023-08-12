@@ -322,6 +322,52 @@ nosb <- data.frame("year_range" = c("2002-2008","2009-2013",
                                     "2014-2018"),
            "n_nosb_recs" = c(2,0,1))
 
+# ---- Organic food sales ----
+## 
+sales <- read.csv('organic_food_sales_clean.csv') %>% 
+  filter(!(year %in% c(2001, 2019:2021)))
+sales$year_range <- assign_yr_range(sales$year) 
+
+year_totals <- unique(select(sales, year, yr_total))
+year_crop_totals <- unique(select(sales, year, 
+                                  maincrop, sales))
+year_veg <- year_crop_totals[year_crop_totals$maincrop == "Vegetables",]
+year_for <- year_crop_totals[year_crop_totals$maincrop == "Forage",]
+year_fiel <- year_crop_totals[year_crop_totals$maincrop == "Field",]
+## year ----
+ogsales_yearonly <- sales %>% 
+  select(year_range) %>% 
+  unique() %>% 
+  mutate(increase = c(year_totals$yr_total[year_totals$year == 2008] -
+                        year_totals$yr_total[year_totals$year == 2002],
+                      year_totals$yr_total[year_totals$year == 2013] -
+                        year_totals$yr_total[year_totals$year == 2009],
+                      year_totals$yr_total[year_totals$year == 2018] -
+                        year_totals$yr_total[year_totals$year == 2014]))
+
+## year x crop ----
+ogsales_year_crop <- sales %>% 
+  select(year_range, maincrop) %>% 
+  unique() %>% 
+  mutate(og_sale_increase = c(year_fiel$sales[year_fiel$year == 2008] -
+                        year_fiel$sales[year_fiel$year == 2002],
+                      year_for$sales[year_for$year == 2008] -
+                        year_for$sales[year_for$year == 2002],
+                      year_veg$sales[year_veg$year == 2008] -
+                        year_veg$sales[year_veg$year == 2002],
+                      year_fiel$sales[year_fiel$year == 2013] -
+                        year_fiel$sales[year_fiel$year == 2009],
+                      year_for$sales[year_for$year == 2013] -
+                        year_for$sales[year_for$year == 2009],
+                      year_veg$sales[year_veg$year == 2013] -
+                        year_veg$sales[year_veg$year == 2009],
+                      year_fiel$sales[year_fiel$year == 2018] -
+                        year_fiel$sales[year_fiel$year == 2014],
+                      year_for$sales[year_for$year == 2018] -
+                        year_for$sales[year_for$year == 2014],
+                      year_veg$sales[year_veg$year == 2018] -
+                        year_veg$sales[year_veg$year == 2014]))
+
 # ---- Intellectual property ----
 ##
 pp <- read.csv('ip/uspto_plantpatents.csv') %>% 
@@ -383,6 +429,7 @@ regional_summary <- left_join(funds_year_region_crop,
   left_join(ip_year_region) %>% 
   left_join(dnb_sales_reg) %>% 
   left_join(nosb) %>% 
+  left_join(ogsales_year_crop) %>% 
   mutate(organicip_n = ifelse(is.na(organicip_n),0, organicip_n))
 
 # I am saving this, but it should match exactly what came out of the sumary from quant, which was saved in the organicseed adoption Box
@@ -391,8 +438,9 @@ subsystem_summary <- select(regional_summary, year_range,
                             Region, maincrop, annual_average,
                             grower_n_avg,
                             supplychain_n_avg, ratio_avg,
-                            organicip_n)
+                            organicip_n, og_sale_increase)
 write.csv(subsystem_summary, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/supplemental_subsystem_summary.csv", row.names = F)
+
 
 # ---- Tables 1b and 1c ----
 table2b <- left_join(funds_yearonly, supplier_yearonly) %>% 
@@ -410,3 +458,111 @@ survey_multilevel <- df %>%
   left_join(regional_summary)
 
 saveRDS(survey_multilevel, "~/Box/organicseed_adoption/df_multilevel.rds")
+
+# ---- SEM potential data ----
+assign_yr_range2 <- function(year_var){
+  x <- ifelse(year_var <= 2001, "pre-2002",
+              ifelse(year_var > 2001 & year_var <= 2011, "2002-2011",
+                     ifelse(year_var > 2011 & year_var <= 2021, "2012-2021", NA_character_)))
+  return(x)
+}
+
+ids <- 1:(3*4*3)
+year_range <- c("pre-2002", "2002-2011","2012-2021")
+regions <- c("North Central", "Northeast", "South", "West")
+maincrop <- c("Vegetables", "Forage", "Field") 
+shape <- data.frame("year_range" = rep(year_range, each = 4*3),
+                          "Region" = c(rep(regions, length.out = 3*4*3)),
+                          "maincrop" = c(rep(maincrop, each = 4, 
+                                             length.out = 3*4*3)))
+
+
+funds <- read.csv('funding/organicseed_funding.csv') %>% 
+  rename("funding_amt" = award_dollars) %>% 
+  filter() %>% 
+  mutate(year_range = assign_yr_range2(year)) %>% 
+  filter(!is.na(year_range))  %>% 
+  group_by(year_range, Region, maincrop) %>% 
+  summarize(funding_sum = sum(funding_amt))
+allgrowers <- read.csv('nop/nop_allgrowers.csv')  %>% 
+  group_by(cert_year, Region) %>% 
+  count()  %>% 
+  mutate(year_range = assign_yr_range2(cert_year)) %>% 
+  filter(!is.na(year_range))   %>% 
+  group_by(year_range, Region) %>% 
+  summarize(grower_sum = sum(n))
+seedproducers <- read.csv('nop/nop_seedsupplychain.csv') %>% 
+  group_by(cert_year, Region) %>% 
+  count()  %>% 
+  mutate(year_range = assign_yr_range2(cert_year)) %>% 
+  filter(!is.na(year_range))   %>% 
+  group_by(year_range, Region) %>% 
+  summarize(producer_sum = sum(n))
+dnb <- read.csv('dnb/dnb.csv') %>% 
+  filter(Region != "Outside US" & !is.na(Region)) %>% 
+  group_by(year_started, Region) %>% 
+  count()  %>% 
+  mutate(year_range = assign_yr_range2(year_started)) %>% 
+  filter(!is.na(year_range))  %>% 
+  group_by(year_range, Region) %>% 
+  summarize(company_sum = sum(n)) 
+
+pp <- read.csv('ip/uspto_plantpatents.csv') %>% 
+  filter(Region != "International" & !is.na(Region)) %>% 
+  filter(ornamental == F & organic == T) %>% 
+  select(WKU, year_issued, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
+  rename("id" = WKU) %>% 
+  mutate(type = 'pp') %>% 
+  select(-id)
+pvp <- read.csv('ip/pvp.csv') %>% 
+  filter(Region != "International" & !is.na(Region)) %>% 
+  filter(ornamental == F & organic == T) %>% 
+  select(`Application..`, year_issued, cropcat_veg, cropcat_field, cropcat_forage, Region) %>% 
+  rename("id" = `Application..`) %>% 
+  select(-id) %>% 
+  mutate(type = 'pvp')
+ossi <- read.csv('ip/ossi.csv') %>% 
+  filter(Region != "International" & !is.na(Region)) %>% 
+  filter(organic == T) %>% 
+  select(variety_name, year_pledge, cropcat_veg, 
+         cropcat_field, cropcat_forage, Region) %>% 
+  rename("id" = variety_name) %>% 
+  mutate(type = 'ossi') %>% 
+  select(-id) %>% 
+  rename(year_issued = year_pledge) 
+
+ip_reg <- rbind(pp, pvp, ossi) %>% 
+  mutate(maincrop = case_when(
+    cropcat_veg == T & cropcat_field == F & cropcat_forage == F ~ "Vegetables",
+    cropcat_veg == F & cropcat_field == T & cropcat_forage == F ~ "Field",
+    cropcat_veg == F & cropcat_field == F & cropcat_forage == T ~ "Forage",
+    T ~ NA_character_
+  )) %>% 
+  # there are some crops that are flowers
+  filter(!is.na(maincrop)) %>% 
+  group_by(year_issued, maincrop, Region) %>% 
+  count() %>% 
+  filter(!is.na(year_issued))  %>% 
+  mutate(year_range = assign_yr_range2(year_issued)) %>% 
+  filter(!is.na(year_range))   %>% 
+  group_by(year_range, Region, maincrop) %>% 
+  summarize(ip_sum = sum(n))
+
+summ <- left_join(shape, funds) %>% 
+  left_join(allgrowers) %>% left_join(seedproducers) %>% 
+  left_join(dnb) %>% left_join(ip_reg)
+sem_summary <- select(regional_summary, year_range, 
+                      Region, maincrop, annual_average,
+                      grower_n_building, supplychain_n,
+                      organicip_n)
+df_summary <- df %>% 
+  group_by(survey_year, Region, maincrop) %>% 
+  summarize(avg_certifier_req = mean(CertifierRequestn, na.rm = T),
+            med_certifier_req = median(CertifierRequestn, na.rm = T),
+            avg_adoption = mean(OGseed_percent_maincrop, na.rm = T),
+            med_adoption = median(OGseed_percent_maincrop, na.rm = T)) %>% 
+  mutate(year_range = assign_yr_range2(survey_year))
+
+sem_summary <- left_join(df_summary, sem_summary)
+
+saveRDS(sem_summary, "~/Box/organicseed_adoption/sem_summary.rds")
