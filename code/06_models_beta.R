@@ -47,7 +47,7 @@ m <- inla(CVseed_percent_maincrop_prop ~
 mdf <- prep_inla_data(m)
 plot_inla_models(mdf, 1)
 
-ggsave("figures/model_results.png", width = 8, height = 4)
+ggsave("figures/figure2.png", width = 8, height = 4)
 
 # PREDICTED PROBABILITY ----
 ## Two farm models in several settings ----
@@ -153,7 +153,7 @@ pred_df <- df_og %>%
 
 plot_predicted_probs(pred_df)
 
-ggsave('figures/predicted_probs_veg.png', width = 7, height = 4)
+ggsave('figures/figure3.png', width = 7, height = 4)
 
 # Text
 wide11 <- pred_df %>%

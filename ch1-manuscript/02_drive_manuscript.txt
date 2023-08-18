@@ -1,0 +1,891 @@
+Target journal: Agricultural systems or or Agriculture and Human Values
+or Journal of Environmental Management or Journal of Agriculture, Food
+Systems, and Community Development (2.4)
+
+-   [[AS submission
+    > guidelines]{.underline}](https://www.elsevier.com/wps/find/journaldescription.cws_home/405851?generatepdf=true):
+    > max 10,000 words
+
+-   [[JEM]{.underline}](https://www.elsevier.com/journals/journal-of-environmental-management/0301-4797/guide-for-authors):
+    > no word limit but LaTeX template
+
+-   Food policy?
+
+Author names: 1. Wood, Liza; 2. Zystro, Jared; 2. Hubbard, Kiki
+
+Affiliations: 1. University of California, Davis; 2. Organic Seed
+Alliance
+
+Corresponding author: Liza Wood, belwood@ucdavis.edu
+
+Address: 1. One Shields Ave, Davis CA 95616; 2.
+
+# Environmental policy flexibility is a double-edged sword: The case of the seed loophole in certified organic production
+
+## 1. Introduction
+
+Effective environmental policy has to walk the line between being
+stringent enough to improve environmental outcomes, while also flexible
+enough so that the policies don\'t backfire (Barreiro-Hurle et al. 2023;
+Sunstein 2017). Overly stringent policies may cause industries to
+opt-out/exit or find methods for \'creative non-compliance\'. However,
+overly flexible policies can also be taken advantage of, enabling
+industries to shirk responsibilities, or create uncertainties about
+participation. Broadly, the goal is to find the right mix and balance of
+policies that encourages industry to participate and comply, while
+reducing uncertainty that environmental targets will be met.
+
+In this paper we study how farmers respond to a flexible environmental
+policy setting, particularly *exceptions* to requirements in a voluntary
+policy setting. It is in this context that we ask: **Do flexible
+environmental standards (policy exceptions) spare farmers from undue
+burden, or enable laggards to remain laggards? / Who benefits from
+flexible environmental regulation?**
+
+To answer this question we use the case of the organic certification
+seed policy in the United States. The policy for seed sourcing under the
+organic certification requires growers to use certified organic seed,
+but permits exceptions if the variety is not \"commercially available\".
+This exception, mirrored in organic policies around the world, gives
+flexibility to growers with their seed sourcing to ideally limit the
+burden when organic seeds are unavailable. We measure organic growers\'
+reliance on the exception based on their use of conventional seed in
+three cross-sections over the last fifteen years, as well as their
+operational attributes and perceptions about organic seed and its
+sourcing challenges. We model the relationship between conventional seed
+use and grower attributes to test hypotheses about the supportive and/or
+enabling effect of the flexible policy.
+
+We find evidence that the flexibility of the organic policy is both
+supporting growers who need it, as well as enabling more
+\'conventionalized\' organic farmers. Our model finds that use of
+conventional seed is associated with growers who experience the highest
+barriers sourcing organic seed, which ultimately provides support to
+reduce the burden on growers. At the same time, the policy also allows a
+certain profile of farmers to avoid organic seed use. Farmers of this
+profile appear to be those that represent the \'conventionalization\' of
+organic agriculture -- larger, less diverse farm operations who don\'t
+see organic seed as important for the success or integrity of organic
+production.
+
+Implications: Policy design needs to account for different motivations
+in use. For organic, this means...
+
+## 2. Background
+
+### 2.1 Environmental policy flexibility
+
+Environmental regulation has to strike a balance between stringency and
+flexibility. Stringent environmental policies often take the command and
+control approach, where firms are required to meet specific criteria
+such as defined contributions, reduction targets, or technology
+standards (Barreiro-Hurle et al. 2023; Pettersson and Soderholm 2014).
+These types of regulatory measures reduce uncertainty in the achievement
+of environmental outcomes so long as enforcement is in place (Pineiro et
+al. 2020). However, stringency has its drawbacks. The increase of
+regulation may reduce competitiveness of firms (), counteract voluntary
+behavior (Barreiro-Hurle et al. 2023), and prompt relocation to an area
+with more lenient policies or resistance/creative non-compliance (e.g.
+in the agricultural sector) (Bartel and Barclay 2011).
+
+Flexible environmental policies, on the other hand, use a range of tools
+to motivate firms via incentives to improve environmental outcomes
+(Pineiro et al. 2020), and at times permit exceptions/derogations if the
+regulation is overly burdensome (Romero-Castro et al. 2022). The
+benefits of flexible policies include reduced tension between firms and
+government (), as well as room for innovation to ultimately improve
+environmental protection (Porter and van der Linde ; Loonie et al.
+2011). The drawback of flexible policy tools, however, is that
+participation can be low, adherence needs to be monitored to avoid
+free-riding (Prakash and Poroski 2007), and there is considerable
+uncertainty of environmental protection gains (Stuart et al. 2014).
+Furthermore, vague criteria for exceptions/derogations like the use of
+\'best available technology\' or waiting on \'commercial availability\'
+gives wide latitude to firms/puts discretion in the firms\' hands
+(Romero-Castro et al. 2022).
+
+This paper is particularly interested in environmental policy that
+provides flexibility in the form of exceptions/derogations. For example,
+the EU industrial emissions directive mandates firms to reduce emissions
+using \'best available technology\', but grant derogations if the costs
+of complying (as calculated by the firm) are too high (Romero-Castro et
+al. 2022, Soderholm et al. 2021). In the United States, regulation of
+manure discharge by animal feeding operations has several exceptions
+based on size, nutrient management plans, and affected waterways (Rosov
+et al. 2020). Who takes advantage of these derogations and how they
+affect environmental outcomes is an open question.
+
+**Do flexible environmental standards spare firms from undue burden, or
+enable laggards to remain laggards? / Who benefits from flexible
+environmental regulation?** \[ say something about laggards/shirkers \]
+
+### 2.2 Organic agricultural standards
+
+#### **2.2.1** Flexibility of organic certification
+
+Policy exceptions are commonplace in organic agricultural standards.
+Organic certification is a voluntary program that agricultural producers
+and food processors opt into, and are then monitored according to the
+certification standards. The certification standards, however, are
+accompanied by listed exemptions (e.g. allowing the use of certain
+synthetic materials) and exceptions for using non-organic products.
+These exceptions are proposed to reduce excessive burdens and barriers
+facing growers and processors (e.g. [[2004 NOSB
+Recommendation]{.underline}](https://www.ams.usda.gov/sites/default/files/media/Commercial%20Availability.pdf)
+; [[2006 NOSB
+recommendation]{.underline}](https://www.ams.usda.gov/sites/default/files/media/NOP%20Sunset%20Rec%20Hydrated%20Lime%20in%20Crops.pdf))
+in an otherwise stringent and often challenging certification process
+(Flaten et al. 2010, Carter er al. 2022).
+
+One such exception in the organic label is related to seed sourcing.
+Organic standards generally require organic growers to use organic seed.
+However, derogations or loopholes are often put into place (Endres,
+Liveseed), whereby organic growers are allowed to use conventional seed
+if \"an equivalent organically produced variety is not commercially
+available\" (US 7 CFR § 205.204). This kind of exception codified in the
+United States standard is similar to organic standards around the world.
+For example, the UK Soil Association[^1], EU Organic Standard, and East
+Africa Organic Standard[^2] all have equivalent exceptions based
+\'availability\'.
+
+In the United States, \"the goal \[of the exception\] is to promote the
+continued growth and improvement in organic seed production and
+subsequent usage by organic growers, without hurting or putting undo
+\[sic\] burdens on growers.\" \[see [[2008 NOSB
+Recommendation]{.underline}](https://www.ams.usda.gov/sites/default/files/media/NOP%20Final%20Rec%20Seed%20Commercial%20Availability.pdf)\].
+The intention is that this exception is designed to excuse farmers based
+on availability barriers. While there is evidence that the seed system
+is growing through increased public research spending, there is still
+widespread uncertainty as to how the seed loophole is used by organic
+growers (Hubbard 2011, 2016, 2021).
+
+#### **2.2.2** Different models of organic farming
+
+To develop an understanding of how farmers are using the organic seed
+loophole, we first recognize that farmers (and firms more generally)
+have different motivations. While securing economic returns is certainly
+valued across operations, this motivation exists on balance with other
+values and operational attributes (Prokopy et al. 2018, Floress et al.
+2017). Farmers make decisions based on a gradient of values ranging from
+\'farm-as-business\' to \'environmental stewardship\', though the two
+are not mutually exclusive (Thompson et al. 2015, maybe dolaglu?).
+Additionally, operational attributes such as farm size can influence the
+willingness/ability to innovate. In some cases large operations may be
+the ones that have the resources to take on risk and experiment with new
+practices
+([Feder_Umali_1993](https://www.zotero.org/google-docs/?4hXARi), [Dunn
+et al., 2016](https://www.zotero.org/google-docs/?broken=rs6XVC)), but
+in other cases it may hinder the willingness to try something new at a
+large scale, especially if there is no visible economic return (Napier
+2000,
+[Buttel_Jr_Larson_1990](https://www.zotero.org/google-docs/?FI07wa)).
+
+Variation in grower motivations is especially prominent in organic
+agriculture. Organic farming practices originated as a grassroots
+movement, centered around holistic environmental and social farming
+principles [(Youngberg & DeMuth,
+2013)](https://www.zotero.org/google-docs/?broken=hg5nRL). Particularly,
+there is an emphasis on soil health, biodiversity, social justice, and
+community food systems (ibid, Coleman). But when codified into practice
+as certified organic standards, there was quickly a trend towards
+\'conventionalization\' of organic. In this conventionalization, growers
+participate in practice but not principle only to gain the price premium
+(Darnhofer et al. 2010, Guthman).
+
+The division between \'principled\' and \'conventionalized\' organic
+farmers has created tension around the identity of organic farming (von
+Shlen 2007, Coleman 2001). This tension has come to bear throughout the
+process of setting and revising the certification standards, such as the
+bi-annual discussion of the National Organic Standards Board, where
+exemptions and exceptions are reviewed and updated (DuPuis). Though the
+division between \'principled\' and \'conventionalized\' organic farmers
+does not fully represent the diversity of farmer profiles involved in
+organic (Guthman, Darnhofer), they help us typify different ways that
+growers may be engaging with the organic standard.
+
+## 3. Hypotheses
+
+We use the case of the organic agricultural standard to ask: Do flexible
+environmental standards spare firms from undue burden, or enable
+laggards to remain laggards? / Who benefits from flexible environmental
+regulation? We propose two sets of hypotheses.
+
+The first proposition tests whether environmental policies add
+flexibility in order to reduce excessive burden on industries (that
+emissions one). Organic farming is certainly challenging (Sahm et al.
+2012), and barriers to complete compliance are likely to be strong,
+especially in the early phases of the certification\'s establishment. As
+such, we should see evidence that growers who are relying on the seed
+loophole (i.e. planting conventional seed) are those who experience the
+greatest barriers to accessing organic seed. Furthermore, we expect that
+as the organic seed market develops over time, fewer growers are using
+conventional seed. Together, we put forth the following hypotheses:
+
+> H1a. Conventional seed use will be highest among growers experiencing
+> more significant organic seed sourcing barriers
+>
+> H1b. Conventional seed use will decline over time
+
+The second proposition tests whether policy flexibility enables some
+farmers to take advantage of the policy\'s leniency (Prakash; Stuart
+2014). In the organic seed policy, though guidance for growers and
+certifiers has tried to define and operationalize the \'commercial
+availability\' exception (NOSB 2018), there is still opportunity for
+shirking. We propose that those particularly inclined to take advantage
+of its leniency are farmers fitting the \'conventionalized\' profile,
+given that they have little principled motivation to adopt organic seed.
+In this case, we expect to see evidence that growers relying on the seed
+loophole are those who align with that profile -- farmers who place low
+value on organic integrity and have operations that resemble
+conventional farms: large acreage and low crop diversity. Together, we
+put forth the following hypotheses:
+
+> H2a. Conventional seed use will be highest among those with who place
+> low value on organic seeds\' contribution to organic integrity
+>
+> H2b. Conventional seed use will be highest on large farms
+>
+> H2c. Conventional seed use will be highest on low-diversity farms
+
+## 4. Empirical approach 
+
+### 4.1 Case: USDA National Organic Program and organic seed
+
+In this paper we focus on the case of the US Department of Agriculture
+(USDA) certified organic label. The organic movement in the US began
+prominently organizing in the 1970s, and it is through their collective
+action that the Organic Foods Production Act was passed as part of the
+1990 Farm Bill and ultimately ratified in 2002 (Youngberg). In the
+arrangement, the USDA National Organic Program (NOP) determines the
+standards, through they are guided by the National Organic Standards
+Board (NOSB) -- a panel of industry representatives that meets regularly
+to continuously discuss exemptions, exceptions, and general guidance
+with input from the public.
+
+The general idea of certified organic crop production is that growers
+use only biological inputs (e.g. no pesticides or genetically modified
+seeds) to create an agro-ecosystem with healthy soil, diverse crop
+rotations, and minimal environmental impact (USDA 2015). From start to
+finish of the organic certified supply chain, inputs should be organic
+to \'protect the integrity\' of the label, including seeds. In practical
+terms, organic seeds are those that are cultivated under certified
+organic conditions. However, the ethic of the organic seed movement also
+promotes environmental and social principles. For example, organic crops
+ought to support the maintenance of genetic and crop diversity
+maintenance, be adapted to organic growing conditions, and suitable for
+regional environments [(Hubbard et al., 2022; Rohe et al.,
+2022)](https://www.zotero.org/google-docs/?broken=pvMEt9). Furthermore,
+organic breeding is often collaborative, where seed sovereignty and
+social needs are included as project considerations [(Colley, 2022;
+Dawson et al.,
+2011)](https://www.zotero.org/google-docs/?broken=6ndb0v).
+
+There are exceptions to several of these requirements, as mentioned in
+Section 2.2.1. Of focus in this paper is that organic growers are
+allowed to use conventional seed if \"an equivalent organically produced
+variety is not commercially available\" (7 CFR § 205.204). Third-party
+organic certifiers, or accredited certifying agencies, are responsible
+for evaluating organic growers\' compliance with the organic standard,
+and whether or not a farm qualifies for the organic seed exemption is at
+their discretion. Now that more than twenty years have passed since the
+ratification of the NOP, we can draw on data to understand trends in
+seed use, and the attributes of growers that have been unable to source
+organic seed. Such an assessment can help policymakers rethink the
+organic seed policy as the US organic standard enters into its third
+decade.
+
+### 4.2 Data: Organic grower survey
+
+This research combines three cross-sectional surveys of organic seed
+producers in the United States. These data were collected in 2009-2011,
+2014-2016, and 2019-2021, which we will refer to as the 2010, 2015, and
+2020 time periods. The nation-wide organic grower survey, orchestrated
+by the national non-profit organization Organic Seed Alliance, was
+designed to cover four main topics: Farm profile, use of organic seed,
+barriers to organic seed and sourcing, and attitudes towards organic
+seed. Across the three data collection periods survey questions remained
+similar in order to allow for comparison between cross-sections.
+
+In each data collection period, grower surveys were distributed using
+one or both of the following methods: a random sample from the USDA NOP
+INTEGRITY database and a convenience sample from an open-access web
+survey. Responses from both the combined random and convenience samples
+resulted in a total of 899 responses in 2010, 1,162 responses in 2015,
+and 760 responses in 2020 that had identifiable regions and crops. The
+points on the maps in Figure 2 represent the distribution of our survey
+respondents. We cannot associate a response rate with our convenience
+sampling, but the response rates for the random samples were 25% in 2015
+and 22.5% in 2020 (convenience sampling only in 2010). Of these
+responses, 545 (2010), 799 (2015) and 408 (2020) were complete and
+therefore usable for data analysis for a total of 1,770.
+
+![](media/image2.png){width="3.9791666666666665in"
+height="3.4657261592300963in"}
+
+Figure 1. Map of the United States depicting survey responses (points)
+over three time periods, 2010 (purple), 2015 (blue), 2020 (green).
+
+\`\`\`{r fig1.1, echo = F, out.width = \'80%\', fig.align = \'center\',
+fig.cap = \'Map of the United States depicting survey responses (points)
+over three time periods, 2010 (purple), 2015 (blue), 2020 (green).\'}
+
+knitr::include_graphics(\'\~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png\')
+
+\`\`\`
+
+### 4.3 Quantitative analysis
+
+#### 4.3.1 Variables
+
+Descriptions of the variables used in our model are described in
+Table 1. The key dependent variable in our model is *acreage planted to
+conventional seed*. The survey asks respondents: \"Last year, what
+approximate percentage of total acreage of \[vegetable/forage/field
+crops\] was planted with certified organic seed?\". The response to this
+question is a continuous variable between 0 and 100, which was converted
+into a proportion. Then we subtracted this value from one to represent
+the proportion of acreage planted to conventional seed.
+
+Our analysis includes eight independent variables for predicting
+adoption. The first five variables are relevant to our first hypotheses.
+This includes four variables describing *barriers* to sourcing organic
+seed. Growers were asked, \"Over the last three years, how much were
+each of the following a factor in your decision NOT to purchase organic
+seed?\". The top reasons include: Variety is not available as organic,
+lack of desirable genetic traits, insufficient quantity of seed, and
+processor/buyer requires or supplies varieties that are not available in
+organic form. Responses were Likert-scale ratings from \"Not a factor\"
+(1) to \"Significant factor\" (4). Additionally, the *survey year*
+captures how the organic seed market has changed over time.
+
+The next three variables are relevant to our second hypothesis. Organic
+growers\' principled *value* *of organic seed* are derived based on
+respondents\' agreement with the statement: \"Organic seed is important
+in maintaining the integrity of organic food production.\" Agreement
+ranged from strongly disagree (1) to strongly agree (5). *Farm size*,
+measured as acreage ranging from 1-17,000 acres, is a representation of
+scale and farm resources. And *crop diversity* is the number of crop
+categories growers produce, which include field, vegetable, and forage
+crops.
+
+Last, we include four variables in our model as controls: variables we
+know to influence adoption but are not of theoretical interest to this
+paper. These include the amount of *seed sourced via seed saving or
+trading*, represented as the percentage of seeds that farmers report
+sourcing from either their own farm or from other farmers, ranging
+between 0 and 100 percent. *Certifiers request organic seed use* is the
+growers\' reported experience with certifiers\' regulatory enforcement.
+Growers were asked the yes-no question: \"Over the last three years has
+your certifier requested that you take greater steps to source organic
+seed?\". Last, we include the *region* in which the farmer is located
+and the *main crop* of that grower based on their percent acreage
+planted to that crop, to account for variation in the development and
+availability of organic seed in these different subsystems.
+
++------------------------------+-------+-------------+----------------+
+| Table 1.                     |       |             |                |
++==============================+=======+=============+================+
+| **Data description**         | **Hy  | *           | **Data**       |
+|                              | pothe | *Variable** |                |
+|                              | sis** |             | **type**       |
+|                              |       | **name**    |                |
++------------------------------+-------+-------------+----------------+
+| Dependent variable           |       |             |                |
++------------------------------+-------+-------------+----------------+
+| Last year, what approximate  |       | Acreage     | Proportion     |
+| percentage of total acreage  |       | planted to  |                |
+| of \[crop\] was planted with |       | c           | (0-1)          |
+| conventional seed?           |       | onventional |                |
+|                              |       | seed        |                |
++------------------------------+-------+-------------+----------------+
+| Independent variables        |       |             |                |
++------------------------------+-------+-------------+----------------+
+| Over the last three years,   |       |             |                |
+| how much were each of the    |       |             |                |
+| following a factor in your   |       |             |                |
+| decision NOT to purchase     |       |             |                |
+| organic seed?                |       |             |                |
++------------------------------+-------+-------------+----------------+
+| Specific variety not         | H1a   | Barrier:    | Likert scale   |
+| available as                 |       | Organic     |                |
+|                              |       | a           | (1-4)          |
+| organic seed                 |       | vailability |                |
++------------------------------+-------+-------------+----------------+
+| Insufficient quantity of     | H1a   | Barrier:    | Likert scale   |
+| seed                         |       | I           |                |
+|                              |       | nsufficient | (1-4)          |
+|                              |       | quantity    |                |
++------------------------------+-------+-------------+----------------+
+| Lack of desirable genetic    | H1a   | Barrier:    | Likert scale   |
+| traits                       |       | Undesirable |                |
+|                              |       |             | (1-4)          |
+|                              |       | traits      |                |
++------------------------------+-------+-------------+----------------+
+| Processor/buyer requires or  | H1a   | Barrier:    | Likert scale   |
+| supplies                     |       | Buyer       |                |
+|                              |       | r           | (1-4)          |
+| varieties that are not       |       | equirements |                |
+| available                    |       |             |                |
++------------------------------+-------+-------------+----------------+
+| Survey year                  | H1b   | Survey year | Categorical    |
+|                              |       |             |                |
+|                              |       |             | (2010, 2015,   |
+|                              |       |             | 2020)          |
++------------------------------+-------+-------------+----------------+
+| Please indicate your level   | H2a   | Values      | Likert scale   |
+| of agreement with the        |       | organic     |                |
+| statement: Organic seed is   |       | seed        | (1-5)          |
+| important in maintaining the |       |             |                |
+| integrity of organic food    |       |             |                |
+| production                   |       |             |                |
++------------------------------+-------+-------------+----------------+
+| Total acreage                | H2b   | Farm size   | Numeric        |
+|                              |       | (acres)     |                |
+|                              |       |             | (0-17,000)     |
++------------------------------+-------+-------------+----------------+
+| Crop diversity               | H2c   | Crop        | Numeric        |
+|                              |       | diversity   |                |
+|                              |       |             | (1-3)          |
++------------------------------+-------+-------------+----------------+
+| Control variables            |       |             |                |
++------------------------------+-------+-------------+----------------+
+| Has your certifier requested |       | Certifiers  | Binary         |
+| that you take greater steps  |       | request     |                |
+| to source organic seed?      |       | organic     | (0-1)          |
+|                              |       | seed use    |                |
++------------------------------+-------+-------------+----------------+
+| Sources seed from self or    |       | Seed saved  | Percent        |
+| other farmers                |       | or traded   |                |
+|                              |       | (%)         | (0-100)        |
++------------------------------+-------+-------------+----------------+
+| Main crop                    |       | Crop        | Categorical    |
+|                              |       |             |                |
+|                              |       |             | (Field,        |
+|                              |       |             | Forage,        |
+|                              |       |             | Vegetable)     |
++------------------------------+-------+-------------+----------------+
+| Region                       |       | Region      | Categorical    |
+|                              |       |             |                |
+|                              |       |             | (N. Central,   |
+|                              |       |             | West,          |
+|                              |       |             | Northeast,     |
+|                              |       |             | South)         |
++------------------------------+-------+-------------+----------------+
+
+#### 4.3.2 Modeling approach
+
+We use a beta regression model to estimate the relationships between
+organic growers\' use of conventional seed and their attributes. The
+beta distribution is best suited for our model given that the dependent
+variable of conventional seed use is bounded by 0 and 1, representing
+the proportion of acreage. Prior to fitting the model, we transformed
+the data in two ways. First, the acreage proportion data was censored by
+0.001 so that observations fall within (but not equal to) the 0-1
+boundaries of a beta distribution (INLA Documentation: Beta). Second,
+all independent variables are mean-centered and scaled for easier
+interpretation of coefficients. This way, the values of the coefficients
+represent the proportion increase in conventional seed used based on a
+unit change from the mean of the variable.
+
+We ran our analysis using the INLA package (Rue et al. 2009) available
+in R Statistical software (R Core Team 2023). INLA uses an Integrated
+Nested Laplace Approximation -- a deterministic Bayesian method for
+estimating its models. Analysis is available at
+[[github.com/liza-wood/organicseed_adoption]{.underline}](https://github.com/liza-wood/organicseed_adoption).
+Variable selection is informed largely by theory rather than model
+fitting exercises. However, we compare several models and provide
+measures of model fit in Appendix Section A.
+
+### 4.4 Descriptive analysis
+
+## 5. Results
+
+### 5.1 State of organic seed
+
+Across the three time periods of our survey (2010, 2015, 2020), the mean
+values and their standard deviations are reported in Table 2.
+Conventional seed use has been relatively low since the inception of the
+organic certification. The mean proportion of organic crop acreage
+planted to conventional seed decreased from 43% to 32% between 2010 and
+2015, then to 29% in 2020, with high standard deviations.
+
+The most significant barrier that growers report as limiting their
+organic seed sourcing is that a specific variety is not available in
+organic form, which is ranked over 3 (between moderate and significant
+factor) in all three survey periods. The barriers of insufficient
+quantity and desirable genetic traits score an average of 2.6 (between
+low and moderate factor) in 2010, and that score decreases by 2020.
+Buyer requirements are the least significant barrier to sourcing organic
+seed, but it does remain a consistent, low ranked factor over time.
+
+Across the three survey periods, growers\' perceived value of organic
+seed as important to the integrity of organic has remained consistently
+high. In the 2010 survey, the average agreement score with the statement
+that organic seed is important to the success of organic production was
+4 (\'somewhat\' important), which increased to 4.3 in 2015 and 2020. The
+operational profile of organic growers matches the profile of
+agricultural production more generally in that farm sizes are increasing
+[Sumner_2014](https://www.zotero.org/google-docs/?nfiL40). The average
+farm size over the three survey periods was 180, 275, and 346 acres.
+This increase is most pronounced in field and forage crops. Further, the
+number of crop categories planted by growers has been declining, with an
+average of 1.7 crop types in 2010 down to an average of 1.3 in 2020.
+
+The relationship between certifiers and organic growers has shifted over
+the years, as it appears that organic certifiers are becoming less
+strict. When non-compliant growers (i.e. growers not already using 100%
+organic seed) were asked whether or not their certifier had requested
+the increase their organic seed use, 61% responded yes in 2010,
+decreasing to 56% in 2015 and 46% in 2020. This decline suggests that
+certifiers are becoming less insistent to ensure that growers are taking
+measures to source organic seed. Further, reliance on non-commercial
+seed sources, via seed saving and seed exchange, has decreased from 23%
+and 24% in 2010 and 2015 to 15% in 2020.
+
+Table 2. Mean values and standard deviations (reported in pathenses) for
+the key variables from the organic grower survey for each time period
+
+  ------------------------------------------------------------------------
+  Organic grower survey questions      2010        2015        2020
+  ------------------------------------ ----------- ----------- -----------
+  Proportion of acreage planted to     0.43 (0.38) 0.32 (0.36) 0.29 (0.36)
+  conventional seed                                            
+
+  Barrier: Organic availability        3.55 (0.95) 3.05 (1.22) 3.19 (1.15)
+
+  Barrier: Insufficient quantity of    2.62 (1.29) 2.22 (1.23) 2 (1.16)
+  organic seed                                                 
+
+  Barrier: Lack of desirable genetic   2.63 (1.33) 2.15 (1.26) 2.31 (1.27)
+  traits                                                       
+
+  Barrier: Buyer requirements          1.87 (1.26) 1.63 (1.13) 1.9 (1.25)
+
+  Values organic seed                  4.03 (1.07) 4.29 (0.96) 4.32 (0.89)
+
+  Farm size (acres)                    181.05      275.16      346.98
+                                       (342.15)    (645.05)    (999.54)
+
+  Vegetable Crop Acreage               27.58       62.79       12.3
+                                       (90.34)     (427.81)    (47.81)
+
+  Field Crop Acreage                   178.21      259.32      351.51
+                                       (347.15)    (490.56)    (812.27)
+
+  Forage Crop Acreage                  98.96       122.03      172.11
+                                       (124.74)    (197.63)    (548.85)
+
+  Crop diversity                       1.66 (0.64) 1.5 (0.6)   1.25 (0.56)
+
+  Certifiers request organic seed use  61%         56%         46%
+  (% yes)                                                      
+
+  Seed saved or traded (%)             22.54       23.67       14.63
+                                       (29.95)     (31.69)     (24.05)
+
+  Number of respondents (no missing    545         799         408
+  data)                                                        
+  ------------------------------------------------------------------------
+
+### 5.2 Policy flexibility for those facing barriers
+
+Having described key variables from our survey, we next present our
+model results. First we address our first set of hypotheses, which
+propose that environmental policies add flexibility in order to reduce
+excessive burden on organic producers. We present the mean coefficient
+estimates and credible intervals of our model results in Figure 2. Full
+model results are available in Appendix B.
+
+Of the four organic seed sourcing barriers facing organic growers, three
+have a significant positive relationship with planting conventional
+seed. The barriers related to organic seed variety availability, lacking
+desirable genetic traits, and limitations in choice via buyer
+requirements have effect sizes of 0.14, 0.13, and 0.11, respectively. In
+other words, for each unit higher that a grower ranks the barrier of
+organic variety availability, the proportion of acreage planted to
+convention seed increases by a mean estimate of 0.14 (14%). This
+estimate is based on all other variables being held constant at their
+mean or baseline, so for example, these effects are calculated based on
+having an average farm size, number of crops, and value rating of
+organic seed, among other variables. The barrier related to insufficient
+quantity of an organic variety was not significantly related to
+conventional seed use.
+
+Regarding survey year, we find that conventional seed use significantly
+decreased over time. In 2015, the coefficient estimate is -0.17,
+suggesting that compared to the baseline data in 2010, growers are
+planting 17% less of their acreage to conventional seed. Likewise in
+2015, growers are planting 33% less of their acreage to conventional
+seed.
+
+![](media/image1.png){width="6.5in" height="3.25in"}
+
+Figure 2 Coefficient estimates and credible intervals for the beta
+regression assessing the proportion of total acreage of growers main
+crop planted with conventional seed.
+
+\`\`\`{r fig1.2, echo = F, out.width = \'100%\', fig.align = \'center\',
+fig.cap = \'Coefficient estimates and credible intervals for the beta
+regression assessing the proportion of total acreage of a growers main
+crop planted with conventional seed.\'}
+
+knitr::include_graphics(\'\~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure2.png\')
+
+\`\`\`
+
+These results support our first hypotheses: H1a) Conventional seed use
+will be highest among growers experiencing more significant organic seed
+sourcing barriers and H1b) Conventional seed use will decline over time.
+Together, they suggest that the flexibility of the organic seed policy
+is being used by those with the highest seed sourcing burden, and as the
+organic seed market develops over time, growers rely less on the seed
+policy exception.
+
+### 5.3 Conventionalized farmer profiles rely more on policy flexibility
+
+Next we address our second set of hypotheses, which propose that policy
+flexibility enables some farmers to take advantage of the policy\'s
+leniency. A grower\'s rating of organic seed\'s value has a significant
+negative relationship with planting conventional seed. Our model
+estimates an effect size of -0.2, meaning that for every unit higher
+that a grower ranks the value of organic seed, the acreage planted to
+conventional seed decreases by 20%. All else held equal -- so for
+example farmers who experience the same barriers and have the same farm
+sizes -- the principled belief that organic seed is important to the
+integrity of organic farming has a considerable effect on how much of
+acreage is planted to conventional versus organic seed.
+
+Regarding operational characteristics, farm size has a significant
+positive relationship with planting conventional seed. For every unit
+larger a farm is, growers plant 11% more of their acreage to
+conventional seed. Crop diversity has a negative relationship with
+planting conventional seed, with an effect size of -0.07, but credible
+intervals that span between -0.14 and 0.01.
+
+These results support all three of our second hypotheses: H2a)
+Conventional seed use will be highest among those with who place low
+value on organic seeds\' contribution to organic integrity, H2b)
+Conventional seed use will be highest on large farms, and H2c)
+Conventional seed use will be highest on low-diversity farms. These
+results suggest that certain farmers\' profiles -- notably those that
+align with a \'conventionalized\' organic grower -- rely more on the
+organic seed policy exception than more \'principled\' organic growers.
+
+The crop and regional controls in our model highlight considerable
+variation in adoption based on these different organic subsystems.
+Forage crop growers plant an estimated 85% more of their acreage to
+conventional seed compared to field crop growers, while vegetables crop
+growers plant an estimated 21% more. Regionally, compared to the
+baseline of the North Central region, growers from both the West and the
+Northeast regions plant significantly more of their acreage to
+conventional seed, with coefficient estimates of 0.35 and 0.24,
+respectively. The estimate for the Southern region is also higher than
+the baseline (0.12), though the credible intervals of this estimate
+cross over zero.
+
+We take results related to our second set of hypotheses and visualize
+the differences in predicted acreage planted to conventional seed based
+on these two farmer profiles: conventionalized and principled. A
+conventionalized farmer profile is defined by a low value of organic
+seed (25th percentile), large farm size (75th percentile), and low crop
+diversity (25th percentile). A principled farmer profile is the
+opposite, characterized by a high value of organic seed, small farms,
+and high crop diversity. We calculate these profiles for each region in
+the United States and use the example of vegetable crops. All other
+variables are fixed at their median value.
+
+Figure 3 visualizes model predictions of conventional seed use by
+hypothetical vegetable growers from these two farmer profiles across
+regions in the United States. From the predicted values we see a
+consistent difference between the two farm profiles: conventionalized
+farmers rely more on the seed policy loophole, planting between 20-39%
+more acreage to conventional seed than principled farmers in 2010,
+22-73% in 2015, and 8-20% in 2020. We run these same predictions for
+Field and Forage crops (available in Appendix C) and observe even higher
+differences between the two farm profiles, consistent over the time
+periods.
+
+![](media/image3.png){width="6.5in" height="3.7083333333333335in"}
+
+Figure 3. Predicted mean estimates and their credible intervals (not
+visible due to small size) for vegetable growers of two farmer profiles.
+Estimates are made for each region of the US, represented by the
+different colored points (see legend). The points represent the mean
+estimates and lines connecting points highlight the different between
+\'practical\' and \'principled\' growers in each time period.
+
+\`\`\`{r fig1.3, echo = F, out.width = \'100%\', fig.align = \'center\',
+fig.cap = \'Predicted mean estimates and their credible intervals (not
+visible due to small size) for vegetable growers of two farmer profiles.
+Estimates are made for each region of the US, represented by the
+different colored points (see legend). The points represent the mean
+estimates and lines connecting points highlight the difference between
+practical and principled growers in each time period.
+
+\'}
+
+knitr::include_graphics(\'\~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure3.png\')
+
+\`\`\`
+
+### 5.4 Descriptive??
+
+Other control, namely, certifier guidance. And additional steps
+
+## 6. Discussion
+
+### 6.1 flexibility in the organic standard is double-edged. 
+
+We find support for both our hypotheses, suggesting that the flexibility
+of the organic standard is a double edges sword. It helps and hurts.
+This is consistent with what?? Incentive structures work differently for
+different people. Especially in the environmental world
+
+-- it is both
+
+-- There are certainly those that are facing real barriers
+
+-- But there are also those that, holding barriers constant, aren;t
+budging. Large, simpler farms
+
+-- This represents the general tension in \'sustainability\' more
+generally...
+
+-- limits to the analysis
+
+These characteristics align with traditional scaling visions, whereby
+economies of scale are the focus and pro-innovation attitudes are
+relevant largely to the extent that they are perceived as cost-saving,
+rather than related to a stewardship ethic
+[Buttel_Jr_Larson_1990](https://www.zotero.org/google-docs/?M96lMu). For
+example, the Cal-Organic farm has grown from a quarter of an acre of
+organic production to one of the nation\'s largest organic vegetable
+providers, in part due to merger with conventional operations and
+industrial supply chain connection with Whole Foods
+([[https://calorganicfarms.com/our-story/]{.underline}](https://calorganicfarms.com/our-story/)).
+In another example, Bayer CropScience, one of the largest agri-chemical
+and seed companies in the world, has recently announced its entry into
+the organic seed market (Bayer 2021). These examples represent two of
+the traditional pathways identified in the sustainability transitions
+literature, where the objective is scaling to substitute or hybridize
+with the dominant conventional system
+[Geels_Schot_2007](https://www.zotero.org/google-docs/?ke9eHl). In these
+pathways, niche systems will conform in order to compete under the same
+selection pressures of the mainstream system
+[Smith_Raven_2012](https://www.zotero.org/google-docs/?tEIm2Y), which
+includes hierarchical and formalized industrial markets for
+business-first operations
+[Daloğlu_Nassauer_Riolo_Scavia_2014_Gaitán-Cremaschi_Klerkx_Duncan_Trienekens_Huenchuleo_Dogliotti_Contesse_Rossing_2018](https://www.zotero.org/google-docs/?Igm7aZ).
+
+The second farm model, the \'alternative\' innovator, is typified by
+smaller operations that source seed from diverse sources, including
+non-commercial sources, and have stronger attitudes towards the value of
+organic seed beyond its cost-saving potential. These characteristics
+present an alternative to the fit-and-conform substitution by
+integrating alternative institutions for seed development and exchange,
+as well making decisions based on the organic ethic
+[Daloğlu_Nassauer_Riolo_Scavia_2014_Gaitán-Cremaschi_Klerkx_Duncan_Trienekens_Huenchuleo_Dogliotti_Contesse_Rossing_2018](https://www.zotero.org/google-docs/?RppIb0).
+For example, farms like Bee Heaven Farm in Florida produce mixed
+vegetables for direct sales on five acres, and grow out seed for use on
+their operation. Farms like these are even going as far as re-asserting
+their ethic through initiatives like the \"Real Organic\" label, that
+oppose what is perceived as the industrial co-opting of the organic
+standard
+([[www.realorganicproject.org]{.underline}](http://www.realorganicproject.org)).
+These approaches resemble one of two alternative pathways: a
+stretch-and-transform substitution pathway, where the niche aims to
+modify the \'rules of the game\' to match their innovation systems\'
+approach
+[Smith_Fressoli_Abrol_Arond_Ely_2016](https://www.zotero.org/google-docs/?oAuSlr);
+or a vision of scaling that aims not to substitute or compete with the
+mainstream at all, but rather, sustainably coexist as a niche with its
+own institutions
+[Jain_Islam_Goossen_Nair_2023](https://www.zotero.org/google-docs/?rioAiF).
+
+### 6.2 Organic Policy recommendations
+
+SEE Kiki\'s recomendations
+
+6.1 Environmental policy flexibility should be tailored to specific
+cases and monitor for shirking
+
+If the flexibility is about allowing for innovation, there need to be
+complementary policies that support innovation
+
+Measuring availability has been addressed in the EU through the creation
+of an organic seed database, in which all organic seeds must be
+registered
+([[LiveSeed]{.underline}](https://www.liveseed.eu/wp-content/uploads/2021/09/Policy-brief-RoadMap-National-Authorities_final_compressed-4.pdf)).
+And consequently, these derogations are slated to be phased out by 2036.
+
+Since there is enabling of laggards this is also having negative
+consequences on the organic seed sector
+
+Consequences for the organic seed innovation system -- puts them in a
+bind -- uncertain demand
+
+Agri-environmental policy instrument effectiveness improves if
+characteristics of the target population are taken into account (Pineiro
+et al. 2020).
+
+And yet, policymakers tend to reduce decision-making down to economic
+and structural factors, without accounting for the variety of farmer
+motivations (Brown et al. 2021; The farmer typology one).
+
+Of course, the goal is to get the balance just right. To move towards
+more certain compliance while reducing exit, shirking, and promoting
+necessary innovation.
+
+BUT, striking this balance with a heterogenous firms means that policy
+needs to be nimble. to recognize that there are different kinds of farms
+in the organic niche.
+
+Those that are looking for the industrial option will continue to be
+laggards unless 1. Policy becomes more strict and their either comply or
+exit, and 2. Seed becomes affordable.
+
+-   Increase stringency gradually. Prove that they have made efforts and
+    > if availability is a problem, that they take action themselves.
+    > Larger farms have the resources, but no one is contracting...
+
+-   Support expansion of organic seed.
+
+This closing of the loophole is happening in Europe
+
+But this is easier in Europe where there is a seed database
+
+Those that are truer to organic, however, should not be completely
+crowded out. Competition policy around seed generally needs to be sure
+to be cautious for maintaining diversity.
+
+Though the standard supports organic seed market development and
+innovation by requiring its use, it simultaneously creates challenges
+for incentivizing entrepreneurial activity due to this exception, and
+leaves the decision to certifiers for assessing commercial availability
+and viable alternatives [(Renaud et al.,
+2016)](https://www.zotero.org/google-docs/?broken=bElDy3).
+
+**More broadly, the policy implications are for an iterative and
+diversified approach for policy flexibility. To ensure that\'re not
+enabling laggards, policies can take measures to have firms show
+evidence of change, engaging in concrete ways of supporting innovation**
+
+**Is it about public needing to support niche innovations, directed more
+resources to regulating. In part, for organic and similar sustainability
+movements, there will also need to be a consideration of what kind of
+movement**
+
+[^1]: \"When there are no organic or in-conversion seeds or vegetative
+    propagating material of a suitable variety available you may use
+    non-organic\" ([[UK Soil
+    Association]{.underline}](https://www.soilassociation.org/media/25986/sa-gb-farming-growing.pdf),
+    (EC) 834/2007 Art. 22(2)(b) (EC) 889/2008 Art. 45(1)(b))
+
+[^2]: Seeds, seedlings and planting materials from organic production
+    shall be used. If organic seeds, seedlings and planting materials
+    are not commercially available, then conventional, chemically
+    untreated seed, seedlings and planting material may be used. Only if
+    these are not commercially available may chemically treated seeds,
+    seedlings and planting materials be used. The operator shall
+    demonstrate the apparent need for such use. ([[Kilimohai
+    Organic]{.underline}](https://kilimohai.org/fileadmin/02_documents/Standards/East_African_Organic_products_standard.pdf))

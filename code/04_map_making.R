@@ -214,7 +214,7 @@ mapdf <- region_text(df)
 map <- make_map(df, mapdf)
 map
 
-ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/map.png", height = 4.5, width = 5, dpi = 800)
+ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png", height = 4.5, width = 5, dpi = 800)
 
 # Olg regional maps -- fx will not work for them anymore
 
