@@ -8,20 +8,9 @@ reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
 blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
 
 mako <- viridis::mako(n=9)
-#[1] "#0B0405FF" "#2B1C35FF" "#3E356BFF" "#3B5698FF" "#357BA2FF" "#359EAAFF" "#49C1ADFF" #"#96DDB5FF"
-#[9] "#DEF5E5FF"
 magma <- viridis::magma(n = 9)
-#[1] "#000004FF" "#1D1147FF" "#51127CFF" "#822681FF" "#B63679FF" "#E65164FF" "#FB8861FF" #"#FEC287FF"
-#[9] "#FCFDBFFF"
-#virid <- viridis::viridis(n=9)
-#[1] "#440154FF" "#472D7BFF" "#3B528BFF" "#2C728EFF" "#21908CFF" "#27AD81FF" "#5DC863FF" #"#AADC32FF"
-#[9] "#FDE725FF"
 inferno <- viridis::inferno(n=9)
-[1] "#000004FF" "#210C4AFF" "#56106EFF" "#89226AFF" "#BB3754FF" "#E35932FF" "#F98C0AFF"
-[8] "#F9C932FF" "#FCFFA4FF"
 turbo <- viridis::turbo(n=9)
-#[1] "#30123BFF" "#466BE3FF" "#28BBECFF" "#31F299FF" "#A2FC3CFF" "#EDD03AFF" "#FB8022FF"
-#[8] "#D23105FF" "#7A0403FF"
 
 
 setwd("~/Box/osa_networks/data_combined/")
@@ -104,7 +93,12 @@ northeast <- c("WV", "MD", "DE", "NJ", "PA", "NY", "CT", "RI", "MA", "VT",
                        "Rhode Island", "Massachusetts", "Vermont", "New Hampshire", 
                "Maine", "District of Columbia")
 
-df11_random_locations <- df11_random_locations %>% 
+df11_random_locations$year = 2011
+df16$year = 2016
+df21$year = 2021
+
+df <- rbind(df11_random_locations, df16, df21)
+df <- df %>% 
   mutate(Region = case_when(
     State %in% western ~ "West",
     State %in% northcentral ~ "North Central",
@@ -114,25 +108,6 @@ df11_random_locations <- df11_random_locations %>%
   )) %>% 
   filter(!is.na(Region))
 
-df16 <- df16 %>% 
-  mutate(Region = case_when(
-    State %in% western ~ "West",
-    State %in% northcentral ~ "North Central",
-    State %in% southern ~ "South",
-    State %in% northeast ~ "Northeast",
-    T ~ NA_character_
-  )) %>% 
-  filter(!is.na(Region))
-
-df21 <- df21 %>% 
-  mutate(Region = case_when(
-    State %in% western ~ "West",
-    State %in% northcentral ~ "North Central",
-    State %in% southern ~ "South",
-    State %in% northeast ~ "Northeast",
-    T ~ NA_character_
-  )) %>% 
-  filter(!is.na(Region))
 
 region_text <- function(df){
   n.by.state <- df %>% 
@@ -141,7 +116,8 @@ region_text <- function(df){
     ungroup() %>% 
     mutate(StateN = sum(n), 
            Stateprop = n/StateN,
-           StatePercent = paste(round(100*(n/StateN), 1), "%")) %>% 
+           StatePercent = paste(round(100*(n/StateN), 1), "%"),
+           StateN = sum(n), ) %>% 
     rename("Staten" = n) 
   n.by.region <- df %>% 
       group_by(Region) %>% 
@@ -157,7 +133,8 @@ region_text <- function(df){
   
   return(counts)
 }
-make_map <- function(df, mapdf, colors, year_title){
+
+make_map <- function(df, mapdf){
   # This one is finnicky but works
   us_states <- left_join(us_states_og, mapdf, by = c("abbr" = "State")) %>% 
     rename("State" = "full") %>% 
@@ -189,8 +166,11 @@ make_map <- function(df, mapdf, colors, year_title){
         T ~ RegionPercent))
   
   # To plot points on the map
-  loc <- data.frame(lon = df$long, lat = df$lat)
+  loc <- data.frame(lon = df$long, lat = df$lat, year = df$year)
   transformed <- usmap_transform(loc) %>% filter(lat < 51 & lat > 21)
+  transformed <- transformed %>% 
+    mutate(year = case_when(year == 2011 ~ 2010, year == 2016 ~ 2015,
+                            year == 2021 ~ 2020, T ~ NA)) 
   #plot_usmap() +
   #  geom_point(data = transformed, aes(x = x, y = y), colour = "#2d677f", shape=21, size = 2)
   
@@ -206,31 +186,39 @@ make_map <- function(df, mapdf, colors, year_title){
   
   p <- ggplot() +
     geom_polygon(data = us_states, fill = "white", size = 0.2,
+                 color = "black",
                  aes(x = x, y = y, 
-                     color = factor(Regionn), group = group,
-                     text = paste0("N:", Regionn, "\n",
-                                   "Response rate: ", 
-                                   RegionPercent))) + 
-    geom_point(data = transformed, aes(x = x, y = y), colour = "black", 
-               alpha = .5,shape=20, size = 1) +
-    scale_color_manual(values = colors) + 
-    labs(title = year_title,
+                     #color = factor(Regionn), 
+                     group = group)) + 
+    geom_point(data = transformed, aes(x = x, y = y, colour = factor(year)) , 
+               alpha = .4,shape=20, size = 2,
+               position=position_jitter(width=10000, height=10000)) +
+    scale_color_manual(values = mako[c(2,5,8)]) + 
+    labs(title = "",
          color = "",
          x = "", y = "") + 
     theme_light(base_size = 10)  +
     theme(
-      legend.position="none", # was bottom
+      #legend.position="bottom", # was bottom
+      legend.position = c(0.5, 0.05),
+      legend.direction = "horizontal",
       panel.grid = element_blank(),
       line = element_blank(),
       rect = element_blank(),
       axis.text = element_blank(),
-      #text = element_text(family = FONTTYPE, size = FONTSIZE),
-      plot.title = element_text(family = "Times", hjust = 0.5),
+      text = element_text(family = "Times", size = 14)
       #axis.title = element_text(family = FONTTYPE, size = TITLESIZE)
-    )
+    ) +
+    guides(color = guide_legend(override.aes = list(size = 10)))
   return(p)
   
 }
+
+mapdf <- region_text(df)
+map <- make_map(df, mapdf)
+map
+
+ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/map.png", height = 4.5, width = 5, dpi = 800)
 
 df11mapdf <- region_text(df11_random_locations)
 map10 <- make_map(df11_random_locations, df11mapdf, rep("black",4), "2010")

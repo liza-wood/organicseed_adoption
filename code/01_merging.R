@@ -9,11 +9,12 @@ df11f <- readRDS("data2011_cleaned.rds") %>%
   cbind(select(read.csv("2011SurveyData.csv", skip = 2, header = T), 
                NoOGSeedTreat, NoOGSeedProcessor,     
                NoOGSeedQuant, NoOGSeedSave, NoOGSeedQual,          
-               NoOGSeedPrice, NoOGSeedVar , NoOGSeedTrait, SeedInterest)) %>% 
+               NoOGSeedPrice, NoOGSeedVar , NoOGSeedTrait, SeedInterest,
+               AddStepsOther)) %>% 
   select(codebook$qcode_11_16, IncreasedOGSeed)
 df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGVegSeed,
                                                     IncreasedOGFieldSeed, IncreasedOGForageSeed,
-                                                    AddStepsTimely, AddStepsContract)
+                                                    AddStepsTimely, AddStepsContract, AddStepsOther)
 df21f <- readRDS("data2021_cleaned.rds")
 zipcode <- data.table::fread("zipcode.csv")
 getzipcode <- zipcode$state
@@ -43,7 +44,8 @@ df21f <- select(df21f, codebook$qcode_11_16,
                 NoOGSeedQuant, NoOGSeedSave, NoOGSeedQual,NoOGSeedPrice,
                 NoOGSeedVar, NoOGSeedTrait,
                 IncreasedOGVegSeed,
-                IncreasedOGFieldSeed, IncreasedOGForageSeed)
+                IncreasedOGFieldSeed, IncreasedOGForageSeed,
+                AddStepsTimely, AddStepsContract)
 
 df11f$survey_year = 2011
 df16f$survey_year = 2016
