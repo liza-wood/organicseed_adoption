@@ -8,10 +8,6 @@ reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
 blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
 
 mako <- viridis::mako(n=9)
-magma <- viridis::magma(n = 9)
-inferno <- viridis::inferno(n=9)
-turbo <- viridis::turbo(n=9)
-
 
 setwd("~/Box/osa_networks/data_combined/")
 df11 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2011SurveyData.csv") %>% 
@@ -220,6 +216,8 @@ map
 
 ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/map.png", height = 4.5, width = 5, dpi = 800)
 
+# Olg regional maps -- fx will not work for them anymore
+
 df11mapdf <- region_text(df11_random_locations)
 map10 <- make_map(df11_random_locations, df11mapdf, rep("black",4), "2010")
 
@@ -230,4 +228,3 @@ df21mapdf <- region_text(df21)
 map20 <- make_map(df21, df21mapdf, blues[c(6,2,4,8)], "2020")
 
 cowplot::plot_grid(map10, map15, map20, nrow = 1)
-ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure2.png", height = 2.5, width = 9, dpi = 800)

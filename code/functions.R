@@ -2,8 +2,8 @@ coef_order <- c("Barrier: Organic availability",
                 "Barrier: Undesirable traits",
                 "Barrier: Buyer requirements",
                 "Barrier: Insufficient quantity",
-                "Year: 2016 (vs. 2011)",
-                "Year: 2021 (vs. 2011)",
+                "Year: 2015 (vs. 2010)",
+                "Year: 2020 (vs. 2010)",
                 "Values organic seed",
                 "Farm size (acres)",
                 "Crop diversity", 
@@ -17,6 +17,7 @@ coef_order <- c("Barrier: Organic availability",
                 "Southern region (vs. North Central)",
                 "(Intercept)")
 
+shapes <- 21:25
 prep_inla_data <- function(m){
   mdf <- m$summary.fixed
   mdf$term = rownames(mdf)
@@ -39,8 +40,8 @@ prep_inla_data <- function(m){
       term == "RegionWest" ~ "Western region (vs. North Central)",
       term == "RegionNortheast" ~ "Northeastern region (vs. North Central)", 
       term == "RegionSouth" ~ "Southern region (vs. North Central)", 
-      term == "survey_year2016" ~ "Year: 2016 (vs. 2011)",
-      term == "survey_year2021" ~ "Year: 2021 (vs. 2011)",
+      term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
+      term == "survey_year2021" ~ "Year: 2020 (vs. 2010)",
       T ~ term)) %>% 
     mutate(term = factor(term, rev(coef_order))) %>% 
     arrange(term)
@@ -78,7 +79,7 @@ plot_inla_models <- function(mdf, nmodels){
       geom_vline(xintercept = 0, linetype = 2, size = 0.25) + 
       scale_colour_manual(values = viridis::mako(n = nmodels, begin = .1, end = .9),
                           guide = guide_legend(reverse = TRUE)) + 
-      scale_shape_manual(values = 21:25[1:nmodels],
+      scale_shape_manual(values = shapes[1:nmodels],
                          guide = guide_legend(reverse = TRUE)) +
       jtools::theme_nice(base_family = "Times") + 
       jtools::drop_y_gridlines() + 
@@ -96,7 +97,8 @@ plot_inla_models <- function(mdf, nmodels){
 
 make_pp_df <- function(subset){
   row.names(subset) <- NULL
-  df <- data.frame(acreage_s = quantile(subset$acreage_s, na.rm = T)[c(2,5)],
+  df <- suppressWarnings(
+    data.frame(acreage_s = quantile(subset$acreage_s, na.rm = T)[c(2,5)],
                    legitimation_user_s = quantile(subset$legitimation_user_s, 
                                                   na.rm = T)[c(5,2)],
                    cropcat_n_s = quantile(subset$cropcat_n_s, na.rm = T)[c(5,2)],
@@ -114,8 +116,33 @@ make_pp_df <- function(subset){
                      rep(median(subset$barrier_availability_s, na.rm = T), 2),
                    maincrop = rep(subset$maincrop, 2),
                    Region = rep(subset$Region, 2),
-                   survey_year = rep(subset$survey_year, 2)) %>% 
+                   survey_year = rep(subset$survey_year, 2))) %>% 
     unique() %>% 
-    mutate(model = c('Principled', 'Conventionalized'))
+    mutate(model = c('Principled', 'Practical'))
   return(df)
+}
+
+plot_predicted_probs <- function(pred_df){
+  p <- pred_df  %>% 
+    mutate(survey_year = case_when(survey_year == 2011 ~ 2010, 
+                                   survey_year == 2016 ~ 2015, T ~2020)) %>% 
+    ggplot(aes(x = model, y = mean, color = factor(Region, 
+                                                   c("North Central", "Northeast",
+                                                     "South", "West")))) +
+    geom_point(size = 4, alpha = .8,) +
+    geom_line(aes(group = factor(Region, 
+                                 c("North Central", "Northeast",
+                                   "South", "West")))) +
+    geom_linerange(aes(ymin = `0.025quant`, ymax = `0.975quant`)) +
+    facet_wrap(~survey_year) +
+    theme_minimal() +
+    scale_color_viridis_d(option = "D", begin = .1, end = .9) +
+    theme(legend.position = "bottom",
+          axis.text.y = element_text(size = 12),
+          axis.title.x = element_text(size = 12),
+          text = element_text(size = 14, family = "Times"),
+          panel.grid.major.x = element_line(linetype = "solid")) + 
+    labs(x = "", shape = "", color = "", y = "Predicted acreage planted\nto conventional seed") +
+    ylim(c(0,1))
+  p
 }

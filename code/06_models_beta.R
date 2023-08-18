@@ -5,8 +5,9 @@ library(cowplot)
 library(jtools)
 #install.packages("INLA",repos=c(getOption("repos"),INLA="https://inla.r-inla-download.org/R/stable"), dep=TRUE)
 library(INLA)
+source('code/functions.R')
 setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
-df.full <- readRDS("~/Box/organicseed_adoption/df_full.rds") %>% 
+df.full <- readRDS("~/Box/organicseed_adoption/df_scaled.rds") %>% 
   select(CVseed_percent_maincrop_prop,
          legitimation_user_s,
          CertifierRequestn_s,
@@ -23,7 +24,9 @@ df.full <- readRDS("~/Box/organicseed_adoption/df_full.rds") %>%
          survey_year) %>% 
   na.omit()
 
-cens <- 0.001
+df.full_rounded <- df.full
+df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.99, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.01, df.full_rounded$CVseed_percent_maincrop_prop))
+
 m <- inla(CVseed_percent_maincrop_prop ~ 
              legitimation_user_s + 
              acreage_s + 
@@ -39,8 +42,7 @@ m <- inla(CVseed_percent_maincrop_prop ~
              noncommercial_seedsource_s, 
            data = df.full_rounded,
            family = "beta",
-           control.compute = list(cpo= T, waic= T),
-           control.family = list(beta.censor.value = cens))
+           control.compute = list(cpo= T, waic= T))
 
 mdf <- prep_inla_data(m)
 plot_inla_models(mdf, 1)
@@ -49,7 +51,7 @@ ggsave("figures/model_results.png", width = 8, height = 4)
 
 # PREDICTED PROBABILITY ----
 ## Two farm models in several settings ----
-focal_crop = "Field"
+focal_crop = "Vegetables"
 dfw11 <- make_pp_df(filter(df.full, Region == "West" &
                               maincrop == focal_crop & 
                               survey_year == 2011))
@@ -91,9 +93,9 @@ dfne21 <- make_pp_df(filter(df.full, Region == "Northeast" &
 df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
       dfnc11, dfnc16, dfnc21, dfne11, dfne16, dfne21)
 df_og$CVseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
-df <- select(df_og, colnames(df.full))
+df <- select(df_og, colnames(df.full_rounded))
 
-newdf <- rbind(df.full, df)
+newdf <- rbind(df.full_rounded, df)
 
 # predictions with INLA
 #pred_veg_west <- cbind(veg_west, predict(m3, 
@@ -128,47 +130,50 @@ formula = CVseed_percent_maincrop_prop ~ legitimation_user_s +
 
 r = inla(formula, data = newdf,
          family = "beta",
-         control.family = list(beta.censor.value = cens,
-                               initial = 10, fixed=TRUE), ## no observational noise 
-         
+         control.family = list(initial = 10, fixed=TRUE), ## no observational noise 
          control.predictor=list(link=1)) 
 
-
-## What is this? Basically it fits the values of these data and then pretends like
-## they are the predictors...
+# Exploring what is happening here with NAs
+## Basically it fits the values of these data and then pretends like
+## they are the predictors... if you don't set link=1, then this does not happen
 r$summary.linear.predictor[c((nrow(newdf)-3):nrow(newdf)), c("mean", "sd",
                                                             "0.025quant", 
                                                             "0.975quant")]
 r$summary.fitted.values[c((nrow(newdf)-3):nrow(newdf)), c("mean", "sd",
                                                          "0.025quant", 
                                                          "0.975quant")]
-## Notice how for where we actually had data they change
-r$summary.linear.predictor[1:5, c("mean", "sd",
-                                  "0.025quant", 
-                                  "0.975quant")]
-r$summary.fitted.values[1:5, c("mean", "sd",
-                               "0.025quant", 
-                               "0.975quant")]
 
 pred_df <- df_og %>% 
-                  cbind(r$summary.fitted.values[c((nrow(newdf)-(nrow(df_og)-1)):nrow(newdf)), 
+                  cbind(r$summary.fitted.values[c((nrow(newdf)-
+                                                     (nrow(df_og)-1)):nrow(newdf)), 
                                               c("mean", "sd",
                                                 "0.025quant", 
                                                 "0.975quant")])
-pred_df  %>% 
-  mutate(survey_year = case_when(survey_year == 2011 ~ 2010, 
-                                 survey_year == 2016 ~ 2015, T ~2020)) %>% 
-  ggplot(aes(x = model, y = mean, color = factor(Region, 
-                                                 c("North Central", "Northeast",
-                                                   "South", "West")))) +
-  geom_point(size = 4, alpha = .8,) +
-  geom_linerange(aes(ymin = `0.025quant`, ymax = `0.975quant`)) +
-  facet_wrap(~survey_year) +
-  theme_minimal() +
-  scale_color_viridis_d(option = "D", begin = .1, end = .9) +
-  theme(axis.text.y = element_text(size = 12),
-        axis.title.x = element_text(size = 12),
-        text = element_text(size = 14, family = "Times"),
-        panel.grid.major.x = element_line(linetype = "solid")) + 
-  labs(x = "", shape = "", color = "", y = "Predicted acreage planted to conventional seed") +
-  ylim(c(0,1))
+
+
+plot_predicted_probs(pred_df)
+
+ggsave('figures/predicted_probs_veg.png', width = 7, height = 4)
+
+# Text
+wide11 <- pred_df %>%
+  select(survey_year, Region, model, mean) %>% 
+  filter(survey_year == 2011) %>% 
+  pivot_wider(names_from = model,
+              values_from = mean) 
+
+wide11$Practical-wide11$Principled
+
+wide16 <- pred_df %>%
+  select(survey_year, Region, model, mean) %>% 
+  filter(survey_year == 2016) %>% 
+  pivot_wider(names_from = model,
+              values_from = mean) 
+wide16$Practical-wide16$Principled
+
+wide21 <- pred_df %>%
+  select(survey_year, Region, model, mean) %>% 
+  filter(survey_year == 2021) %>% 
+  pivot_wider(names_from = model,
+              values_from = mean) 
+wide21$Practical-wide21$Principled

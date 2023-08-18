@@ -1,97 +1,97 @@
-colnames,Q.x,Q.y,Label,df11,df16,df21
+cleaned_colnames,Q.x,Q.y,Label,df11,df16,df21
 RespondentID,RespondentID,RespondentID,RespID,TRUE,TRUE,NA
 CollectorID,CollectorID,CollectorID,NA,TRUE,TRUE,NA
 SurveyID,SurveyID,CollectorName,NA,TRUE,TRUE,NA
 StartDate,StartDate,StartDate,NA,TRUE,TRUE,NA
 EndDate,EndDate,EndDate,NA,TRUE,TRUE,NA
-IPAddress,IPAddress,IP.Address,NA,TRUE,TRUE,NA
-EmailAddress,EmailAddress,Email.Address,NA,TRUE,TRUE,NA
-State,In.which.state.do.you.farm...i..Please.fill.in....i.,In.which.state.s..and.zip.code.s..do.you.farm...i..Please.fill.in....i.,NA,TRUE,TRUE,TRUE
-YearsCertified,How.many.years.have.you.been.certified.organic...i..Please.fill.in....i.,X,NA,TRUE,TRUE,TRUE
-GrowVegis,Last.year..did.you.have.any.organic.acres.in.annual.vegetables...i..Please.select.one....i.,Last.year..did.you.have.any.organic.acres.in..b..i.annual.vegetables..i...b....i..Please.select.one....i.,NA,TRUE,TRUE,TRUE
-VegiAcreage,Last.year..how.many.organic.acres.did.you.have.in.annual.vegetables...i..Please.fill.in.number....i.,How.many.organic.acres.did.you.have.in.annual.vegetables.last.year...i..Please.fill.in.number....i.,NA,TRUE,TRUE,TRUE
-OGVegiSeed,Last.year..what.approximate.percentage.....of.total.acreage.of.annual.vegetables.was.planted.with.certified.organic.seed...i..Please.fill.in.number....i.,Last.year..what.approximate.percentage.....of.total.acreage.of.annual.vegetables.was.planted.with.certified.organic.seed...i..Enter.a.number.between.0.and.100..Do.not.enter.a.....sign....i.,NA,TRUE,TRUE,TRUE
-OGVegSeedAcres,X,X.15,NA,TRUE,TRUE,TRUE
+IPAddress,IPAddress,IP Address,NA,TRUE,TRUE,NA
+EmailAddress,EmailAddress,Email Address,NA,TRUE,TRUE,NA
+State,In which state do you farm   i  Please fill in    i ,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,TRUE,TRUE,TRUE
+YearsCertified,How many years have you been certified organic   i  Please fill in    i ,Custom Data,NA,TRUE,TRUE,TRUE
+GrowVegis,Last year  did you have any organic acres in annual vegetables   i  Please select one    i ,Last year  did you have any organic acres in  b  i annual vegetables  i   b    i  Please select one    i ,NA,TRUE,TRUE,TRUE
+VegiAcreage,Last year  how many organic acres did you have in annual vegetables   i  Please fill in number    i ,How many organic acres did you have in annual vegetables last year   i  Please fill in number    i ,NA,TRUE,TRUE,TRUE
+OGVegiSeed,Last year  what approximate percentage     of total acreage of annual vegetables was planted with certified organic seed   i  Please fill in number    i ,Last year  what approximate percentage     of total acreage of annual vegetables was planted with certified organic seed   i  Enter a number between 0 and 100  Do not enter a     sign    i ,NA,TRUE,TRUE,TRUE
+OGVegSeedAcres,Last year  what approximate percentage     of total acreage of annual vegetables was planted with certified organic seed   i  Please fill in number    i ,Last year  what approximate percentage     of total acreage of annual vegetables was planted with certified organic seed   i  Enter a number between 0 and 100  Do not enter a     sign    i ,NA,TRUE,TRUE,TRUE
 X,NA,NA,NA,TRUE,NA,TRUE
-VegCrop1,Last.year..what.were.your.top.three.annual.vegetable.crops.by.acreage..and.what.percentage.of.certified.organic.seed.did.you.use.for.each...i..Please.fill.in....i.,What.were.your.top.three.annual.vegetable.crops.by.acreage..And.what.approximate.percentage.....of.certified.organic.seed.did.you.use.for.each...i..Please.fill.in....i.,What were your top 3 annual vegetable crops by acreage last year (2019)?: Crop 1,TRUE,TRUE,NA
-VegCat1,X.2,NA,NA,TRUE,NA,NA
-VegPercent1,X.3,X.16,Approximately what percent (%) of certified organic seed did you use for each last year?: Crop 1,TRUE,TRUE,NA
-VegCrop2,X.4,X.17,What were your top 3 annual vegetable crops by acreage last year (2019)?: Crop 2,TRUE,TRUE,NA
-VegCat2,X.5,NA,NA,TRUE,NA,NA
-VegPercent2,X.6,X.18,Approximately what percent (%) of certified organic seed did you use for each last year?: Crop 2,TRUE,TRUE,NA
-VegCrop3,X.7,X.19,What were your top 3 annual vegetable crops by acreage last year (2019)?: Crop 3,TRUE,TRUE,NA
-VegCat3,X.8,NA,NA,TRUE,NA,NA
-VegPercent3,X.9,X.20,Approximately what percent (%) of certified organic seed did you use for each last year?: Crop 3,TRUE,TRUE,NA
-GrowField,Last.year..did.you.have.any.organic.acres.in.field.crops..soy..field.corn..cotton..canola..small.grains..pulses.such.as.beans..peas..lentils..etc.....i..Please.select.one....i.,Last.year..did.you.have.any.organic.acres.in.field.crops.such.soy..field.corn..cotton..canola..small.grains..pulses..e.g..beans..peas..lentils..etc.....i..Please.select.one....i.,NA,TRUE,TRUE,TRUE
-FieldAcreage,Last.year..how.many.organic.acres.did.you.have.in.field.crops....i..Please.fill.in.number....i.,How.many.organic.acres.did.you.have.in.field.crops.last.year....i..Please.fill.in.number....i.,How many certified organic acres did you have in field crops last year (2019)?,TRUE,TRUE,TRUE
-OGFieldSeed,Last.year..what.approximate.percentage....of.total.acreage.of..field.crops.was.planted.with.certified.organic.seed...i..Please.fill.in.number....i.,What.approximate.percentage.....of.total.acreage.of..field.crops.was.planted.with.certified.organic.seed.last.year...i..Enter.a.number.between.0.and.100..Do.not.enter.a.....sign....i.,"Last year, approximately what percent of your certified organic field crops were planted with certified organic seed?",TRUE,TRUE,TRUE
-OGFieldSeedAcres,X.10,X.27,NA,TRUE,TRUE,NA
-FieldCrop1,Last.year..what.were.your.top.three.field.crops.by.acreage..and.what.percentage.of.certified.organic.seed.did.you.use.for.each...i..Please.fill.in....i.,What.were.your.top.three.field.crops.by.acreage..And.what.approximate.percentage.....of.certified.organic.seed.did.you.use.for.each...i..Please.fill.in....i.,What were your top 3 field crops by acreage last year (2019)? Crop 1,TRUE,TRUE,NA
-FieldCat1,X.11,NA,Approximately what percent (%) of certified organic seed did you use for each last year? Crop 1,TRUE,NA,NA
-FieldPercent1,X.12,X.28,NA,TRUE,TRUE,NA
-FieldCrop2,X.13,X.29,What were your top 3 field crops by acreage last year (2019)? Crop 2,TRUE,TRUE,NA
-FieldCat2,X.14,NA,NA,TRUE,NA,NA
-FieldPercent2,X.15,X.30,Approximately what percent (%) of certified organic seed did you use for each last year? Crop 2,TRUE,TRUE,NA
-FieldCrop3,X.16,X.31,What were your top 3 field crops by acreage last year (2019)? Crop 3,TRUE,TRUE,NA
-FieldCat3,X.17,NA,NA,TRUE,NA,NA
-FieldPercent3,X.18,X.32,Approximately what percent (%) of certified organic seed did you use for each last year? Crop 3,TRUE,TRUE,NA
-GrowForage,Last.year..did.you.have.any.organic.acres.in.forage.crops...i..Please.select.one....i.,Last.year..did.you.have.any.organic.acres.in.forage.crops...i..Please.select.one....i.,NA,TRUE,TRUE,TRUE
-ForageAcreage,Last.year..how.many.organic.did.you.have.in.forage.crops...i..Please.fill.in.number....i.,How.many.organic.acres.did.you.have.in.forage.crops.last.year...i..Please.fill.in.number....i.,How many certified organic acres did you have in forage crops last year (2019)?,TRUE,TRUE,TRUE
-OGForageSeed,Last.year..what.approximate.percentage....of.total.acreage.of..forage.crops.was.planted.with.certified.organic.seed...i..Please.fill.in.number....i.,What.approximate.percentage.....of.total.acreage.of..forage.crops.was.planted.with.certified.organic.seed.last.year...i..Enter.a.number.between.0.and.100..Do.not.enter.a.....sign....i.,"Last year, approximately what percent of your certified organic forage crops were planted with certified organic seed?",TRUE,TRUE,TRUE
-OGForageSeedAcres,X.19,X.33,NA,TRUE,TRUE,NA
-OGCoverPercent,What.approximate.percentage....of.total.acreage.of.green.manure.and.cover.crops.is.planted.with.certified.organic.seed...i..Please.fill.in.number....i.,NA,How many certified organic acres did you have in annual cover crops/greeen pasture last year (2019)?,TRUE,NA,NA
-SeedSourceOwn,In.the.last.year..what.percent.of.your.seed..organic.or.non.treated.conventional..did.you.get.from.the.following.sources..Fill.in.your.best.general.estimate.below.based.on.percentage.of.seed.used.on.farm...u.Total.should.equal.100..Only.fill.in.the.number..Do.NOT.use.percentage.symbol.or.letters.in.your.answer...u...i..Fill.in.percentages....i.,Last.year..what.percent.of.your.seed..organic.or.non.treated.conventional..did.you.get.from.the.following.sources..Fill.in.your.best.general.estimate.below.based.on.percentage.of.seed.used.on.farm......p..u.Total.MUST.equal.100...Only.fill.in.the.number..Do.NOT.use.percentage.symbol.or.letters.in.your.answer...u...i..Fill.in.percentages....i...p.,NA,TRUE,TRUE,TRUE
-SeedSourceBroker,X.20,X.39,NA,TRUE,TRUE,NA
-SeedSourceCat,X.21,X.40,NA,TRUE,TRUE,NA
-SeedSourceCenter,X.22,NA,NA,TRUE,NA,NA
-SeedSourceFarm,X.23,X.44,NA,TRUE,TRUE,TRUE
-SeedSourceOther,X.24,X.45,NA,TRUE,TRUE,NA
-IncreasedOGSeed,Over.the.last.three.years.have.you.increased.the.percentage.of.certified.organic.seed.that.you.use...i..Please.select.one....i.,NA,NA,TRUE,NA,NA
-CertifierRequest,Over.the.last.three.years.has.your.certifier.requested.that.you.take.greater.steps.to.source.organic.seed...i..Please.select.one....i.,Over.the.last.three.years..2011.2013...has.your.certifier.requested.that.you.take.greater.steps.to.source.organic.seed...i..Please.select.one....i.,NA,TRUE,TRUE,TRUE
-AddStepsTrial,Which.additional.steps.has.your.certifier.requested...i..Select.all.that.apply....i.,Which.additional.steps.has.your.certifier.requested...i..Select.all.that.apply....i.,NA,TRUE,TRUE,TRUE
-AddStepsOMRI,X.25,NA,NA,TRUE,NA,NA
-AddStepsCat,X.26,X.50,NA,TRUE,TRUE,TRUE
-AddStepsOther,X.27,X.53,NA,TRUE,TRUE,NA
-NoOGSeedSize,X.35,X.61,NA,TRUE,TRUE,NA
-NoOGSeedOther,X.36,X.62,NA,TRUE,TRUE,NA
-NoOGSeedText,X.37,X.63,NA,TRUE,TRUE,NA
-OGSeedQualGerm,What.organic.seed.quality.issues.have.you.experienced...i..Please.indicate.one.response.per.reason.below....i.,For.each.organic.seed.quality.issue.listed.below..how.much.of.a.problem.has.it.been.in.your.experience.over.the.last.three.years..2011.2013....i..Please.indicate.one.response.per.reason.below....i.,NA,TRUE,TRUE,NA
-OGSeedQualVar,X.38,X.64,NA,TRUE,TRUE,NA
-OGSeedQualWeed,X.39,X.65,NA,TRUE,TRUE,NA
-OGSeedQualGMO,X.40,X.66,NA,TRUE,TRUE,NA
-OGSeedQualAppear,X.41,X.67,NA,TRUE,TRUE,NA
-OGSeedQualChaff,X.42,X.68,NA,TRUE,TRUE,NA
-OGSeedQualDisease,X.43,X.69,NA,TRUE,TRUE,NA
-OGSeedQualSize,X.44,X.70,NA,TRUE,TRUE,NA
-OGSeedQualOther,X.45,X.71,NA,TRUE,TRUE,NA
-OGSeedQualText,X.46,X.72,NA,TRUE,TRUE,NA
-OGvsConvQuality,Do.you.have.more.of.the.above.mentioned.quality.issues.with.untreated.conventional.seed.or.organic.seed...i..Please.select.one.response....i.,In.general.do.you.have.more.problems.with.seed.quality.issues.in.non.treated.conventional.seed.or.organic.seed...i..Please.select.one.response....i.,NA,TRUE,TRUE,NA
-GMOTesting,Seed.companies.should.conduct.testing.and.report.rates.of.GE..GMO..contamination.in.organic.seed.,Please.indicate.the.extent.to.which.you.disagree.or.agree.with.the.following.statements.,NA,TRUE,TRUE,TRUE
-Regulations,The.regulatory.framework.in.place.is.adequate.to.protect.my.organic.farm.product.s..from.damages.due.to.possible.contamination.by.GE..GMO..crops.,X.79,NA,TRUE,TRUE,TRUE
-RiskfromGMO,My.organic.farm.product.s..are.at.risk.from.seed.contaminated.by.GE..GMO..traits.,X.80,NA,TRUE,TRUE,TRUE
-OGSeedOGIntegrity,Organic.seed.is.important.in.maintaining.the.integrity.of.organic.food.production.,X.81,NA,TRUE,TRUE,TRUE
-OGVarietiesSuccess,Varieties.bred.for.organic.system.management.are.important.to.the.overall.success.of.organic.agriculture.,X.82,NA,TRUE,TRUE,TRUE
-CropsNeedBreed,Do.you.think.that.there.are.crops.in.need.of.organic.breeding.,Do.you.think.that.there.are.crops.in.need.of.organic.plant.breeding.,NA,TRUE,TRUE,TRUE
-BreedCropA,Please.list.the.two.highest.priority.crops.you.feel.are.in.need.of.organic.breeding..crop.improvement...and.the.two.most.important.traits.to.breed.for.in.those.crops.,First.crop.in.most.need.for.improvement.,NA,TRUE,TRUE,NA
-BreedCatA,X.47,X.83,NA,TRUE,TRUE,TRUE
-BreedLargeCatA,X.48,X.84,NA,TRUE,TRUE,TRUE
-BreedLargeCatA,X.48,X.97,NA,TRUE,TRUE,TRUE
-BreedTraitA1,X.49,NA,NA,TRUE,NA,NA
-BreedTraitCatA1,X.50,NA,NA,TRUE,NA,NA
-BreedTraitA2,X.51,NA,NA,TRUE,NA,NA
-BreedTraitCatA2,X.52,NA,NA,TRUE,NA,NA
-BreedCropB,X.53,Second.crop.in.most.need.for.improvement.,NA,TRUE,TRUE,NA
-BreedCatB,X.54,X.96,NA,TRUE,TRUE,TRUE
-BreedLargeCatB,X.55,NA,NA,TRUE,NA,TRUE
-BreedTraitB1,X.56,NA,NA,TRUE,NA,NA
-BreedTraitCatB1,X.57,NA,NA,TRUE,NA,NA
-BreedTraitB2,X.58,NA,NA,TRUE,NA,NA
-BreedTraitCatB2,X.59,NA,NA,TRUE,NA,NA
-ProduceOGSeedNo,Do.you.produce.organic.seed...i..Check.all.that.apply....i.,NA,NA,TRUE,NA,NA
-ProduceOGSeedOnFarm,X.60,NA,NA,TRUE,NA,NA
-ProduceOGSeedCom,X.61,NA,NA,TRUE,NA,NA
-ProduceOGSeedComPast,X.62,Have.you.ever.produced.organic.seed.commercially.in.the.past.,NA,TRUE,TRUE,NA
-BreedInterest,Are.you.interested.in.conducting.crop.improvement.breeding.on.your.farm...i..Select.one.response....i.,Are.you.interested.in.conducting.plant.breeding..crop.improvement..on.your.farm...i..Select.one.response....i.,NA,TRUE,TRUE,NA
+VegCrop1,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three annual vegetable crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,What were your top 3 annual vegetable crops by acreage last year (2019)?: Crop 1,TRUE,TRUE,NA
+VegCat1,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA,NA
+VegPercent1,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three annual vegetable crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,Approximately what percent (%) of certified organic seed did you use for each last year?: Crop 1,TRUE,TRUE,NA
+VegCrop2,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three annual vegetable crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,What were your top 3 annual vegetable crops by acreage last year (2019)?: Crop 2,TRUE,TRUE,NA
+VegCat2,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA,NA
+VegPercent2,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three annual vegetable crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,Approximately what percent (%) of certified organic seed did you use for each last year?: Crop 2,TRUE,TRUE,NA
+VegCrop3,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three annual vegetable crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,What were your top 3 annual vegetable crops by acreage last year (2019)?: Crop 3,TRUE,TRUE,NA
+VegCat3,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA,NA
+VegPercent3,Last year  what were your top three annual vegetable crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three annual vegetable crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,Approximately what percent (%) of certified organic seed did you use for each last year?: Crop 3,TRUE,TRUE,NA
+GrowField,Last year  did you have any organic acres in field crops  soy  field corn  cotton  canola  small grains  pulses such as beans  peas  lentils  etc     i  Please select one    i ,Last year  did you have any organic acres in field crops such soy  field corn  cotton  canola  small grains  pulses  e g  beans  peas  lentils  etc     i  Please select one    i ,NA,TRUE,TRUE,TRUE
+FieldAcreage,Last year  how many organic acres did you have in field crops    i  Please fill in number    i ,How many organic acres did you have in field crops last year    i  Please fill in number    i ,How many certified organic acres did you have in field crops last year (2019)?,TRUE,TRUE,TRUE
+OGFieldSeed,Last year  what approximate percentage    of total acreage of  field crops was planted with certified organic seed   i  Please fill in number    i ,What approximate percentage     of total acreage of  field crops was planted with certified organic seed last year   i  Enter a number between 0 and 100  Do not enter a     sign    i ,"Last year, approximately what percent of your certified organic field crops were planted with certified organic seed?",TRUE,TRUE,TRUE
+OGFieldSeedAcres,Last year  what approximate percentage    of total acreage of  field crops was planted with certified organic seed   i  Please fill in number    i ,What approximate percentage     of total acreage of  field crops was planted with certified organic seed last year   i  Enter a number between 0 and 100  Do not enter a     sign    i ,NA,TRUE,TRUE,NA
+FieldCrop1,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three field crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,What were your top 3 field crops by acreage last year (2019)? Crop 1,TRUE,TRUE,NA
+FieldCat1,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,Approximately what percent (%) of certified organic seed did you use for each last year? Crop 1,TRUE,NA,NA
+FieldPercent1,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three field crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,NA,TRUE,TRUE,NA
+FieldCrop2,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three field crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,What were your top 3 field crops by acreage last year (2019)? Crop 2,TRUE,TRUE,NA
+FieldCat2,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA,NA
+FieldPercent2,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three field crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,Approximately what percent (%) of certified organic seed did you use for each last year? Crop 2,TRUE,TRUE,NA
+FieldCrop3,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three field crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,What were your top 3 field crops by acreage last year (2019)? Crop 3,TRUE,TRUE,NA
+FieldCat3,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA,NA
+FieldPercent3,Last year  what were your top three field crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,What were your top three field crops by acreage  And what approximate percentage     of certified organic seed did you use for each   i  Please fill in    i ,Approximately what percent (%) of certified organic seed did you use for each last year? Crop 3,TRUE,TRUE,NA
+GrowForage,Last year  did you have any organic acres in forage crops   i  Please select one    i ,Last year  did you have any organic acres in forage crops   i  Please select one    i ,NA,TRUE,TRUE,TRUE
+ForageAcreage,Last year  how many organic did you have in forage crops   i  Please fill in number    i ,How many organic acres did you have in forage crops last year   i  Please fill in number    i ,How many certified organic acres did you have in forage crops last year (2019)?,TRUE,TRUE,TRUE
+OGForageSeed,Last year  what approximate percentage    of total acreage of  forage crops was planted with certified organic seed   i  Please fill in number    i ,What approximate percentage     of total acreage of  forage crops was planted with certified organic seed last year   i  Enter a number between 0 and 100  Do not enter a     sign    i ,"Last year, approximately what percent of your certified organic forage crops were planted with certified organic seed?",TRUE,TRUE,TRUE
+OGForageSeedAcres,Last year  what approximate percentage    of total acreage of  forage crops was planted with certified organic seed   i  Please fill in number    i ,What approximate percentage     of total acreage of  forage crops was planted with certified organic seed last year   i  Enter a number between 0 and 100  Do not enter a     sign    i ,NA,TRUE,TRUE,NA
+OGCoverPercent,What approximate percentage    of total acreage of green manure and cover crops is planted with certified organic seed   i  Please fill in number    i ,NA,How many certified organic acres did you have in annual cover crops/greeen pasture last year (2019)?,TRUE,NA,NA
+SeedSourceOwn,In the last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm   u Total should equal 100  Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i ,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,TRUE,TRUE,TRUE
+SeedSourceBroker,In the last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm   u Total should equal 100  Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i ,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,TRUE,TRUE,NA
+SeedSourceCat,In the last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm   u Total should equal 100  Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i ,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,TRUE,TRUE,NA
+SeedSourceCenter,In the last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm   u Total should equal 100  Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i ,NA,NA,TRUE,NA,NA
+SeedSourceFarm,In the last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm   u Total should equal 100  Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i ,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,TRUE,TRUE,TRUE
+SeedSourceOther,In the last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm   u Total should equal 100  Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i ,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,TRUE,TRUE,NA
+IncreasedOGSeed,Over the last three years have you increased the percentage of certified organic seed that you use   i  Please select one    i ,NA,NA,TRUE,NA,NA
+CertifierRequest,Over the last three years has your certifier requested that you take greater steps to source organic seed   i  Please select one    i ,Over the last three years  2011 2013   has your certifier requested that you take greater steps to source organic seed   i  Please select one    i ,NA,TRUE,TRUE,TRUE
+AddStepsTrial,Which additional steps has your certifier requested   i  Select all that apply    i ,Which additional steps has your certifier requested   i  Select all that apply    i ,NA,TRUE,TRUE,TRUE
+AddStepsOMRI,Which additional steps has your certifier requested   i  Select all that apply    i ,NA,NA,TRUE,NA,NA
+AddStepsCat,Which additional steps has your certifier requested   i  Select all that apply    i ,Which additional steps has your certifier requested   i  Select all that apply    i ,NA,TRUE,TRUE,TRUE
+AddStepsOther,Which additional steps has your certifier requested   i  Select all that apply    i ,Which additional steps has your certifier requested   i  Select all that apply    i ,NA,TRUE,TRUE,NA
+NoOGSeedSize,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+NoOGSeedOther,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed? Other",TRUE,TRUE,NA
+NoOGSeedText,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Other, please specify",TRUE,TRUE,NA
+OGSeedQualGerm,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualVar,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualWeed,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualGMO,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualAppear,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualChaff,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualDisease,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualSize,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualOther,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGSeedQualText,What organic seed quality issues have you experienced   i  Please indicate one response per reason below    i ,For each organic seed quality issue listed below  how much of a problem has it been in your experience over the last three years  2011 2013    i  Please indicate one response per reason below    i ,NA,TRUE,TRUE,NA
+OGvsConvQuality,Do you have more of the above mentioned quality issues with untreated conventional seed or organic seed   i  Please select one response    i ,In general do you have more problems with seed quality issues in non treated conventional seed or organic seed   i  Please select one response    i ,NA,TRUE,TRUE,NA
+GMOTesting,Seed companies should conduct testing and report rates of GE  GMO  contamination in organic seed ,Please indicate the extent to which you disagree or agree with the following statements ,NA,TRUE,TRUE,TRUE
+Regulations,The regulatory framework in place is adequate to protect my organic farm product s  from damages due to possible contamination by GE  GMO  crops ,Please indicate the extent to which you disagree or agree with the following statements ,NA,TRUE,TRUE,TRUE
+RiskfromGMO,My organic farm product s  are at risk from seed contaminated by GE  GMO  traits ,Please indicate the extent to which you disagree or agree with the following statements ,NA,TRUE,TRUE,TRUE
+OGSeedOGIntegrity,Organic seed is important in maintaining the integrity of organic food production ,Please indicate the extent to which you disagree or agree with the following statements ,NA,TRUE,TRUE,TRUE
+OGVarietiesSuccess,Varieties bred for organic system management are important to the overall success of organic agriculture ,Please indicate the extent to which you disagree or agree with the following statements ,NA,TRUE,TRUE,TRUE
+CropsNeedBreed,Do you think that there are crops in need of organic breeding ,Do you think that there are crops in need of organic plant breeding ,NA,TRUE,TRUE,TRUE
+BreedCropA,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,First crop in most need for improvement ,NA,TRUE,TRUE,NA
+BreedCatA,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,First crop in most need for improvement ,NA,TRUE,TRUE,TRUE
+BreedLargeCatA,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,First crop in most need for improvement ,NA,TRUE,TRUE,TRUE
+BreedLargeCatA,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,Second crop in most need for improvement ,NA,TRUE,TRUE,TRUE
+BreedTraitA1,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+BreedTraitCatA1,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+BreedTraitA2,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+BreedTraitCatA2,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+BreedCropB,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,Second crop in most need for improvement ,NA,TRUE,TRUE,NA
+BreedCatB,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,Second crop in most need for improvement ,NA,TRUE,TRUE,TRUE
+BreedLargeCatB,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,TRUE
+BreedTraitB1,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+BreedTraitCatB1,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+BreedTraitB2,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+BreedTraitCatB2,Please list the two highest priority crops you feel are in need of organic breeding  crop improvement   and the two most important traits to breed for in those crops ,NA,NA,TRUE,NA,NA
+ProduceOGSeedNo,Do you produce organic seed   i  Check all that apply    i ,NA,NA,TRUE,NA,NA
+ProduceOGSeedOnFarm,Do you produce organic seed   i  Check all that apply    i ,NA,NA,TRUE,NA,NA
+ProduceOGSeedCom,Do you produce organic seed   i  Check all that apply    i ,NA,NA,TRUE,NA,NA
+ProduceOGSeedComPast,Do you produce organic seed   i  Check all that apply    i ,Have you ever produced organic seed commercially in the past ,NA,TRUE,TRUE,NA
+BreedInterest,Are you interested in conducting crop improvement breeding on your farm   i  Select one response    i ,Are you interested in conducting plant breeding  crop improvement  on your farm   i  Select one response    i ,NA,TRUE,TRUE,NA
 YearsCertified_bin,NA,NA,NA,TRUE,TRUE,TRUE
 VegiAcreageBins,NA,NA,NA,TRUE,TRUE,TRUE
 FieldAcreageBins,NA,NA,NA,TRUE,TRUE,TRUE
@@ -110,101 +110,102 @@ OGForageSeedBins,NA,NA,NA,TRUE,TRUE,TRUE
 AllOGSeed,NA,NA,NA,TRUE,TRUE,TRUE
 SeedSourceOwn0or100,NA,NA,NA,TRUE,TRUE,TRUE
 SeedSourceComp,NA,NA,NA,TRUE,TRUE,TRUE
-SeedSourceGardenCenter,NA,X.43,NA,TRUE,TRUE,TRUE
-AddStepsSeedFinder,NA,X.49,NA,TRUE,TRUE,TRUE
+SeedSourceGardenCenter,NA,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,TRUE,TRUE,TRUE
+AddStepsSeedFinder,NA,Which additional steps has your certifier requested   i  Select all that apply    i ,NA,TRUE,TRUE,TRUE
 BreedTop10CatA,NA,NA,NA,TRUE,TRUE,TRUE
 BreedTop10CatB,NA,NA,NA,TRUE,TRUE,TRUE
+NA,Last year  what approximate percentage     of total acreage of annual vegetables was planted with certified organic seed   i  Please fill in number    i ,NA,NA,TRUE,NA,NA
+NoOGSeedTreat,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Lack of seed treatments, such as pelleting or priming",TRUE,TRUE,TRUE
+NoOGSeedProcessor,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Processor (buyer) requires or supplies varieties that are not available organically",TRUE,TRUE,TRUE
+NoOGSeedQuant,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Insufficient quantity of seed",TRUE,TRUE,TRUE
+NoOGSeedSave,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Save my own seed",TRUE,TRUE,TRUE
+NoOGSeedQual,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Distrust of organic seed quality",TRUE,TRUE,TRUE
+NoOGSeedPrice,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Price",TRUE,TRUE,TRUE
+NoOGSeedVar,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Specific variety not available as organic seed",TRUE,TRUE,TRUE
+NoOGSeedTrait,Please indicate the reasons you have not purchased organic seed in the past   i  Please indicate one response per reason below    i ,For each reason listed below  how much of a reason was it for you to  i not purchase  i  organic seed over the last three years  2011 2013    i  Please indicate one response per reason below    i ,"Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed?: Lack of desirable genetic traits",TRUE,TRUE,TRUE
+SeedInterest,Are you interested in producing organic seed for commercial use   i  Select one response    i ,Are you interested in producing organic seed for commercial use at some point in the future   i  Select one response    i ,NA,TRUE,TRUE,TRUE
 First.Name,NA,NA,NA,NA,TRUE,NA
 LastName,NA,LastName,NA,NA,TRUE,NA
-FarmName,NA,Custom.Data,NA,NA,TRUE,NA
-StateAbr,NA,X.1,NA,NA,TRUE,NA
-State2,NA,X.2,NA,NA,TRUE,NA
-State3,NA,X.3,NA,NA,TRUE,NA
-State4,NA,X.4,NA,NA,TRUE,NA
-State5,NA,X.5,NA,NA,TRUE,NA
-State6,NA,X.6,NA,NA,TRUE,NA
-State7,NA,X.7,NA,NA,TRUE,NA
-Zip1,NA,X.8,NA,NA,TRUE,NA
-Zip2,NA,X.9,NA,NA,TRUE,NA
-Zip3,NA,X.10,NA,NA,TRUE,NA
-Zip4,NA,X.11,NA,NA,TRUE,NA
-Zip5,NA,X.12,NA,NA,TRUE,NA
-Zip6,NA,X.13,NA,NA,TRUE,NA
-Region,NA,X.14,NA,NA,TRUE,NA
-GrowCover,NA,Last.year..did.you.have.any.organic.acres.in.annual.cover.crops.and.or.green.pasture..,NA,NA,TRUE,TRUE
-CoverAcres,NA,How.many.organic.acres.did.you.have.in.annual.cover.crops.and.or.green.pasture.last.year.,NA,NA,TRUE,NA
-OGCoverSeed,NA,What.approximate.percentage.....of.total.acreage.of.annual.cover.crops.and.or.green.pasture.was.planted.with.certified.organic.seed.last.year...i..Enter.a.number.between.0.and.100..Do.not.enter.a.....sign....i.,NA,NA,TRUE,TRUE
-OGCoverSeedAcres,NA,X.21,NA,NA,TRUE,NA
-CoverCrop1,NA,What.were.your.top.3.cover.crops.and.or.green.manure.crops.by.acreage..And.what.approximate.percentage.....of.organic.seed.did.you.use.for.each.,NA,NA,TRUE,NA
-CoverPercent1,NA,X.22,NA,NA,TRUE,NA
-CoverCrop2,NA,X.23,NA,NA,TRUE,NA
-CoverPercent2,NA,X.24,NA,NA,TRUE,NA
-CoverCrop3,NA,X.25,NA,NA,TRUE,NA
-CoverPercent3,NA,X.26,NA,NA,TRUE,NA
-ForageCrop1,NA,Last.year..what.were.your.top.three.forage.crops.by.acreage..and.what.percentage.of.certified.organic.seed.did.you.use.for.each...i..Please.fill.in....i.,NA,NA,TRUE,NA
-ForagePecentage1,NA,X.34,NA,NA,TRUE,NA
-ForageCrop2,NA,X.35,NA,NA,TRUE,NA
-ForagePecentage2,NA,X.36,NA,NA,TRUE,NA
-ForageCrop3,NA,X.37,NA,NA,TRUE,NA
-ForagePecentage3,NA,X.38,NA,NA,TRUE,NA
-SeedSourceWebsite,NA,X.41,NA,NA,TRUE,NA
-SeedSourceRep,NA,X.42,NA,NA,TRUE,NA
-IncreasedOGVegSeed,NA,Over.the.last.3.years..2011.2013..have.you.increased.decreased.the.percentage.of.organic.seed.that.you.use.in.the.following.crop.types....i..Please.select.one.response.for.each.crop.type....i.,NA,NA,TRUE,TRUE
-IncreasedOGFieldSeed,NA,X.46,NA,NA,TRUE,TRUE
-IncreasedOGForageSeed,NA,X.47,NA,NA,TRUE,TRUE
-IncreasedOGCoverSeed,NA,X.48,NA,NA,TRUE,TRUE
-AddStepsTimely,NA,X.51,NA,NA,TRUE,TRUE
-AddStepsContract,NA,X.52,NA,NA,TRUE,TRUE
-NoOGSeedTreat,NA,For.each.reason.listed.below..how.much.of.a.reason.was.it.for.you.to..i.not.purchase..i..organic.seed.over.the.last.three.years..2011.2013....i..Please.indicate.one.response.per.reason.below....i.,NA,NA,TRUE,TRUE
-NoOGSeedProcessor,NA,X.54,NA,NA,TRUE,TRUE
-NoOGSeedQuant,NA,X.55,NA,NA,TRUE,TRUE
-NoOGSeedSave,NA,X.56,NA,NA,TRUE,TRUE
-NoOGSeedQual,NA,X.57,NA,NA,TRUE,TRUE
-NoOGSeedPrice,NA,X.58,NA,NA,TRUE,TRUE
-NoOGSeedVar,NA,X.59,NA,NA,TRUE,TRUE
-NoOGSeedTrait,NA,X.60,NA,NA,TRUE,TRUE
-OGvsConvQualityText,NA,X.73,NA,NA,TRUE,NA
-OGSeedMarket,NA,To.help.us.understand.your.organic.seed.purchasing.decisions..please.indicate.the.extent.to.which.you.disagree.or.agree.with.the.following.statements.,NA,NA,TRUE,NA
-OGSeedSimilar,NA,X.74,NA,NA,TRUE,NA
-OGSeedEncourageBreed,NA,X.75,NA,NA,TRUE,NA
-OGSeedCertify,NA,X.76,NA,NA,TRUE,NA
-OGSeedOther,NA,X.77,NA,NA,TRUE,NA
-OGSeedOtherText,NA,X.78,NA,NA,TRUE,NA
-BreedTraitANUE,NA,Referring.to.the.crop.listed.above..select.the.TOP.2.TRAITS.of.that.crop.in.need.of.improvement.from.the.list.below..,NA,NA,TRUE,NA
-BreedTraitAFlavor,NA,X.85,NA,NA,TRUE,NA
-BreedTraitAAppear,NA,X.86,NA,NA,TRUE,NA
-BreedTraitACold,NA,X.87,NA,NA,TRUE,NA
-BreedTraitAYield,NA,X.88,NA,NA,TRUE,NA
-BreedTraitADisease,NA,X.89,NA,NA,TRUE,NA
-BreedTraitAGerm,NA,X.90,NA,NA,TRUE,NA
-BreedTraitACompete,NA,X.91,NA,NA,TRUE,NA
-BreedTraitAEarly,NA,X.92,NA,NA,TRUE,NA
-BreedTraitAQuality,NA,X.93,NA,NA,TRUE,NA
-BreedTraitAOther,NA,X.94,NA,NA,TRUE,NA
-BreedTraitAOtherText,NA,X.95,NA,NA,TRUE,NA
+FarmName,NA,Custom Data,NA,NA,TRUE,NA
+StateAbr,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+State2,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+State3,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+State4,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+State5,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+State6,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+State7,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+Zip1,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+Zip2,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+Zip3,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+Zip4,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+Zip5,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+Zip6,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+Region,NA,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,NA,TRUE,NA
+GrowCover,NA,Last year  did you have any organic acres in annual cover crops and or green pasture  ,NA,NA,TRUE,TRUE
+CoverAcres,NA,How many organic acres did you have in annual cover crops and or green pasture last year ,NA,NA,TRUE,NA
+OGCoverSeed,NA,What approximate percentage     of total acreage of annual cover crops and or green pasture was planted with certified organic seed last year   i  Enter a number between 0 and 100  Do not enter a     sign    i ,NA,NA,TRUE,TRUE
+OGCoverSeedAcres,NA,What approximate percentage     of total acreage of annual cover crops and or green pasture was planted with certified organic seed last year   i  Enter a number between 0 and 100  Do not enter a     sign    i ,NA,NA,TRUE,NA
+CoverCrop1,NA,What were your top 3 cover crops and or green manure crops by acreage  And what approximate percentage     of organic seed did you use for each ,NA,NA,TRUE,NA
+CoverPercent1,NA,What were your top 3 cover crops and or green manure crops by acreage  And what approximate percentage     of organic seed did you use for each ,NA,NA,TRUE,NA
+CoverCrop2,NA,What were your top 3 cover crops and or green manure crops by acreage  And what approximate percentage     of organic seed did you use for each ,NA,NA,TRUE,NA
+CoverPercent2,NA,What were your top 3 cover crops and or green manure crops by acreage  And what approximate percentage     of organic seed did you use for each ,NA,NA,TRUE,NA
+CoverCrop3,NA,What were your top 3 cover crops and or green manure crops by acreage  And what approximate percentage     of organic seed did you use for each ,NA,NA,TRUE,NA
+CoverPercent3,NA,What were your top 3 cover crops and or green manure crops by acreage  And what approximate percentage     of organic seed did you use for each ,NA,NA,TRUE,NA
+ForageCrop1,NA,Last year  what were your top three forage crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA
+ForagePecentage1,NA,Last year  what were your top three forage crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA
+ForageCrop2,NA,Last year  what were your top three forage crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA
+ForagePecentage2,NA,Last year  what were your top three forage crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA
+ForageCrop3,NA,Last year  what were your top three forage crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA
+ForagePecentage3,NA,Last year  what were your top three forage crops by acreage  and what percentage of certified organic seed did you use for each   i  Please fill in    i ,NA,NA,TRUE,NA
+SeedSourceWebsite,NA,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,NA,TRUE,NA
+SeedSourceRep,NA,Last year  what percent of your seed  organic or non treated conventional  did you get from the following sources  Fill in your best general estimate below based on percentage of seed used on farm      p  u Total MUST equal 100   Only fill in the number  Do NOT use percentage symbol or letters in your answer   u   i  Fill in percentages    i   p ,NA,NA,TRUE,NA
+IncreasedOGVegSeed,NA,Over the last 3 years  2011 2013  have you increased decreased the percentage of organic seed that you use in the following crop types    i  Please select one response for each crop type    i ,NA,NA,TRUE,TRUE
+IncreasedOGFieldSeed,NA,Over the last 3 years  2011 2013  have you increased decreased the percentage of organic seed that you use in the following crop types    i  Please select one response for each crop type    i ,NA,NA,TRUE,TRUE
+IncreasedOGForageSeed,NA,Over the last 3 years  2011 2013  have you increased decreased the percentage of organic seed that you use in the following crop types    i  Please select one response for each crop type    i ,NA,NA,TRUE,TRUE
+IncreasedOGCoverSeed,NA,Over the last 3 years  2011 2013  have you increased decreased the percentage of organic seed that you use in the following crop types    i  Please select one response for each crop type    i ,NA,NA,TRUE,TRUE
+AddStepsTimely,NA,Which additional steps has your certifier requested   i  Select all that apply    i ,NA,NA,TRUE,TRUE
+AddStepsContract,NA,Which additional steps has your certifier requested   i  Select all that apply    i ,NA,NA,TRUE,TRUE
+OGvsConvQualityText,NA,In general do you have more problems with seed quality issues in non treated conventional seed or organic seed   i  Please select one response    i ,NA,NA,TRUE,NA
+OGSeedMarket,NA,To help us understand your organic seed purchasing decisions  please indicate the extent to which you disagree or agree with the following statements ,NA,NA,TRUE,NA
+OGSeedSimilar,NA,To help us understand your organic seed purchasing decisions  please indicate the extent to which you disagree or agree with the following statements ,NA,NA,TRUE,NA
+OGSeedEncourageBreed,NA,To help us understand your organic seed purchasing decisions  please indicate the extent to which you disagree or agree with the following statements ,NA,NA,TRUE,NA
+OGSeedCertify,NA,To help us understand your organic seed purchasing decisions  please indicate the extent to which you disagree or agree with the following statements ,NA,NA,TRUE,NA
+OGSeedOther,NA,To help us understand your organic seed purchasing decisions  please indicate the extent to which you disagree or agree with the following statements ,NA,NA,TRUE,NA
+OGSeedOtherText,NA,To help us understand your organic seed purchasing decisions  please indicate the extent to which you disagree or agree with the following statements ,NA,NA,TRUE,NA
+BreedTraitANUE,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAFlavor,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAAppear,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitACold,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAYield,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitADisease,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAGerm,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitACompete,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAEarly,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAQuality,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAOther,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
+BreedTraitAOtherText,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below  ,NA,NA,TRUE,NA
 BreedLargeCatA.1,NA,NA,NA,NA,TRUE,NA
-BreedTraitBNUE,NA,Referring.to.the.crop.listed.above..select.the.TOP.2.TRAITS.of.that.crop.in.need.of.improvement.from.the.list.below...1,NA,NA,TRUE,NA
-BreedTraitBFlavor,NA,X.98,NA,NA,TRUE,NA
-BreedTraitBAppear,NA,X.99,NA,NA,TRUE,NA
-BreedTraitBCold,NA,X.100,NA,NA,TRUE,NA
-BreedTraitBYield,NA,X.101,NA,NA,TRUE,NA
-BreedTraitBDisease,NA,X.102,NA,NA,TRUE,NA
-BreedTraitBGerm,NA,X.103,NA,NA,TRUE,NA
-BreedTraitBCompete,NA,X.104,NA,NA,TRUE,NA
-BreedTraitBEarly,NA,X.105,NA,NA,TRUE,NA
-BreedTraitBQuality,NA,X.106,NA,NA,TRUE,NA
-BreedTraitBOther,NA,X.107,NA,NA,TRUE,NA
-BreedTraitBOtherText,NA,X.108,NA,NA,TRUE,NA
-ProduceOGSeed,NA,Which.of.the.following.categories.best.fits.your.situation.pertaining.to.producing.organic.seed...i...Select.one.response....i.,NA,NA,TRUE,TRUE
-SeedInterest,NA,Are.you.interested.in.producing.organic.seed.for.commercial.use.at.some.point.in.the.future...i..Select.one.response....i.,NA,NA,TRUE,TRUE
-SeedProLimitTrain,NA,What.factors.have.kept.you.from.producing.organic.seed.for.commercial.use.,NA,NA,TRUE,NA
-SeedProLimitEcon,NA,X.109,NA,NA,TRUE,NA
-SeedProLimitLaws,NA,X.110,NA,NA,TRUE,NA
-SeedProLimitFacilities,NA,X.111,NA,NA,TRUE,NA
-SeedProLimitOther,NA,X.112,NA,NA,TRUE,NA
-SeedTrainInterest,NA,How.interested.are.you.in.taking.a.training.on.producing.organic.seed.for.commercial.use.,NA,NA,TRUE,NA
-OpenComment,NA,Thank.you.for.your.time.and.interest.in.completing.this.survey..Your.answers.and.comments.are.integral.to.the.2015.State.of.Organic.Seed.report..If.you.have.any.additional.comments.please.include.them.in.the.space.below.or.on.a.separate.piece.of.paper..If.you.want.to.be.available.for.follow.up.questions.you.are.welcome.to.share.your.name.and.contact.info.but.this.is.by.no.means.necessary.,NA,NA,TRUE,NA
-MailingList,NA,If.you.would.like.to.join.our.mailing.list.to.receive.more.information.about.this.project.and.Organic.Seed.Alliance..please.provide.your.contact.information.here..name..address..and.email..,NA,NA,TRUE,NA
+BreedTraitBNUE,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBFlavor,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBAppear,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBCold,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBYield,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBDisease,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBGerm,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBCompete,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBEarly,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBQuality,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBOther,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+BreedTraitBOtherText,NA,Referring to the crop listed above  select the TOP 2 TRAITS of that crop in need of improvement from the list below   1,NA,NA,TRUE,NA
+ProduceOGSeed,NA,Which of the following categories best fits your situation pertaining to producing organic seed   i   Select one response    i ,NA,NA,TRUE,TRUE
+SeedProLimitTrain,NA,What factors have kept you from producing organic seed for commercial use ,NA,NA,TRUE,NA
+SeedProLimitEcon,NA,What factors have kept you from producing organic seed for commercial use ,NA,NA,TRUE,NA
+SeedProLimitLaws,NA,What factors have kept you from producing organic seed for commercial use ,NA,NA,TRUE,NA
+SeedProLimitFacilities,NA,What factors have kept you from producing organic seed for commercial use ,NA,NA,TRUE,NA
+SeedProLimitOther,NA,What factors have kept you from producing organic seed for commercial use ,NA,NA,TRUE,NA
+SeedTrainInterest,NA,How interested are you in taking a training on producing organic seed for commercial use ,NA,NA,TRUE,NA
+OpenComment,NA,Thank you for your time and interest in completing this survey  Your answers and comments are integral to the 2015 State of Organic Seed report  If you have any additional comments please include them in the space below or on a separate piece of paper  If you want to be available for follow up questions you are welcome to share your name and contact info but this is by no means necessary ,NA,NA,TRUE,NA
+MailingList,NA,If you would like to join our mailing list to receive more information about this project and Organic Seed Alliance  please provide your contact information here  name  address  and email  ,NA,NA,TRUE,NA
 CoverAcreageBins,NA,NA,NA,NA,TRUE,TRUE
 OGCoverSeedBins,NA,NA,NA,NA,TRUE,TRUE
 SeedSourceBuyer,NA,NA,NA,NA,TRUE,TRUE
@@ -219,8 +220,9 @@ NoOGSeedQualModSig,NA,NA,NA,NA,TRUE,TRUE
 NoOGSeedPriceModSig,NA,NA,NA,NA,TRUE,TRUE
 NoOGSeedVarModSig,NA,NA,NA,NA,TRUE,TRUE
 NoOGSeedTraitModSig,NA,NA,NA,NA,TRUE,TRUE
+First Name,NA,First Name,NA,NA,TRUE,NA
 All,NA,NA,NA,NA,NA,TRUE
-RespID,NA,NA,,NA,NA,TRUE
+RespID,NA,NA,RespID,NA,NA,TRUE
 Group,NA,NA,Group,NA,NA,TRUE
 Dataset,NA,NA,Dataset,NA,NA,TRUE
 Status,NA,NA,Status,NA,NA,TRUE

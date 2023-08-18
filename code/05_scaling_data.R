@@ -1,11 +1,11 @@
 library(dplyr)
-df <- readRDS("~/Box/organicseed_adoption/df_multilevel.rds")
+df <- readRDS("~/Box/organicseed_adoption/df.rds")
 
-# 1. Select and scale data ----
+# Scale data ----
 # Considering acreage as the dependent variable 
 ## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 
-df.full <- df %>% 
+df <- df %>% 
   filter(Region != "International", maincrop != "Other") %>% 
   select(RespondentID, 
          OGseed_percent_maincrop, #dependent variable
@@ -40,6 +40,6 @@ df.full <- df %>%
                                               scale = T)),
          years_certified_s = c(scale(YearsCertified, scale = T)))
 
-head(df.full[c('CVseed_percent_maincrop_prop', 'OGseed_percent_maincrop_prop')])
+head(df[c('CVseed_percent_maincrop_prop', 'OGseed_percent_maincrop_prop')])
 
-saveRDS(df.full, "~/Box/organicseed_adoption/df_full.rds")
+saveRDS(df, "~/Box/organicseed_adoption/df_scaled.rds")

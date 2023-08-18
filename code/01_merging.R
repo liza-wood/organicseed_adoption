@@ -105,25 +105,3 @@ table(is.na(df.full$Region))
 table(df.full$State[is.na(df.full$Region)])
 
 write.csv(df.full, "~/Box/organicseed_adoption/merged_df_3panel.csv", row.names = F)
-
-#setwd("~/Documents/Davis/R-Projects/organicseed/")
-#codebook <- read.csv("data/codebook_2panel.csv")
-#setwd("~/Dropbox/SOSInteractiveSurvey/")
-#df11f <- readRDS("data2011_cleaned.rds") %>% select(codebook$qcode_11_16)
-#df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16)
-#
-#df.full <- merge(df11f, df16f, all = T)
-#
-#df.full <- df.full %>% 
-#  mutate(State = toupper(State)) %>% 
-#  mutate(Region = case_when(
-#    State %in% western | State %in% missp_west  ~ "West",
-#    State %in% northcentral | State %in% missp_ncentral ~ "North Central",
-#    State %in% southern | State %in% missp_south ~ "South",
-#    State %in% northeast| State %in% missp_neast ~ "Northeast",
-#    State %in% international ~ "International",
-#    State %in% other ~ NA_character_,
-#    T ~ NA_character_))
-#
-#write.csv(df.full, "~/Box/organicseed/merged_df_2panel.csv", row.names = F)
-#

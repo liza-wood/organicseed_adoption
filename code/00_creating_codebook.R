@@ -60,10 +60,8 @@ df.full <- df %>%
 setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
 write.csv(df, "data/codebook_columns.csv", row.names = F)
 
-# I really only did the first like 50 rows, so could do more
-#manual <- read.csv("data/codebook_columns_manual.csv")
 # The changes I did here were line up Label from 21 with the questions in 11 and 16
-manual <- read.csv("data/codebook_columns_manual2.csv")
+manual <- read.csv("data/codebook_columns_manual.csv")
 # if not NA in label and is NA in df21, get the colnames
 newcols <- data.frame(newcols = ifelse(!is.na(manual$Label) & 
                                          is.na(manual$df21), manual$cleaned_colnames, NA),
