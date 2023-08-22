@@ -93,7 +93,7 @@ pred_df <- df_og %>%
                                   "0.975quant")])
 
 plot_predicted_probs(pred_df)
-ggsave('figures/sm_predicted_probs_field.png', width = 7, height = 4)
+ggsave('figures/figurea1.png', width = 7, height = 4)
 
 # Text
 wide11 <- pred_df %>%
@@ -177,7 +177,7 @@ pred_df <- df_og %>%
                                   "0.975quant")])
 
 plot_predicted_probs(pred_df)
-ggsave('figures/sm_predicted_probs_forage.png', width = 7, height = 4)
+ggsave('figures/figurea2.png', width = 7, height = 4)
 
 # Text
 wide11 <- pred_df %>%

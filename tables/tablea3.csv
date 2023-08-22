@@ -1,0 +1,18 @@
+"term","mean","se"
+"(Intercept)",-0.663,0.002
+"Southern region (vs. North Central)",0.124,0.003
+"Northeastern region (vs. North Central)",0.236,0.002
+"Western region (vs. North Central)",0.351,0.002
+"Vegetable crops (vs. Field)",0.214,0.002
+"Forage crops (vs. Field)",0.848,0.002
+"Certifiers request organic seed use",0.043,0.001
+"Seed saved or traded (%)",-0.096,0.001
+"Crop diversity",-0.065,0.001
+"Farm size (acres)",0.114,0.001
+"Values organic seed",-0.2,0.001
+"Year: 2020 (vs. 2010)",-0.334,0.002
+"Year: 2015 (vs. 2010)",-0.171,0.002
+"Barrier: Insufficient quantity",0.009,0.001
+"Barrier: Buyer requirements",0.112,0.001
+"Barrier: Undesirable traits",0.127,0.001
+"Barrier: Organic availability",0.14,0.001

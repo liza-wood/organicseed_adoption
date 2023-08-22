@@ -45,9 +45,15 @@ m <- inla(CVseed_percent_maincrop_prop ~
            control.compute = list(cpo= T, waic= T))
 
 mdf <- prep_inla_data(m)
-plot_inla_models(mdf, 1)
 
+plot_inla_models(mdf, 1)
 ggsave("figures/figure2.png", width = 8, height = 4)
+
+tablea3 <- mdf[,c('term', 'mean', 'se')]
+tablea3$mean <- round(tablea3$mean, 3)
+tablea3$se <- round(tablea3$se, 3)
+write.csv(tablea3, 'tables/tablea3.csv', row.names = F)
+
 
 # PREDICTED PROBABILITY ----
 ## Two farm models in several settings ----
@@ -113,6 +119,19 @@ newdf <- rbind(df.full_rounded, df)
 #field_nc_match <- select(field_nc, colnames(df.full))
 #newdf <- rbind(df.full, veg_west_match) %>% 
 #  rbind(field_nc_match)
+
+# test one prediction on my own
+summ <- summary(m)
+dfw11
+summ$fixed[2]*(dfw11$legitimation_user_s[1]) + 
+  summ$fixed[3]*(dfw11$acreage_s[1]) + summ$fixed[4]*(dfw11$cropcat_n_s[1]) +
+  summ$fixed[5]*(dfw11$barrier_buyerReq_s[1]) + summ$fixed[6]*(dfw11$barrier_insuffQuantity_s[1]) + 
+  summ$fixed[7]*(dfw11$barrier_lackdesiredTraits_s[1]) + 
+  summ$fixed[8]*(dfw11$barrier_availability_s[1]) +
+  summ$fixed[9]*0 + summ$fixed[10]*1 +summ$fixed[11]*1 + summ$fixed[12]*0 +
+  summ$fixed[13]*0 + summ$fixed[14]*0 + summ$fixed[15]*0 +
+  summ$fixed[16]*(dfw11$CertifierRequestn_s[1]) + summ$fixed[17]*(dfw11$noncommercial_seedsource_s[1])
+
 
 formula = CVseed_percent_maincrop_prop ~ legitimation_user_s + 
                                          CertifierRequestn_s + 
