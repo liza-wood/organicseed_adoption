@@ -1,0 +1,35 @@
+﻿Data description,Hypothesis,Variable name,Data type
+Dependent variable,,,
+"Last year, what approximate percentage",,Acreage planted to,Proportion 
+of total acreage of [crop] was planted with,,conventional seed,(0-1)
+conventional seed? ,,,
+Independent variables,,,
+"Over the last three years, how much ",,,
+were each of the following a factor in,,,
+your decision NOT to purchase organic seed?,,,
+    Specific variety not available as ,H1a,Barrier: Organic,Likert scale
+     organic seed,,availability,(1-4)
+    Insufficient quantity of seed,H1a,Barrier: Insufficient,Likert scale
+,,quantity,(1-4)
+    Lack of desirable genetic traits,H1a,Barrier: Undesirable ,Likert scale
+,,traits,(1-4)
+    Processor/buyer requires or supplies   ,H1a,Barrier: Buyer,Likert scale
+     varieties that are not available,,requirements,(1-4)
+Survey year,H1b,Survey year,Categorical
+,,,"(2010, 2015, 2020)"
+Please indicate your level of agreement with ,H2a,Values organic seed,Likert scale
+the statement: Organic seed is important in,,,(1-5)
+maintaining the integrity of organic food production,,,
+Total acreage,H2b,Farm size (acres),Numeric
+,,,"(0-17,000)"
+Crop diversity,H2c,Crop diversity,Numeric
+,,,(1-3)
+Control variables,,,
+Has your certifier requested that you take greater,,Certifiers request,Binary
+steps to source organic seed?,,organic seed use,(0-1)
+Sources seed from self or other farmers,,Seed saved or,Percent
+,,traded (%),(0-100)
+Main crop,,Crop,Categorical
+,,,"(Field, Forage, Vegetable)"
+Region,,Region,Categorical
+,,,"(N. Central, West, Northeast, South)"

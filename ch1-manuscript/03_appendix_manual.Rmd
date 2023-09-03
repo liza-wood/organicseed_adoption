@@ -1,28 +1,30 @@
-# Appendix A
-## 1. Model selection and fit
+# 
+## Model selection and fit
 ```{r, echo = F}
 tablea1 <- read.csv('~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea1.csv') ; 
 colnames(tablea1) <- c("Term", rep(c("Mean", "SE"), 5)) ; 
 tablea1[is.na(tablea1)] <- "" ; 
-kbl(tablea1, booktabs = T, caption = 'Model comparison results') %>% kable_styling(latex_options = "scale_down") %>% 
+kbl(tablea1, booktabs = T, caption = 'Model comparison results') %>% kable_styling(latex_options = c("scale_down","HOLD_position")) %>% 
   add_header_above(c(" " = 1, "Model 1" = 2, "Model 2" = 2, "Model 3" = 2, "Model 4" = 2, "Model 5" = 2))
 ```
+
 ```{r, echo = F}
 tablea2 <- read.csv('~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea2.csv') ; 
 colnames(tablea2) <- c("Model", "WAIC", "Maximum Likelihood", "CPO") ; 
-kbl(tablea2, booktabs = T, caption = 'Goodness of fit across models') 
+kbl(tablea2, booktabs = T, caption = 'Goodness of fit across models') %>% 
+  kable_styling(latex_options = "HOLD_position")
 ```
-## 2. Full model results
+## Full model results
 ```{r, echo = F}
 tablea3 <- read.csv('~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea3.csv') ; 
 colnames(tablea3) <- c("Term", "Mean estimate", "Standard error") ; 
-kbl(tablea3, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = "scale_down")  
+kbl(tablea3, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = "HOLD_position")  
 ```
-## 3. Predicted conventional seed use for field and forage crop growers
-```{r, echo = F, out.width = '100%', fig.align = 'center', fig.cap = 'Predicted mean estimates for field crop growers of two farmer profiles.'}
+## Predicted conventional seed use for field and forage crop growers
+```{r, echo = F, out.width = '100%', fig.pos = 'H', fig.align = 'center', fig.cap = 'Predicted mean estimates for field crop growers of two farmer profiles.'}
 knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea1.png')
 ```
-```{r, echo = F, out.width = '100%', fig.align = 'center', fig.cap = 'Predicted mean estimates for forage crop growers of two farmer profiles.'}
+```{r, echo = F, out.width = '100%', fig.pos = 'H', fig.align = 'center', fig.cap = 'Predicted mean estimates for forage crop growers of two farmer profiles.'}
 knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea2.png')
 ```
 

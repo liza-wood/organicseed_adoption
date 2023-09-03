@@ -51,6 +51,12 @@ df %>%
   group_by(survey_year, Region) %>% 
   count()
 
+# Table 1 test ----
+table1.1 <- read.csv('~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1_manual.csv') ;
+
+kbl(table1.1, booktabs = T, caption = 'Organic seed grower survey questions, key variables, and hypotheses', align = c('l', 'l', rep('c', 3))) %>% kable_styling(latex_options = 'scale_down') %>% row_spec(2, hline_after = T) %>% row_spec(5, hline_after = T) %>% row_spec(6, hline_after = T) %>% row_spec(26, hline_after = T) %>% row_spec(27, hline_after = T)
+
+
 # ---- Text summaries ----
 summary(df.full$OGseed_percent_maincrop)
 table(df.full$CertifierRequestn[df.full$IncreasedOGSeed != "Already at 100%" | df.full$OGseed_percent_maincrop != 100])
@@ -89,7 +95,7 @@ variable_df <- data.frame(
                 "Certifiers request organic seed use",
                 "Seed saved or traded (%)",
                 #"Years certified",
-                "Number of respondents"
+                "Number of respondents (complete data)"
   ),
                 
   mean2011 = c(
@@ -210,6 +216,9 @@ variable_df$stats2021 <- paste0(variable_df$mean2021, " (",
 
 variable_df <- select(variable_df, Questions, stats2011, stats2016, 
                       stats2021)
+
+variable_df[12,2:4] <- str_remove_all(variable_df[12,2:4], ' \\(\\)')
+variable_df[14,2:4] <- str_remove_all(variable_df[14,2:4], ' \\(\\d{3}\\)')
 
 # Already at 100%
 df11 <- filter(df, survey_year == 2011)
