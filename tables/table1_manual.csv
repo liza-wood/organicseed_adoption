@@ -17,8 +17,8 @@ your decision NOT to purchase organic seed?,,,
      varieties that are not available,,requirements,(1-4)
 Survey year,H1b,Survey year,Categorical
 ,,,"(2010, 2015, 2020)"
-Please indicate your level of agreement with ,H2a,Values organic seed,Likert scale
-the statement: Organic seed is important in,,,(1-5)
+Please indicate your level of agreement with ,,,Likert scale
+the statement: Organic seed is important in,H2a,Values organic seed,(1-5)
 maintaining the integrity of organic food production,,,
 Total acreage,H2b,Farm size (acres),Numeric
 ,,,"(0-17,000)"

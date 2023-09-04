@@ -25,7 +25,7 @@ df.full <- readRDS("~/Box/organicseed_adoption/df_scaled.rds") %>%
   na.omit()
 
 df.full_rounded <- df.full
-df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.99, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.01, df.full_rounded$CVseed_percent_maincrop_prop))
+df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$CVseed_percent_maincrop_prop))
 
 m <- inla(CVseed_percent_maincrop_prop ~ 
              legitimation_user_s + 
@@ -52,6 +52,9 @@ ggsave("figures/figure2.png", width = 8, height = 4)
 tablea3 <- mdf[,c('term', 'mean', 'se')]
 tablea3$mean <- round(tablea3$mean, 3)
 tablea3$se <- round(tablea3$se, 3)
+tablea3 <- tablea3 %>% 
+  mutate(term = factor(term, rev(coef_order))) %>% 
+  arrange(rev(term))
 write.csv(tablea3, 'tables/tablea3.csv', row.names = F)
 
 
