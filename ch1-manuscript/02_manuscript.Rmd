@@ -167,7 +167,7 @@ voluntary standards to gain participants premiums
 However, the certification standards are generally accompanied by listed
 exceptions for using non-organic products. These exceptions are proposed
 to reduce excessive burdens and barriers facing growers and processors
-National Organic Standards Board_2004_National Organic Standards Board_2006 in an otherwise
+[@National_Organic_Standards_Board_2006] in an otherwise
 stringent and often challenging certification process
 [@Carter_Adams_Wright_Scott_2022; @Flaten_Lien_Koesling_Løes_2010].
 
@@ -210,8 +210,7 @@ decisions are made by actors with varying risk tolerances,
 entrepreneurial initiatives, and environmental values and strategies.
 This is especially true for agricultural settings, where securing
 economic returns exists on balance with other values and operational
-attributes [Floress_García de
-Jalón_Church_Babin_Ulrich-Schad_Prokopy_2017; @Prokopy_Floress_Arbuckle_Church_Eanes_Gao_Gramig_Ranjan_Singh_2019].
+attributes [@Floress_García_de_Jalón_Church_Babin_Ulrich-Schad_Prokopy_2017; @Prokopy_Floress_Arbuckle_Church_Eanes_Gao_Gramig_Ranjan_Singh_2019].
 
 Farmers make decisions based on a gradient of values ranging from
 "farm-as-business" to "environmental stewardship", though the two

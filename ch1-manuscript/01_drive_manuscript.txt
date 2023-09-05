@@ -198,8 +198,8 @@ voluntary standards to gain participants premiums
 However, the certification standards are generally accompanied by listed
 exceptions for using non-organic products. These exceptions are proposed
 to reduce excessive burdens and barriers facing growers and processors
-[National Organic Standards Board_2004,
-2006](https://www.zotero.org/google-docs/?LjgIHJ) in an otherwise
+[National Organic Standards
+Board_2006](https://www.zotero.org/google-docs/?LjgIHJ) in an otherwise
 stringent and often challenging certification process
 [Carter_Adams_Wright_Scott_2022_Flaten_Lien_Koesling_Løes_2010](https://www.zotero.org/google-docs/?gbclRN).
 
@@ -1729,12 +1729,6 @@ watersheds examined.}, number={2}, journal={Journal of Soil and Water
 Conservation}, publisher={Soil and Water Conservation Society},
 author={Napier, T. L. and Robinson, J. and Tucker, M.}, year={2000},
 month={Apr}, pages={135--141}, language={en}
-}](https://www.zotero.org/google-docs/?p5pDZ0)
-
-[\@book{National Organic Standards Board_2004, title={Recommendation for
-Rule Change of Commercial Availability, April 29, 2004},
-institution={National Organic Standards Board}, author={National Organic
-Standards Board}, year={2004}, language={en}
 }](https://www.zotero.org/google-docs/?p5pDZ0)
 
 [\@book{National Organic Standards Board_2006, title={Sunset Review -

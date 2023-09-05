@@ -15,15 +15,16 @@ colnames(tablea2) <- c("Model", "WAIC", "Maximum Likelihood", "CPO") ;
 kbl(tablea2, booktabs = T, caption = 'Goodness of fit across models') %>% kable_styling(latex_options = c("hold_position")) 
 ```
 
-## Full model results
+## Full model results  
+
 
 ```{r, echo = F}
 tablea3 <- read.csv('~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea3.csv') ; 
 colnames(tablea3) <- c("Term", "Mean estimate", "Standard error") ; 
-kbl(tablea3, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = c("hold_position")) 
+kbl(tablea3, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = c("HOLD_position")) 
 ```
 
-## Predicted conventional seed use 
+## Predicted conventional seed use  
 
 ```{r, echo = F, out.width = '100%', fig.pos='h', fig.align = 'center', fig.cap = 'Predicted conventional seed use for field crop growers of two farmer profiles.'}
 knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea1.png')
