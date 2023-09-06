@@ -142,7 +142,7 @@ Furthermore, vague criteria for exceptions/derogations like the use of
 In this paper we are interested in environmental policy that provides
 flexibility in the form of exceptions. For example, the European Union
 industrial emissions directive mandates firms to reduce emissions using
-"best available technology", but grants derogations if the costs of
+"best available technology," but grants derogations if the costs of
 complying (as calculated by the firm) are too high
 [@Romero-Castro_López-Cabarcos_Piñeiro-Chousa_2022; @Söderholm_Bergquist_Pettersson_Söderholm_2022].
 As a second example, regulation of manure discharge by animal feeding
@@ -184,7 +184,7 @@ Standard[^2], and the East Africa Organic Standard[^3].
 In the United States, "the goal [of the exception] is to promote the
 continued growth and improvement in organic seed production and
 subsequent usage by organic growers, without hurting or putting undo
-[sic] burdens on growers." [@National_Organic_Standards_Board_2008]. The intention
+[sic] burdens on growers" [@National_Organic_Standards_Board_2008]. The intention
 is that this exception can excuse farmers who experience challenges,
 particularly as the organic seed market develops
 [@Dillon_Hubbard_2011; @Hubbard_Zystro_2016].
@@ -213,7 +213,7 @@ economic returns exists on balance with other values and operational
 attributes [@Floress_García_de_Jalón_Church_Babin_Ulrich-Schad_Prokopy_2017; @Prokopy_Floress_Arbuckle_Church_Eanes_Gao_Gramig_Ranjan_Singh_2019].
 
 Farmers make decisions based on a gradient of values ranging from
-"farm-as-business" to "environmental stewardship", though the two
+"farm-as-business" to "environmental stewardship," though the two
 are not mutually exclusive
 [@Daloğlu_Nassauer_Riolo_Scavia_2014; @Thompson_Reimer_Prokopy_2015].
 Additionally, operational attributes such as farm size can influence the
@@ -547,7 +547,7 @@ We ran our analysis using the INLA package
 available in R Statistical software
 [@Team_2023]. INLA uses an
 Integrated Nested Laplace Approximation -- a deterministic Bayesian
-method for estimating its models. Analyses are available at
+method for estimating its models. Code for analysis is available at
 [github.com/liza-wood/organicseed_adoption](www.github.com/liza-wood/organicseed_adoption).
 We compare several models and provide measures of model fit in Appendix
 A.
@@ -683,12 +683,10 @@ decreased over time. In 2015, the coefficient estimate is -0.18,
 suggesting that compared to the baseline data in 2010, growers are
 planting 18% less of their acreage to conventional seed. Likewise in
 2020, growers are planting 32% less of their acreage to conventional
-seed.
-
+seed. \linebreak  
 ```{r, echo = F, out.width = '100%', fig.align = 'center', fig.cap = 'Coefficient estimates and credible intervals for the beta regression modeling the proportion of total acreage planted with conventional seed.'}
  knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure2.png') 
 ```
-
 These results support our first hypotheses: Conventional seed use will
 be highest among growers experiencing more significant organic seed
 sourcing barriers (H1a) and conventional seed use will decline over time

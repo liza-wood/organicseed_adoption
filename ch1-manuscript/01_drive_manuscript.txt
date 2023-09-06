@@ -173,7 +173,7 @@ Furthermore, vague criteria for exceptions/derogations like the use of
 In this paper we are interested in environmental policy that provides
 flexibility in the form of exceptions. For example, the European Union
 industrial emissions directive mandates firms to reduce emissions using
-\"best available technology\", but grants derogations if the costs of
+\"best available technology,\" but grants derogations if the costs of
 complying (as calculated by the firm) are too high
 [Romero-Castro_López-Cabarcos_Piñeiro-Chousa_2022_Söderholm_Bergquist_Pettersson_Söderholm_2022](https://www.zotero.org/google-docs/?rxsyed).
 As a second example, regulation of manure discharge by animal feeding
@@ -217,7 +217,7 @@ Standard[^2], and the East Africa Organic Standard[^3].
 In the United States, \"the goal \[of the exception\] is to promote the
 continued growth and improvement in organic seed production and
 subsequent usage by organic growers, without hurting or putting undo
-\[sic\] burdens on growers.\" [National Organic Standards
+\[sic\] burdens on growers\" [National Organic Standards
 Board_2008](https://www.zotero.org/google-docs/?Tdy1ya). The intention
 is that this exception can excuse farmers who experience challenges,
 particularly as the organic seed market develops
@@ -248,7 +248,7 @@ attributes [Floress_García de
 Jalón_Church_Babin_Ulrich-Schad_Prokopy_2017_Prokopy_Floress_Arbuckle_Church_Eanes_Gao_Gramig_Ranjan_Singh_2019](https://www.zotero.org/google-docs/?7DZmBr).
 
 Farmers make decisions based on a gradient of values ranging from
-\"farm-as-business\" to \"environmental stewardship\", though the two
+\"farm-as-business\" to \"environmental stewardship,\" though the two
 are not mutually exclusive
 [Daloğlu_Nassauer_Riolo_Scavia_2014_Thompson_Reimer_Prokopy_2015](https://www.zotero.org/google-docs/?LeYrjL).
 Additionally, operational attributes such as farm size can influence the
@@ -604,7 +604,7 @@ We ran our analysis using the INLA package
 available in R Statistical software
 [Team_2023](https://www.zotero.org/google-docs/?EGhP03). INLA uses an
 Integrated Nested Laplace Approximation -- a deterministic Bayesian
-method for estimating its models. Analyses are available at
+method for estimating its models. Code for analysis is available at
 \[github.com/liza-wood/organicseed_adoption\](www.github.com/liza-wood/organicseed_adoption).
 We compare several models and provide measures of model fit in Appendix
 A.
