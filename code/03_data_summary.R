@@ -230,7 +230,14 @@ round(table(df21$IncreasedOGSeed)[1]/sum(table(df21$IncreasedOGSeed)[1:3]), 2)
 
 write.csv(variable_df, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table2.csv", row.names = F)
 
-# ---- Supplemental Tables ----
+
+
+
+
+
+
+
+# ---- Supplemental Tables -- NOT USED IN PAPER ----
 ##
 operation_subsys <- df.full %>% 
   group_by(survey_year, Region, maincrop) %>% 
@@ -260,7 +267,8 @@ operation_reg <- df.full %>%
             avg_cert = mean(CertifierRequestn, na.rm = T),
             median_cert = median(CertifierRequestn, na.rm = T))
 
-# Supplemental Figure prep ----
+
+# Supplemental Figure prep -- NOT USED IN PAPER ----
 mako <- viridis::mako(n=9)
 colors <- mako[c(2,5,8)]
 
@@ -338,6 +346,7 @@ df.full %>%
     y = "Average percent of land\nplanted to organic seed", 
     #title = "Organic seed use by organic growers",
     fill = "", color = "")
+
 
 # ---- Supplemental figures ----
 #

@@ -14,10 +14,15 @@ df <- df %>%
          CertifierRequestn, # guidance of the search
          maincrop, survey_year, Region, # system level features
          TotalAcreage, cropcat_n, # operation controls
-         contains('barrier_'),
-         noncommercial_seedsource,
-         YearsCertified
+         #contains('barrier_'),
+         barrier_buyerReq,
+         barrier_insuffQuantity,
+         barrier_lackdesiredTraits,
+         barrier_availability,
+         noncommercial_seedsource#,
+         #YearsCertified
   ) %>% 
+  na.omit() %>%  # do this now so that it
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
@@ -29,16 +34,17 @@ df <- df %>%
          CertifierRequestn_s = c(scale(CertifierRequestn, scale = T)),
          legitimation_user_s = c(scale(OGSeedOGIntegrityn, scale = T)),
          survey_year = factor(survey_year),
-         barrier_price_s = c(scale(barrier_price, scale = T)),
+         #barrier_price_s = c(scale(barrier_price, scale = T)),
          barrier_availability_s = c(scale(barrier_availability, scale = T)),
-         barrier_distrustQuality_s = c(scale(barrier_distrustQuality, scale = T)),
+         #barrier_distrustQuality_s = c(scale(barrier_distrustQuality, scale = T)),
          barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = T)),
-         barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = T)),
+         #barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = T)),
          barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                               scale = T)),
-         years_certified_s = c(scale(YearsCertified, scale = T)))
+         #years_certified_s = c(scale(YearsCertified, scale = T))
+         )
 
 head(df[c('CVseed_percent_maincrop_prop', 'OGseed_percent_maincrop_prop')])
 

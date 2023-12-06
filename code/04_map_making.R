@@ -3,10 +3,6 @@ library(tidyverse)
 us_states_og <- usmap::us_map()
 us_states_og$full <- tools::toTitleCase(us_states_og$full)
 
-greens <- colorRampPalette(c("lightgrey", "#55752f"))(8) # 2014-2018
-reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
-blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
-
 mako <- viridis::mako(n=9)
 
 setwd("~/Box/osa_networks/data_combined/")
@@ -216,7 +212,15 @@ map
 
 ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png", height = 4.5, width = 5, dpi = 800)
 
-# Olg regional maps -- fx will not work for them anymore
+
+
+
+
+# NOTE USED IN PAPER --- Olg regional maps -- fx will not work for them anymore
+
+greens <- colorRampPalette(c("lightgrey", "#55752f"))(8) # 2014-2018
+reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
+blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
 
 df11mapdf <- region_text(df11_random_locations)
 map10 <- make_map(df11_random_locations, df11mapdf, rep("black",4), "2010")

@@ -7,6 +7,7 @@ library(INLA)
 source('code/functions.R')
 setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
 df.full <- readRDS("~/Box/organicseed_adoption/df_scaled.rds") %>% 
+  mutate(acreage_s = c(scale(acreage_log, center = T, scale = F))) %>% 
   select(CVseed_percent_maincrop_prop,
          legitimation_user_s,
          CertifierRequestn_s,
@@ -20,8 +21,7 @@ df.full <- readRDS("~/Box/organicseed_adoption/df_scaled.rds") %>%
          barrier_availability_s,
          maincrop,
          Region,
-         survey_year) %>% 
-  na.omit()
+         survey_year) 
 
 
 # Round the numbers

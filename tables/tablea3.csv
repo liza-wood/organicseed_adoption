@@ -1,18 +1,18 @@
 "term","mean","se"
-"Barrier: Organic availability",0.171,0.001
-"Barrier: Undesirable traits",0.121,0.001
-"Barrier: Buyer requirements",0.121,0.001
-"Barrier: Insufficient quantity",0.016,0.001
-"Year: 2015 (vs. 2010)",-0.175,0.002
-"Year: 2020 (vs. 2010)",-0.316,0.002
-"Values organic seed",-0.2,0.001
-"Farm size (acres)",0.118,0.001
-"Crop diversity",-0.068,0.001
+"Barrier: Organic availability",0.17,0.001
+"Barrier: Buyer requirements",0.116,0.001
+"Barrier: Undesirable traits",0.106,0.001
+"Barrier: Insufficient quantity",0,0.001
+"Year: 2015 (vs. 2010)",-0.208,0.002
+"Year: 2020 (vs. 2010)",-0.364,0.002
+"Values organic seed",-0.189,0.001
+"Farm size (log acres)",0.096,0.001
+"Crop diversity",-0.121,0.001
 "Seed saved or traded (%)",-0.095,0.001
-"Certifiers request organic seed use",0.038,0.001
-"Forage crops (vs. Field)",0.903,0.002
-"Vegetable crops (vs. Field)",0.248,0.002
-"Western region (vs. North Central)",0.338,0.002
-"Northeastern region (vs. North Central)",0.249,0.002
-"Southern region (vs. North Central)",0.122,0.003
-"(Intercept)",-0.701,0.002
+"Certifiers request organic seed use",0.028,0.001
+"Forage crops (vs. Field)",0.921,0.002
+"Vegetable crops (vs. Field)",0.488,0.002
+"Western region (vs. North Central)",0.363,0.002
+"Northeastern region (vs. North Central)",0.285,0.002
+"Southern region (vs. North Central)",0.16,0.003
+"(Intercept)",-0.972,0.004
