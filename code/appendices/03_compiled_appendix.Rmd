@@ -21,7 +21,7 @@ kbl(tablea1, booktabs = T, caption = 'Model comparison results') %>% kable_styli
 
 ```{r, echo = F}
 tablea2 <- read.csv('tables/tablea2.csv') ; 
-colnames(tablea2) <- c("Model", "WAIC", "Maximum Likelihood", "CPO") ; 
+colnames(tablea2) <- c("Model", "AIC", "BIC", "Log likelihood") ; 
 kbl(tablea2, booktabs = T, caption = 'Goodness of fit across models') %>% kable_styling(latex_options = c("hold_position")) 
 ```
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  27 SEP 2023 10:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  8 DEC 2023 11:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -660,7 +660,7 @@ Here is how much of TeX's memory you used:
 texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/20
 20/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2020/texmf-di
 st/fonts/type1/public/lm/lmr17.pfb>
-Output written on 03_compiled_appendix.pdf (3 pages, 437926 bytes).
+Output written on 03_compiled_appendix.pdf (3 pages, 397912 bytes).
 PDF statistics:
  63 PDF objects out of 1000 (max. 8388607)
  50 compressed objects within 1 object stream

@@ -3,11 +3,13 @@ library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(jtools)
-library(INLA)
+#library(INLA)
+library(betareg)
 source('code/functions.R')
 setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
 df.full <- readRDS("~/Box/organicseed_adoption/df_scaled.rds") %>% 
-  mutate(acreage_s = c(scale(acreage_log, center = T, scale = F))) %>% 
+  mutate(acreage_s = acreage_log,
+         cropcat_n_s = cropcat_n) %>% 
   select(CVseed_percent_maincrop_prop,
          legitimation_user_s,
          CertifierRequestn_s,
@@ -30,32 +32,62 @@ df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full$CVseed_percent_ma
                                                        ifelse(df.full$CVseed_percent_maincrop_prop == 1, 0.999,df.full$CVseed_percent_maincrop_prop))
 
 # Model comparison ----
-m0 <- inla(CVseed_percent_maincrop_prop ~ 1, 
-           data = df.full_rounded,
-           family = "beta",
-           control.compute = list(cpo= T, waic= T))
+#m0 <- inla(CVseed_percent_maincrop_prop ~ 1, 
+#           data = df.full_rounded,
+#           family = "beta",
+#           control.compute = list(cpo= T, waic= T))
+#summary(m0)
+m0 <- betareg(CVseed_percent_maincrop_prop ~ 1, 
+              data = df.full_rounded,
+              link = "logit", link.phi = NULL, type = "ML")
 summary(m0)
 
 # Key system variables only
-m1 <- inla(CVseed_percent_maincrop_prop ~ 
+#m1 <- inla(CVseed_percent_maincrop_prop ~ 
+#             maincrop +
+#             Region +
+#             survey_year, 
+#           data = df.full_rounded,
+#           family = "beta",
+#           control.compute = list(cpo= T, waic= T))
+
+m1 <- betareg(CVseed_percent_maincrop_prop ~ 
              maincrop +
              Region +
              survey_year, 
-           data = df.full_rounded,
-           family = "beta",
-           control.compute = list(cpo= T, waic= T))
+           data = df.full_rounded, 
+           link = "logit", link.phi = NULL, type = "ML")
 
 # Key operation variables
-m2 <- inla(CVseed_percent_maincrop_prop ~ 
+#m2 <- inla(CVseed_percent_maincrop_prop ~ 
+#             legitimation_user_s + 
+#             acreage_s + 
+#             cropcat_n_s,
+#           data = df.full_rounded,
+#           family = "beta",
+#           control.compute = list(cpo= T, waic= T))
+
+m2 <- betareg(CVseed_percent_maincrop_prop ~ 
              legitimation_user_s + 
              acreage_s + 
              cropcat_n_s,
-           data = df.full_rounded,
-           family = "beta",
-           control.compute = list(cpo= T, waic= T))
+           data = df.full_rounded, 
+           link = "logit", link.phi = NULL, type = "ML")
 
 # Adding barriers
-m3 <- inla(CVseed_percent_maincrop_prop ~ 
+#m3 <- inla(CVseed_percent_maincrop_prop ~ 
+#             legitimation_user_s + 
+#             acreage_s + 
+#             cropcat_n_s +
+#             barrier_buyerReq_s +
+#             barrier_insuffQuantity_s +
+#             barrier_lackdesiredTraits_s +
+#             barrier_availability_s,
+#           data = df.full_rounded,
+#           family = "beta",
+#           control.compute = list(cpo= T, waic= T))
+
+m3 <- betareg(CVseed_percent_maincrop_prop ~ 
              legitimation_user_s + 
              acreage_s + 
              cropcat_n_s +
@@ -63,12 +95,26 @@ m3 <- inla(CVseed_percent_maincrop_prop ~
              barrier_insuffQuantity_s +
              barrier_lackdesiredTraits_s +
              barrier_availability_s,
-           data = df.full_rounded,
-           family = "beta",
-           control.compute = list(cpo= T, waic= T))
+           data = df.full_rounded, 
+           link = "logit", link.phi = NULL, type = "ML")
 
 # More 'system' controls
-m4 <- inla(CVseed_percent_maincrop_prop ~ 
+#m4 <- inla(CVseed_percent_maincrop_prop ~ 
+#             legitimation_user_s + 
+#             acreage_s + 
+#             cropcat_n_s +
+#             barrier_buyerReq_s +
+#             barrier_insuffQuantity_s +
+#             barrier_lackdesiredTraits_s +
+#             barrier_availability_s +
+#             maincrop +
+#             Region +
+#             survey_year, 
+#           data = df.full_rounded,
+#           family = "beta",
+#           control.compute = list(cpo= T, waic= T))
+
+m4 <- betareg(CVseed_percent_maincrop_prop ~ 
              legitimation_user_s + 
              acreage_s + 
              cropcat_n_s +
@@ -79,12 +125,29 @@ m4 <- inla(CVseed_percent_maincrop_prop ~
              maincrop +
              Region +
              survey_year, 
-           data = df.full_rounded,
-           family = "beta",
-           control.compute = list(cpo= T, waic= T))
+           data = df.full_rounded, 
+           link = "logit", link.phi = NULL, type = "ML")
 
 # Controls
-m5 <- inla(CVseed_percent_maincrop_prop ~ 
+#m5 <- inla(CVseed_percent_maincrop_prop ~ 
+#             legitimation_user_s + 
+#             acreage_s + 
+#             cropcat_n_s +
+#             barrier_buyerReq_s +
+#             barrier_insuffQuantity_s +
+#             barrier_lackdesiredTraits_s +
+#             barrier_availability_s +
+#             maincrop +
+#             Region +
+#             survey_year +
+#             CertifierRequestn_s + 
+#             noncommercial_seedsource_s, 
+#             #years_certified_s, 
+#           data = df.full_rounded,
+#           family = "beta",
+#           control.compute = list(cpo= T, waic= T))
+
+m5 <- betareg(CVseed_percent_maincrop_prop ~ 
              legitimation_user_s + 
              acreage_s + 
              cropcat_n_s +
@@ -97,17 +160,22 @@ m5 <- inla(CVseed_percent_maincrop_prop ~
              survey_year +
              CertifierRequestn_s + 
              noncommercial_seedsource_s, 
-             #years_certified_s, 
-           data = df.full_rounded,
-           family = "beta",
-           control.compute = list(cpo= T, waic= T))
+           #years_certified_s, 
+           data = df.full_rounded, 
+           link = "logit", link.phi = NULL, type = "ML")
 
 # Model results ----
-m1df <- prep_inla_data(m1) %>% mutate(model = 1)
-m2df <- prep_inla_data(m2) %>% mutate(model = 2)
-m3df <- prep_inla_data(m3) %>% mutate(model = 3)
-m4df <- prep_inla_data(m4) %>% mutate(model = 4)
-m5df <- prep_inla_data(m5) %>% mutate(model = 5)
+#m1df <- prep_inla_data(m1) %>% mutate(model = 1)
+#m2df <- prep_inla_data(m2) %>% mutate(model = 2)
+#m3df <- prep_inla_data(m3) %>% mutate(model = 3)
+#m4df <- prep_inla_data(m4) %>% mutate(model = 4)
+#m5df <- prep_inla_data(m5) %>% mutate(model = 5)
+
+m1df <- prep_betreg_data(m1) %>% mutate(model = 1)
+m2df <- prep_betreg_data(m2) %>% mutate(model = 2)
+m3df <- prep_betreg_data(m3) %>% mutate(model = 3)
+m4df <- prep_betreg_data(m4) %>% mutate(model = 4)
+m5df <- prep_betreg_data(m5) %>% mutate(model = 5)
 
 compare_df <- m1df %>% 
   rbind(m2df) %>% 
@@ -143,59 +211,73 @@ kbl(tablea1, booktabs = T, caption = 'Model comparison results') %>% kable_styli
 
 # Compare goodness of fit measures ----
 # Wants lowest value
-waic = c(m1$waic$waic,
-         m2$waic$waic,
-         m3$waic$waic,
-         m4$waic$waic,
-         m5$waic$waic) # lowest
+aic = c(AIC(m1),
+         AIC(m2),
+         AIC(m3),
+         AIC(m4),
+         AIC(m5)) # lowest
+
+bic = c(BIC(m1),
+        BIC(m2),
+        BIC(m3),
+        BIC(m4), # lowest
+        BIC(m5)) 
 
 # Wants highest value
-mlik = c(m1$mlik[1],
-         m2$mlik[1],
-         m3$mlik[1],
-         m4$mlik[1], # highest
-         m5$mlik[1])
+mlik = c(m1$loglik,
+         m2$loglik,
+         m3$loglik,
+         m4$loglik, # highest
+         m5$loglik) # highest
 
 # CPO is a predictive measure -- want to make sure no failures in the measure
-table(m1$cpo$failure > 0)
-table(m2$cpo$failure > 0)
-table(m3$cpo$failure > 0)
-table(m4$cpo$failure > 0)
-table(m5$cpo$failure > 0)
+#table(m1$cpo$failure > 0)
+#table(m2$cpo$failure > 0)
+#table(m3$cpo$failure > 0)
+#table(m4$cpo$failure > 0)
+#table(m5$cpo$failure > 0)
 
 # Then look for highest
 # https://groups.google.com/g/r-inla-discussion-group/c/cWwXBO11jWM?pli=1
-avglogcpo = c(mean(log(m1$cpo$cpo), na.rm = T),
-              mean(log(m2$cpo$cpo), na.rm = T),
-              mean(log(m3$cpo$cpo), na.rm = T),
-              mean(log(m4$cpo$cpo), na.rm = T), # Very close
-              mean(log(m5$cpo$cpo), na.rm = T)) # Very close
+#avglogcpo = c(mean(log(m1$cpo$cpo), na.rm = T),
+#              mean(log(m2$cpo$cpo), na.rm = T),
+#              mean(log(m3$cpo$cpo), na.rm = T),
+#              mean(log(m4$cpo$cpo), na.rm = T), # Very close
+#              mean(log(m5$cpo$cpo), na.rm = T)) # Very close
 
 tablea2 <- data.frame(model = paste('Model', 1:5),
-           waic, mlik, avglogcpo)
-tablea2$waic <- round(tablea2$waic)
+           aic, bic, mlik)
+tablea2$aic <- round(tablea2$aic)
+tablea2$bic <- round(tablea2$bic)
 tablea2$mlik <- round(tablea2$mlik)
-tablea2$avglogcpo <- round(tablea2$avglogcpo, 2)
 
 write.csv(tablea2, 'tables/tablea2.csv', row.names = F)
 
-colnames(tablea2) <- c("Model", "WAIC", "Maximum Likelihood", "CPO") ; 
+colnames(tablea2) <- c("Model", "AIC", "BIC", "Log likelihood") ; 
 kbl(tablea2, booktabs = T, caption = 'Goodness of fit across models') 
 
 # https://becarioprecario.bitbucket.io/inla-gitbook/ch-INLA.html
-ggplot(m1$summary.linear.predictor, 
-       aes(x = 1:nrow(m1$summary.linear.predictor), y = m4$cpo$cpo)) +
-  geom_point()
+#ggplot(m1$summary.linear.predictor, 
+#       aes(x = 1:nrow(m1$summary.linear.predictor), y = m4$cpo$cpo)) +
+#  geom_point()
+#
+#ggplot(m1$summary.linear.predictor, 
+#       aes(x = 1:nrow(m1$summary.linear.predictor), y = m4$cpo$pit)) +
+#  geom_point()
 
-ggplot(m1$summary.linear.predictor, 
-       aes(x = 1:nrow(m1$summary.linear.predictor), y = m4$cpo$pit)) +
-  geom_point()
+# Easy way
+plot(residuals(m1))
+plot(residuals(m2))
+plot(residuals(m3))
+plot(residuals(m4))
+plot(residuals(m5))
 
-residm1 <- df.full$CVseed_percent_maincrop_prop - m1$summary.fitted.values$mean
-residm2 <- df.full$CVseed_percent_maincrop_prop - m2$summary.fitted.values$mean
-residm3 <- df.full$CVseed_percent_maincrop_prop - m3$summary.fitted.values$mean
-residm4 <- df.full$CVseed_percent_maincrop_prop - m4$summary.fitted.values$mean
-residm5 <- df.full$CVseed_percent_maincrop_prop - m5$summary.fitted.values$mean
+# Manual way
+residm1 <- df.full$CVseed_percent_maincrop_prop - predict(m1)
+residm2 <- df.full$CVseed_percent_maincrop_prop - predict(m2)
+residm3 <- df.full$CVseed_percent_maincrop_prop - predict(m3)
+residm4 <- df.full$CVseed_percent_maincrop_prop - predict(m4)
+residm5 <- df.full$CVseed_percent_maincrop_prop - predict(m5)
 
 plot_resid <- function(resid, modelname){
   ggplot(df.full, aes(x = 1:nrow(df.full), y = resid)) +
@@ -245,26 +327,3 @@ m_censdf$model = 'censored'
 m_compare <- rbind(m5df, m_censdf)
 plot_inla_models(m_compare, 2)
 
-# Check using betareg
-library(betareg)
-betaregfit <- betareg(CVseed_percent_maincrop_prop ~ 
-                        legitimation_user_s + 
-                        acreage_s + 
-                        cropcat_n_s +
-                        barrier_buyerReq_s +
-                        barrier_insuffQuantity_s +
-                        barrier_lackdesiredTraits_s +
-                        barrier_availability_s +
-                        maincrop +
-                        Region +
-                        survey_year +
-                        CertifierRequestn_s + 
-                        noncommercial_seedsource_s, 
-                      #years_certified_s, 
-                      data = df.full_rounded)
-summary(betaregfit)
-#plot(residuals(betaregfit))
-
-df2011 <- filter(df.full_rounded, survey_year == 2011)
-df2016 <- filter(df.full_rounded, survey_year == 2016)
-df2021 <- filter(df.full_rounded, survey_year == 2021)

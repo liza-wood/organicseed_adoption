@@ -47,6 +47,37 @@ prep_inla_data <- function(m){
     arrange(term)
   return(mdf)
 }
+prep_betreg_data <- function(m){
+  ms <- summary(m)
+  mdf <- data.frame(ms$coefficients$mean)
+  mdf$term = rownames(mdf)
+  mdf$LCI <- mdf$Estimate - 1.96 * mdf$Std..Error
+  mdf$UCI <- mdf$Estimate + 1.96 * mdf$Std..Error
+  colnames(mdf)[c(1,2,6,7)] <- c('mean', 'se', 'LCI', 'UCI')
+  mdf <- mdf %>% 
+    mutate(term = case_when(
+      term == "legitimation_user_s" ~ "Values organic seed",
+      term == "CertifierRequestn_s" ~ "Certifiers request organic seed use",
+      term == "noncommercial_seedsource_s" ~ "Seed saved or traded (%)", 
+      term == "acreage_s" ~ "Farm size (log acres)", 
+      term == "cropcat_n_s" ~ "Crop diversity", 
+      term == "years_certified_s" ~ "Years certified organic", 
+      term == "barrier_buyerReq_s" ~ "Barrier: Buyer requirements",
+      term == "barrier_insuffQuantity_s" ~ "Barrier: Insufficient quantity", 
+      term == "barrier_lackdesiredTraits_s" ~ "Barrier: Undesirable traits", 
+      term == "barrier_availability_s" ~ "Barrier: Organic availability", 
+      term == "maincropForage" ~ "Forage crops (vs. Field)", 
+      term == "maincropVegetables" ~ "Vegetable crops (vs. Field)", 
+      term == "RegionWest" ~ "Western region (vs. North Central)",
+      term == "RegionNortheast" ~ "Northeastern region (vs. North Central)", 
+      term == "RegionSouth" ~ "Southern region (vs. North Central)", 
+      term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
+      term == "survey_year2021" ~ "Year: 2020 (vs. 2010)",
+      T ~ term)) %>% 
+    mutate(term = factor(term, rev(coef_order))) %>% 
+    arrange(term)
+  return(mdf)
+}
 
 plot_inla_models <- function(mdf, nmodels){
   if(nmodels == 1){
@@ -122,7 +153,7 @@ make_pp_df <- function(subset){
   return(df)
 }
 
-plot_predicted_probs <- function(pred_df){
+plot_predicted_probs <- function(pred_df, ymin = 0.2, ymax = 0.8){
   p <- pred_df  %>% 
     mutate(survey_year = case_when(survey_year == 2011 ~ 2010, 
                                    survey_year == 2016 ~ 2015, T ~2020)) %>% 
@@ -133,7 +164,7 @@ plot_predicted_probs <- function(pred_df){
     geom_line(aes(group = factor(Region, 
                                  c("North Central", "Northeast",
                                    "South", "West")))) +
-    geom_linerange(aes(ymin = `0.025quant`, ymax = `0.975quant`)) +
+    #geom_linerange(aes(ymin = `0.025quant`, ymax = `0.975quant`)) +
     facet_wrap(~survey_year) +
     theme_minimal() +
     scale_color_viridis_d(option = "D", begin = .1, end = .9) +
@@ -143,6 +174,6 @@ plot_predicted_probs <- function(pred_df){
           text = element_text(size = 14, family = "Times"),
           panel.grid.major.x = element_line(linetype = "solid")) + 
     labs(x = "", shape = "", color = "", y = "Predicted acreage planted\nto conventional seed") +
-    ylim(c(0,1))
+    ylim(c(ymin,ymax))
   p
-}
+} 

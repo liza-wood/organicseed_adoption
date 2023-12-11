@@ -17,22 +17,23 @@ df.full <- readRDS("~/Box/organicseed_adoption/df_scaled.rds") %>%
          survey_year) %>% 
   na.omit()
 
-formula = CVseed_percent_maincrop_prop ~ legitimation_user_s + 
-  CertifierRequestn_s + 
-  noncommercial_seedsource_s + 
-  acreage_s + 
-  cropcat_n_s +
-  #years_certified_s + 
-  barrier_buyerReq_s +
-  barrier_insuffQuantity_s +
-  barrier_lackdesiredTraits_s +
-  barrier_availability_s +
-  maincrop +
-  Region +
-  survey_year
-
 df.full_rounded <- df.full
-df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.99, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.01, df.full_rounded$CVseed_percent_maincrop_prop))
+df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$CVseed_percent_maincrop_prop))
+
+m <- betareg(CVseed_percent_maincrop_prop ~ 
+               legitimation_user_s + 
+               acreage_s + 
+               cropcat_n_s +
+               barrier_buyerReq_s +
+               barrier_insuffQuantity_s +
+               barrier_lackdesiredTraits_s +
+               barrier_availability_s +
+               maincrop +
+               Region +
+               survey_year +
+               CertifierRequestn_s + 
+               noncommercial_seedsource_s, 
+             data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 
 focal_crop = "Field"
 dfw11 <- make_pp_df(filter(df.full, Region == "West" &
@@ -78,25 +79,13 @@ df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
 df_og$CVseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
 df <- select(df_og, colnames(df.full_rounded))
 
-newdf <- rbind(df.full_rounded, df)
-
-r = inla(formula, data = newdf,
-         family = "beta",
-         control.family = list(initial = 10, fixed=TRUE), ## no observational noise 
-         control.predictor=list(link=1)) 
-
-pred_df <- df_og %>% 
-  cbind(r$summary.fitted.values[c((nrow(newdf)-
-                                     (nrow(df_og)-1)):nrow(newdf)), 
-                                c("mean", "sd",
-                                  "0.025quant", 
-                                  "0.975quant")])
-
-plot_predicted_probs(pred_df)
+df$mean <- predict(b, newdata = df, se.fit = T)
+df$model <- ifelse(df$legitimation_user_s < 0, "Practical", "Principled")
+plot_predicted_probs(df, .1, .8)
 ggsave('figures/figurea1.png', width = 7, height = 4)
 
 # Text
-wide11 <- pred_df %>%
+wide11 <- df %>%
   select(survey_year, Region, model, mean) %>% 
   filter(survey_year == 2011) %>% 
   pivot_wider(names_from = model,
@@ -104,14 +93,14 @@ wide11 <- pred_df %>%
 
 wide11$Practical-wide11$Principled
 
-wide16 <- pred_df %>%
+wide16 <- df %>%
   select(survey_year, Region, model, mean) %>% 
   filter(survey_year == 2016) %>% 
   pivot_wider(names_from = model,
               values_from = mean) 
 wide16$Practical-wide16$Principled
 
-wide21 <- pred_df %>%
+wide21 <- df %>%
   select(survey_year, Region, model, mean) %>% 
   filter(survey_year == 2021) %>% 
   pivot_wider(names_from = model,
@@ -162,25 +151,14 @@ df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
 df_og$CVseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
 df <- select(df_og, colnames(df.full_rounded))
 
-newdf <- rbind(df.full_rounded, df)
+df$mean <- predict(b, newdata = df, se.fit = T)
+df$model <- ifelse(df$legitimation_user_s < 0.3, "Practical", "Principled")
+plot_predicted_probs(df, .1, .8)
 
-r = inla(formula, data = newdf,
-         family = "beta",
-         control.family = list(initial = 10, fixed=TRUE), ## no observational noise 
-         control.predictor=list(link=1)) 
-
-pred_df <- df_og %>% 
-  cbind(r$summary.fitted.values[c((nrow(newdf)-
-                                     (nrow(df_og)-1)):nrow(newdf)), 
-                                c("mean", "sd",
-                                  "0.025quant", 
-                                  "0.975quant")])
-
-plot_predicted_probs(pred_df)
 ggsave('figures/figurea2.png', width = 7, height = 4)
 
 # Text
-wide11 <- pred_df %>%
+wide11 <- df %>%
   select(survey_year, Region, model, mean) %>% 
   filter(survey_year == 2011) %>% 
   pivot_wider(names_from = model,
@@ -188,14 +166,14 @@ wide11 <- pred_df %>%
 
 wide11$Practical-wide11$Principled
 
-wide16 <- pred_df %>%
+wide16 <- df %>%
   select(survey_year, Region, model, mean) %>% 
   filter(survey_year == 2016) %>% 
   pivot_wider(names_from = model,
               values_from = mean) 
 wide16$Practical-wide16$Principled
 
-wide21 <- pred_df %>%
+wide21 <- df %>%
   select(survey_year, Region, model, mean) %>% 
   filter(survey_year == 2021) %>% 
   pivot_wider(names_from = model,
