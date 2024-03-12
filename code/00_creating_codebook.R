@@ -11,7 +11,7 @@ rownames(codebook11) <- 1:nrow(codebook11)
 codebook11$Q <- str_replace_all(codebook11$Q, "\\.", " ")
 codebook11$Q <- str_replace_all(codebook11$Q, "^X", NA_character_)
 codebook11 <- codebook11 %>%
-  fill(Q, .direction = "down")
+  tidyr::fill(Q, .direction = "down")
 
 df16 <- read.csv("2016SurveyData.csv")
 row1 <- unlist(df16[1,])
@@ -23,7 +23,7 @@ rownames(codebook16) <- 1:nrow(codebook16)
 codebook16$Q <- str_replace_all(codebook16$Q, "\\.", " ")
 codebook16$Q <- str_replace_all(codebook16$Q, "^X", NA_character_)
 codebook16 <- codebook16 %>%
-  fill(Q, .direction = "down")
+  tidyr::fill(Q, .direction = "down")
 
 df21 <- read.csv("NORA19_merged.csv")
 # There is already a codebook for this
@@ -62,6 +62,7 @@ write.csv(df, "data/codebook_columns.csv", row.names = F)
 
 # The changes I did here were line up Label from 21 with the questions in 11 and 16
 manual <- read.csv("data/codebook_columns_manual.csv")
+table(manual$Label == df$Label)
 # if not NA in label and is NA in df21, get the colnames
 newcols <- data.frame(newcols = ifelse(!is.na(manual$Label) & 
                                          is.na(manual$df21), manual$cleaned_colnames, NA),

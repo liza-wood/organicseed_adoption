@@ -1,5 +1,7 @@
 "qcode_11_16","qcode_21","qfull_11","qfull_16","qfull_21"
 "RespondentID","RespID","RespondentID","RespondentID","RespID"
+"SurveyID","Dataset","SurveyID","CollectorName","Dataset"
+"EmailAddress","Q45_1A","EmailAddress","Email Address","To be entered into a drawing to win a $100 gift card to REI, please enter your email address here: email address"
 "State","State","In which state do you farm   i  Please fill in    i ","In which state s  and zip code s  do you farm   i  Please fill in    i ",NA
 "YearsCertified","YearsCertified","How many years have you been certified organic   i  Please fill in    i ","Custom Data",NA
 "GrowVegis","GrowVegis","Last year  did you have any organic acres in annual vegetables   i  Please select one    i ","Last year  did you have any organic acres in  b  i annual vegetables  i   b    i  Please select one    i ",NA

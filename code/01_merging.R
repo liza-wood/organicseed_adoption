@@ -12,9 +12,19 @@ df11f <- readRDS("data2011_cleaned.rds") %>%
                NoOGSeedPrice, NoOGSeedVar , NoOGSeedTrait, SeedInterest,
                AddStepsOther)) %>% 
   select(codebook$qcode_11_16, IncreasedOGSeed)
+# Create a sample type column
+table(df11f$SurveyID)
+df11f$data_coll_method <- "Convenience"
+
 df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGVegSeed,
                                                     IncreasedOGFieldSeed, IncreasedOGForageSeed,
                                                     AddStepsTimely, AddStepsContract, AddStepsOther)
+df16f$EmailAddress <- ifelse(str_detect(df16f$EmailAddress, '@'), df16f$EmailAddress, NA)
+table(df16f$SurveyID)
+df16f$data_coll_method <- ifelse(df16f$SurveyID %in% c("Email Invitation 1",
+                                                       "Sample Group Manual Entry"),
+                                "Random", "Convenience")
+
 df21f <- readRDS("data2021_cleaned.rds")
 zipcode <- data.table::fread("zipcode.csv")
 getzipcode <- zipcode$state
@@ -31,7 +41,10 @@ yrs <- as.numeric(str_remove_all(yrs, "No answer"))
 sort(yrs)
 df21f$YearsCertified[df21f$Q01A == 1908] <- 2021-1994
 df21f$Q01A[df21f$Q01A == 1908] <- 1994
+# Email addresses replace
+df21f$Q45_1A <- ifelse(str_detect(df21f$Q45_1A, '@'), df21f$Q45_1A, NA)
 
+# This is standardizing the column names in 2021 to match earlier
 for(i in 1:ncol(df21f)){
   for(j in 1:nrow(codebook)){
   colnames(df21f)[i] <- ifelse(colnames(df21f)[i] == codebook$qcode_21[j],
@@ -46,6 +59,7 @@ df21f <- select(df21f, codebook$qcode_11_16,
                 IncreasedOGVegSeed,
                 IncreasedOGFieldSeed, IncreasedOGForageSeed,
                 AddStepsTimely, AddStepsContract)
+df21f$data_coll_method <- df21f$SurveyID
 
 df11f$survey_year = 2011
 df16f$survey_year = 2016
@@ -55,6 +69,8 @@ df21f$survey_year = 2021
 df.full <- merge(df11f, df21f, all = T)
 df.full <- merge(df.full, df16f, all = T)
 
+
+## Cleaning location
 table(is.na(df.full$State))
 
 western <- toupper(c("CA", "OR", "WA", "ID", "NV", "AZ", "UT", "NM", "CO", "WY", "MT", 
@@ -104,4 +120,6 @@ df.full <- df.full %>%
 table(is.na(df.full$Region))
 table(df.full$State[is.na(df.full$Region)])
 
+# Double write
 write.csv(df.full, "~/Box/organicseed_adoption/merged_df_3panel.csv", row.names = F)
+write.csv(df.full, "~/OneDrive - University of Exeter/data/organicseed_adoption/merged_df_3panel.csv", row.names = F)

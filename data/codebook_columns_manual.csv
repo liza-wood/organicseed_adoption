@@ -1,11 +1,11 @@
 cleaned_colnames,Q.x,Q.y,Label,df11,df16,df21
 RespondentID,RespondentID,RespondentID,RespID,TRUE,TRUE,NA
 CollectorID,CollectorID,CollectorID,NA,TRUE,TRUE,NA
-SurveyID,SurveyID,CollectorName,NA,TRUE,TRUE,NA
+SurveyID,SurveyID,CollectorName,Dataset,TRUE,TRUE,NA
 StartDate,StartDate,StartDate,NA,TRUE,TRUE,NA
 EndDate,EndDate,EndDate,NA,TRUE,TRUE,NA
 IPAddress,IPAddress,IP Address,NA,TRUE,TRUE,NA
-EmailAddress,EmailAddress,Email Address,NA,TRUE,TRUE,NA
+EmailAddress,EmailAddress,Email Address,"To be entered into a drawing to win a $100 gift card to REI, please enter your email address here: email address",TRUE,TRUE,NA
 State,In which state do you farm   i  Please fill in    i ,In which state s  and zip code s  do you farm   i  Please fill in    i ,NA,TRUE,TRUE,TRUE
 YearsCertified,How many years have you been certified organic   i  Please fill in    i ,Custom Data,NA,TRUE,TRUE,TRUE
 GrowVegis,Last year  did you have any organic acres in annual vegetables   i  Please select one    i ,Last year  did you have any organic acres in  b  i annual vegetables  i   b    i  Please select one    i ,NA,TRUE,TRUE,TRUE

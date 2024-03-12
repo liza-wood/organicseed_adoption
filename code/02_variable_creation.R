@@ -1,7 +1,7 @@
 # Variable creation for funding and seed producers
 ## Start with the merged producer data
 library(tidyverse)
-df <- read.csv("~/Box/organicseed_adoption/merged_df_3panel.csv")
+df <- read.csv("~/OneDrive - University of Exeter/data/organicseed_adoption/merged_df_3panel_certifiers.csv")
 
 df$VegiAcreage <- ifelse(df$VegiAcreage < 0, NA, df$VegiAcreage)
 df$IncreasedOGVegSeedf <- as.numeric(factor(df$IncreasedOGVegSeed, 
