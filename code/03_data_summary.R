@@ -3,7 +3,7 @@ library(tidyverse)
 library(lubridate)
 library(ggplot2)
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
-df <- readRDS("~/Box/organicseed_adoption/df.rds") %>% 
+df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
   select(maincrop, OGseed_percent_maincrop, IncreasedOGSeed,
          VegiAcreage, FieldAcreage, ForageAcreage, # Total acres for each crop

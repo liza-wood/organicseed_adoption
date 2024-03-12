@@ -324,5 +324,7 @@ df.long$IncreasedOGSeed <- ifelse(df.long$OGseed_percent == 100 &
                              df.long$IncreasedOGSeed)
 
 saveRDS(df, "~/Box/organicseed_adoption/df.rds")
+saveRDS(df, "~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds")
 saveRDS(df.long, "~/Box/organicseed_adoption/df_long.rds")
+saveRDS(df.long, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_long.rds")
 

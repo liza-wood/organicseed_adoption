@@ -15,7 +15,13 @@ coef_order <- c("Barrier: Organic availability",
                 "Western region (vs. North Central)",
                 "Northeastern region (vs. North Central)",
                 "Southern region (vs. North Central)",
-                "(Intercept)")
+                "(Intercept)",
+                "Certifier 7",
+                "Certifier 42",
+                "Certifier 34",
+                "Certifier 27",
+                "Certifier 24",
+                "Certifier 2")
 
 shapes <- 21:25
 prep_inla_data <- function(m){
@@ -73,6 +79,12 @@ prep_betreg_data <- function(m){
       term == "RegionSouth" ~ "Southern region (vs. North Central)", 
       term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
       term == "survey_year2021" ~ "Year: 2020 (vs. 2010)",
+      term == "certifier_codenamecertifier7" ~ "Certifier 7",
+      term == "certifier_codenamecertifier42" ~ "Certifier 42",
+      term == "certifier_codenamecertifier34" ~ "Certifier 34",
+      term == "certifier_codenamecertifier27" ~ "Certifier 27",
+      term == "certifier_codenamecertifier24" ~ "Certifier 24",
+      term == "certifier_codenamecertifier2" ~ "Certifier 2",
       T ~ term)) %>% 
     mutate(term = factor(term, rev(coef_order))) %>% 
     arrange(term)

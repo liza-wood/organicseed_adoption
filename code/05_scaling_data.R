@@ -22,7 +22,7 @@ df <- df %>%
          noncommercial_seedsource#,
          #YearsCertified
   ) %>% 
-  na.omit() %>%  # do this now so that it
+  na.omit() %>%  # do this now so that it scales around the sample we are using
   mutate(Region = factor(Region, levels = c("North Central", "West", 
                                             "Northeast", "South"))) %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
@@ -46,6 +46,7 @@ df <- df %>%
          #years_certified_s = c(scale(YearsCertified, scale = T))
          )
 
+summary(df$CertifierRequestn_s)
 head(df[c('CVseed_percent_maincrop_prop', 'OGseed_percent_maincrop_prop')])
 
 saveRDS(df, "~/Box/organicseed_adoption/df_scaled.rds")
