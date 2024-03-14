@@ -171,6 +171,9 @@ m5 <- betareg(CVseed_percent_maincrop_prop ~
 #m4df <- prep_inla_data(m4) %>% mutate(model = 4)
 #m5df <- prep_inla_data(m5) %>% mutate(model = 5)
 
+# Can I try stargazer here to get significance symbols
+saveRDS(list(m1,m2,m3,m4,m5), 'tables/tablesa3_models.RDS')
+
 m1df <- prep_betreg_data(m1) %>% mutate(model = 1)
 m2df <- prep_betreg_data(m2) %>% mutate(model = 2)
 m3df <- prep_betreg_data(m3) %>% mutate(model = 3)
@@ -202,7 +205,7 @@ tablea1 <- select(tablea1, Term, `Mean 1`, `SE 1`, `Mean 2`, `SE 2`,
                      `Mean 3`, `SE 3`, `Mean 4`, `SE 4`, `Mean 5`, `SE 5`)
 tablea1[,2:ncol(tablea1)] <- sapply(tablea1[,2:ncol(tablea1)], function(x){round(x,3)})
 
-write.csv(tablea1, 'tables/tablea1.csv', row.names = F)
+write.csv(tablea1, 'tables/tablea3.csv', row.names = F)
 
 colnames(tablea1) <- c("Term", rep(c("Mean", "SE"), 5)) ; 
 tablea1[is.na(tablea1)] <- "" ; 
@@ -245,16 +248,16 @@ mlik = c(m1$loglik,
 #              mean(log(m4$cpo$cpo), na.rm = T), # Very close
 #              mean(log(m5$cpo$cpo), na.rm = T)) # Very close
 
-tablea2 <- data.frame(model = paste('Model', 1:5),
+tablea3x <- data.frame(model = paste('Model', 1:5),
            aic, bic, mlik)
-tablea2$aic <- round(tablea2$aic)
-tablea2$bic <- round(tablea2$bic)
-tablea2$mlik <- round(tablea2$mlik)
+tablea3x$aic <- round(tablea3x$aic)
+tablea3x$bic <- round(tablea3x$bic)
+tablea3x$mlik <- round(tablea3x$mlik)
 
-write.csv(tablea2, 'tables/tablea2.csv', row.names = F)
+write.csv(tablea3x, 'tables/tablea3x.csv', row.names = F)
 
-colnames(tablea2) <- c("Model", "AIC", "BIC", "Log likelihood") ; 
-kbl(tablea2, booktabs = T, caption = 'Goodness of fit across models') 
+colnames(tablea3x) <- c("Model", "AIC", "BIC", "Log likelihood") ; 
+kbl(tablea3x, booktabs = T, caption = 'Goodness of fit across models') 
 
 # https://becarioprecario.bitbucket.io/inla-gitbook/ch-INLA.html
 #ggplot(m1$summary.linear.predictor, 

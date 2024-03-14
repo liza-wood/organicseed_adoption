@@ -53,31 +53,32 @@ df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_pe
 library(betareg)
 set.seed(19)
 m <- betareg(CVseed_percent_maincrop_prop ~ 
+               barrier_availability_s +
+               barrier_buyerReq_s +
+               barrier_lackdesiredTraits_s +
+               barrier_insuffQuantity_s +
+               survey_year +
                legitimation_user_s + 
                acreage_s + 
                cropcat_n_s +
-               barrier_buyerReq_s +
-               barrier_insuffQuantity_s +
-               barrier_lackdesiredTraits_s +
-               barrier_availability_s +
+               noncommercial_seedsource_s +
+               CertifierRequestn_s +
                maincrop +
-               Region +
-               survey_year +
-               CertifierRequestn_s + 
-               noncommercial_seedsource_s, 
+               Region, 
              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(m)
 mdf <- prep_betreg_data(m)
 plot_inla_models(mdf, 1)
 ggsave("figures/figure2.png", width = 8, height = 3.9)
 
+saveRDS(m, 'tables/tablea7_model.RDS')
 tablea3 <- mdf[,c('term', 'mean', 'se')]
 tablea3$mean <- round(tablea3$mean, 3)
 tablea3$se <- round(tablea3$se, 3)
 tablea3 <- tablea3 %>% 
   mutate(term = factor(term, rev(coef_order))) %>% 
   arrange(rev(term))
-write.csv(tablea3, 'tables/tablea3.csv', row.names = F)
+write.csv(tablea3, 'tables/tablea7.csv', row.names = F)
 
 # So, the idea is to exponentiate the coefficient because it is reported as log odds
 # https://stats.stackexchange.com/questions/297659/interpretation-of-betareg-coef

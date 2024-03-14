@@ -1,0 +1,25 @@
+"survey_year","maincrop","Region","sample_n_operations","sample_prop_operations","usda_census_n_operations","usda_census_prop_operations","representation_n_ops","sample_avg_farm_size","usda_census_avg_farm_size","representation_acres"
+2011,"Field","North Central",193,0.75,7587,0.62,0.13,197,74,123
+2011,"Field","Northeast",13,0.05,2675,0.22,-0.17,334,76,258
+2011,"Field","South",20,0.08,356,0.03,0.05,156,95,61
+2011,"Field","West",32,0.12,1527,0.13,-0.01,460,287,173
+2011,"Vegetables","North Central",47,0.24,1731,0.19,0.05,6,2,4
+2011,"Vegetables","Northeast",30,0.16,3339,0.36,-0.2,6,2,4
+2011,"Vegetables","South",25,0.13,1096,0.12,0.01,15,3,12
+2011,"Vegetables","West",90,0.47,3112,0.34,0.13,61,29,32
+2016,"Field","North Central",249,0.77,13684,0.57,0.2,287,70,217
+2016,"Field","Northeast",28,0.09,6143,0.26,-0.17,280,76,204
+2016,"Field","South",14,0.04,1160,0.05,-0.01,301,125,176
+2016,"Field","West",31,0.1,2828,0.12,-0.02,747,341,406
+2016,"Vegetables","North Central",79,0.23,3481,0.27,-0.04,28,3,25
+2016,"Vegetables","Northeast",79,0.23,3635,0.28,-0.05,11,2,9
+2016,"Vegetables","South",53,0.16,1622,0.12,0.04,12,5,7
+2016,"Vegetables","West",129,0.38,4306,0.33,0.05,168,32,136
+2021,"Field","North Central",106,0.62,16275,0.57,0.05,304,82,222
+2021,"Field","Northeast",32,0.19,7290,0.26,-0.07,290,78,212
+2021,"Field","South",13,0.08,1400,0.05,0.03,1453,195,1258
+2021,"Field","West",20,0.12,3403,0.12,0,554,378,176
+2021,"Vegetables","North Central",44,0.25,6163,0.3,-0.05,9,3,6
+2021,"Vegetables","Northeast",49,0.27,6947,0.34,-0.07,21,1,20
+2021,"Vegetables","South",23,0.13,1876,0.09,0.04,8,6,2
+2021,"Vegetables","West",63,0.35,5454,0.27,0.08,6,33,-27

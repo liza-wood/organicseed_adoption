@@ -74,26 +74,49 @@ df.full %>%
 df.full_rounded <- df.full
 df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$CVseed_percent_maincrop_prop))
 
+df.full_rounded$maincrop <- factor(df.full_rounded$maincrop, c("Field", "Forage", "Vegetables"))
+df.full_rounded$Region <- factor(df.full_rounded$Region, c("North Central", "West", "Northeast", "South"))
+
 library(betareg)
 set.seed(19)
-m <- betareg(CVseed_percent_maincrop_prop ~ 
+m_cert <- betareg(CVseed_percent_maincrop_prop ~ 
+               barrier_availability_s +
+               barrier_buyerReq_s +
+               barrier_lackdesiredTraits_s +
+               barrier_insuffQuantity_s +
+               survey_year +
                legitimation_user_s + 
                acreage_s + 
                cropcat_n_s +
-               barrier_buyerReq_s +
-               barrier_insuffQuantity_s +
-               barrier_lackdesiredTraits_s +
-               barrier_availability_s +
+               noncommercial_seedsource_s +
+               #CertifierRequestn_s +
                maincrop +
                Region +
-               survey_year +
-               #CertifierRequestn_s + #is this redundant?
-               noncommercial_seedsource_s  +
                certifier_codename, 
              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m_cert)
+m_cert_df <- prep_betreg_data(m_cert)
+plot_inla_models(m_cert_df, 1)
+
+m <- betareg(CVseed_percent_maincrop_prop ~ 
+                    barrier_availability_s +
+                    barrier_buyerReq_s +
+                    barrier_lackdesiredTraits_s +
+                    barrier_insuffQuantity_s +
+                    survey_year +
+                    legitimation_user_s + 
+                    acreage_s + 
+                    cropcat_n_s +
+                    noncommercial_seedsource_s +
+                    #CertifierRequestn_s +
+                    maincrop +
+                    Region, 
+                  data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(m)
-mdf <- prep_betreg_data(m)
-plot_inla_models(mdf, 1)
+m_df <- prep_betreg_data(m)
+plot_inla_models(m_df, 1)
+
+saveRDS(list(m_cert, m), 'tables/tablesa6_models.RDS')
 # With certifier request
 #Log-likelihood: 631.5 on 24 Df
 #Pseudo R-squared: 0.2698

@@ -12,8 +12,6 @@ df11f <- readRDS("data2011_cleaned.rds") %>%
                NoOGSeedPrice, NoOGSeedVar , NoOGSeedTrait, SeedInterest,
                AddStepsOther)) %>% 
   select(codebook$qcode_11_16, IncreasedOGSeed)
-# Create a sample type column
-table(df11f$SurveyID)
 df11f$data_coll_method <- "Convenience"
 
 df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGVegSeed,

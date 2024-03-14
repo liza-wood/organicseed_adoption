@@ -1,3 +1,47 @@
+coef_order_core <- c("Barrier: Organic availability",
+                     "Barrier: Buyer requirements",
+                     "Barrier: Undesirable traits",
+                     "Barrier: Insufficient quantity",
+                     "Year: 2015 (vs. 2010)",
+                     "Year: 2020 (vs. 2010)",
+                     "Values organic seed",
+                     "Farm size (log acres)",
+                     "Crop diversity", 
+                     "Years certified organic",
+                     "Seed saved or traded (\\%)",
+                     "Certifiers request organic seed use",
+                     "Forage crops (vs. Field)",
+                     "Vegetable crops (vs. Field)",
+                     "Western region (vs. North Central)",
+                     "Northeastern region (vs. North Central)",
+                     "Southern region (vs. North Central)")
+
+coef_order_stargazer <- c("Barrier\\: Organic availability",
+                "Barrier\\: Buyer requirements",
+                "Barrier\\: Undesirable traits",
+                "Barrier\\: Insufficient quantity",
+                "Year\\: 2015 \\(vs\\. 2010\\)",
+                "Year\\: 2020 \\(vs\\. 2010\\)",
+                "Values organic seed",
+                "Farm size \\(log acres\\)",
+                "Crop diversity", 
+                "Years certified organic",
+                "Seed saved or traded \\(\\%\\)",
+                "Certifiers request organic seed use",
+                "Forage crops \\(vs\\. Field\\)",
+                "Vegetable crops \\(vs\\. Field\\)",
+                "Western region \\(vs\\. North Central\\)",
+                "Northeastern region \\(vs\\. North Central\\)",
+                "Southern region \\(vs\\. North Central\\)",
+                "Certifier 7",
+                "Certifier 42",
+                "Certifier 34",
+                "Certifier 27",
+                "Certifier 24",
+                "Certifier 2",
+                "Random sample \\(vs\\. convenience\\)",
+                "Constant")
+
 coef_order <- c("Barrier: Organic availability",
                 "Barrier: Buyer requirements",
                 "Barrier: Undesirable traits",
@@ -21,7 +65,8 @@ coef_order <- c("Barrier: Organic availability",
                 "Certifier 34",
                 "Certifier 27",
                 "Certifier 24",
-                "Certifier 2")
+                "Certifier 2",
+                "Random sample (vs. convenience)")
 
 shapes <- 21:25
 prep_inla_data <- function(m){
@@ -79,12 +124,14 @@ prep_betreg_data <- function(m){
       term == "RegionSouth" ~ "Southern region (vs. North Central)", 
       term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
       term == "survey_year2021" ~ "Year: 2020 (vs. 2010)",
+      # For extra tests in the appendix
       term == "certifier_codenamecertifier7" ~ "Certifier 7",
       term == "certifier_codenamecertifier42" ~ "Certifier 42",
       term == "certifier_codenamecertifier34" ~ "Certifier 34",
       term == "certifier_codenamecertifier27" ~ "Certifier 27",
       term == "certifier_codenamecertifier24" ~ "Certifier 24",
       term == "certifier_codenamecertifier2" ~ "Certifier 2",
+      term == "data_coll_methodRandom" ~ "Random sample (vs. convenience)",
       T ~ term)) %>% 
     mutate(term = factor(term, rev(coef_order))) %>% 
     arrange(term)

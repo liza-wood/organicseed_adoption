@@ -214,21 +214,3 @@ ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png", 
 
 
 
-
-
-# NOTE USED IN PAPER --- Olg regional maps -- fx will not work for them anymore
-
-greens <- colorRampPalette(c("lightgrey", "#55752f"))(8) # 2014-2018
-reds <- colorRampPalette(c("lightgrey", "#90353b"))(8) # 2002-2008
-blues <- colorRampPalette(c("lightgrey", "#1A476f"))(8) # 2009-2013
-
-df11mapdf <- region_text(df11_random_locations)
-map10 <- make_map(df11_random_locations, df11mapdf, rep("black",4), "2010")
-
-df16mapdf <- region_text(df16)
-map15 <- make_map(df16, df16mapdf, reds[c(6,2,4,8)], "2015")
-
-df21mapdf <- region_text(df21)
-map20 <- make_map(df21, df21mapdf, blues[c(6,2,4,8)], "2020")
-
-cowplot::plot_grid(map10, map15, map20, nrow = 1)

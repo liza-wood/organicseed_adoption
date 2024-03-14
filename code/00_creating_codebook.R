@@ -1,6 +1,7 @@
-setwd("~/Dropbox/SOSInteractiveSurvey/")
 library(dplyr)
 library(stringr)
+setwd("~/Dropbox/SOSInteractiveSurvey/")
+
 df11 <- read.csv("2011SurveyData.csv")
 row1 <- unlist(df11[1,])
 row2 <- unlist(df11[2,])

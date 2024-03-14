@@ -2,6 +2,7 @@ library(VIM)
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
+library(kableExtra)
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
@@ -52,7 +53,7 @@ df %>%
   count()
 
 # Table 1 test ----
-table1.1 <- read.csv('~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1_manual.csv') ;
+table1.1 <- read.csv('~/Documents/Davis/R-Projects/organicseed_adoption/tables/table1_manual.csv') 
 
 kbl(table1.1, booktabs = T, caption = 'Organic seed grower survey questions, key variables, and hypotheses', align = c('l', 'l', rep('c', 3))) %>% kable_styling(latex_options = 'scale_down') %>% row_spec(2, hline_after = T) %>% row_spec(5, hline_after = T) %>% row_spec(6, hline_after = T) %>% row_spec(26, hline_after = T) %>% row_spec(27, hline_after = T)
 

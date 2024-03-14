@@ -1,18 +1,18 @@
-"term","mean","se"
-"Barrier: Organic availability",0.17,0.037
-"Barrier: Buyer requirements",0.116,0.033
-"Barrier: Undesirable traits",0.106,0.036
-"Barrier: Insufficient quantity",0,0.034
-"Year: 2015 (vs. 2010)",-0.207,0.075
-"Year: 2020 (vs. 2010)",-0.363,0.092
-"Values organic seed",-0.189,0.033
-"Farm size (log acres)",0.096,0.021
-"Crop diversity",-0.121,0.054
-"Seed saved or traded (%)",-0.095,0.031
-"Certifiers request organic seed use",0.028,0.032
-"Forage crops (vs. Field)",0.919,0.093
-"Vegetable crops (vs. Field)",0.487,0.103
-"Western region (vs. North Central)",0.363,0.085
-"Northeastern region (vs. North Central)",0.285,0.093
-"Southern region (vs. North Central)",0.161,0.113
-"(Intercept)",-0.97,0.144
+"Term","Mean 1","SE 1","Mean 2","SE 2","Mean 3","SE 3","Mean 4","SE 4","Mean 5","SE 5"
+"Barrier: Organic availability",NA,NA,NA,NA,0.236,0.037,0.17,0.037,0.17,0.037
+"Barrier: Buyer requirements",NA,NA,NA,NA,0.092,0.034,0.119,0.033,0.116,0.033
+"Barrier: Undesirable traits",NA,NA,NA,NA,0.104,0.037,0.109,0.036,0.106,0.036
+"Barrier: Insufficient quantity",NA,NA,NA,NA,0.025,0.035,0.001,0.034,0,0.034
+"Year: 2015 (vs. 2010)",-0.371,0.073,NA,NA,NA,NA,-0.22,0.075,-0.207,0.075
+"Year: 2020 (vs. 2010)",-0.413,0.086,NA,NA,NA,NA,-0.352,0.09,-0.363,0.092
+"Values organic seed",NA,NA,-0.274,0.033,-0.203,0.033,-0.191,0.033,-0.189,0.033
+"Farm size (log acres)",NA,NA,0.016,0.015,0.01,0.015,0.093,0.021,0.096,0.021
+"Crop diversity",NA,NA,-0.054,0.053,-0.092,0.052,-0.124,0.054,-0.121,0.054
+"Seed saved or traded (%)",NA,NA,NA,NA,NA,NA,NA,NA,-0.095,0.031
+"Certifiers request organic seed use",NA,NA,NA,NA,NA,NA,NA,NA,0.028,0.032
+"Forage crops (vs. Field)",0.819,0.093,NA,NA,NA,NA,0.953,0.092,0.919,0.093
+"Vegetable crops (vs. Field)",0.186,0.076,NA,NA,NA,NA,0.524,0.102,0.487,0.103
+"Western region (vs. North Central)",0.439,0.085,NA,NA,NA,NA,0.321,0.084,0.363,0.085
+"Northeastern region (vs. North Central)",0.325,0.094,NA,NA,NA,NA,0.285,0.093,0.285,0.093
+"Southern region (vs. North Central)",0.253,0.115,NA,NA,NA,NA,0.151,0.113,0.161,0.113
+"(Intercept)",-0.595,0.068,-0.442,0.087,-0.364,0.088,-0.959,0.145,-0.97,0.144

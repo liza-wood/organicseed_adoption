@@ -1,0 +1,173 @@
+---
+title: "Appendix"
+subtitle: "Flexible regulation as a double-edged sword: The case of the organic seed standard"
+output: pdf_document
+---
+
+```{r, echo = F, warning = F, message = F}
+library(kableExtra)
+library(dplyr)
+source('code/functions.R')
+knitr::opts_knit$set(root.dir = '~/Documents/Davis/R-Projects/organicseed_adoption')
+```
+
+## Survey sampling method 
+
+Surveys were collected using a mixed of convenience and random sampling, with the approach varying across the three time periods. In the 2010 survey period, data were collected by convenience sample only, distributed by 23 organizations, including non-profits and foundations, organic certifiers, and departments of agriculture. In the 2015 survey period, 800 producers were randomly selected from the approximately 12,000 organic producers that use seed (e.g. not only fruit or livestock producers). From these 800, 203 responded, 127 of which were complete enough to use in our analyses. The remaining responses (672) were gathered through convenience sampling, where surveys were distributed by 41 organizations, again including non-profits and foundations, organic certifiers, and departments of agriculture. In the 202 survey period,, NEED TO SAY MORE. 
+```{r, echo = F}
+tablea1 <- read.csv('tables/tablea1.csv') ; 
+tablea1[1,4] <- "0 (0 %)"
+colnames(tablea1) <- c("Year", "Total complete responses", "Convenience responses (%)", "Random responses (%)")
+kbl(tablea1, align = 'c', booktabs = T, caption = 'Convenience and random samples') %>% kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
+  column_spec(2:4, width = '4cm')
+```
+
+## Survey representativeness 
+
+While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution and approximate average farm size of our sample to USDA Agricultural Census data. We use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. We compare the number of operations in our sample (n) to the population (N) by region. PICK BACK UP HERE
+```{r, echo = F}
+tablea2 <- read.csv('tables/tablea2.csv')  
+meansd_ul <- mean(tablea2$representativeness_ops) + sd(tablea2$representativeness_ops)
+meansd_ll <- mean(tablea2$representativeness_ops) - sd(tablea2$representativeness_ops)
+tablea2$representativeness_ops = cell_spec(tablea2$representativeness_ops, 
+                                         color = ifelse(tablea2$representativeness_ops > meansd_ul, "green", 
+                                                 ifelse(tablea2$representativeness_ops < meansd_ll, "red", "black")))
+colnames(tablea2) <- c("Year", "Region", "Operations in\nsample (n)",
+                        #"Proportion of\ntotal n", 
+                       "Operations USDA\nCensus (N)",
+                        #"Proportion of\ntotal N", 
+                       #"Operation\nrepresentation",
+                       "Operation representativeness",
+                        "Mean acreage\nin sample", "Mean acreage\nUSDA Census",
+                        "Acreage difference")
+
+kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 6)),
+    caption = 'Sample representativeness compared to USDA Censuses (2011, 2016, 2021)') %>% 
+  kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
+  #kableExtra::landscape() %>% 
+  column_spec(3:8, width = '2.2cm') 
+```
+
+\pagebreak 
+## Model selection and fit
+
+```{r, echo = F, results = "asis"}
+#tablea3 <- read.csv('tables/tablea3.csv') ; 
+#colnames(tablea3) <- c("Term", rep(c("Mean", "SE"), 5)) ; 
+#tablea1[is.na(tablea3)] <- "" ; 
+#kbl(tablea3, booktabs = T, caption = 'Model comparison results') %>% kable_styling(latex_options = c("scale_down", #"hold_position")) %>% 
+#  add_header_above(c(" " = 1, "Model 1" = 2, "Model 2" = 2, "Model 3" = 2, "Model 4" = 2, "Model 5" = 2))
+
+m_list <- readRDS('tables/tablesa3_models.RDS')
+
+core_vars <- c("Forage crops (vs. Field)",
+                "Vegetable crops (vs. Field)",
+                "Western region (vs. North Central)",
+                "Northeastern region (vs. North Central)",
+                "Southern region (vs. North Central)",
+                "Year: 2015 (vs. 2010)",
+                "Year: 2020 (vs. 2010)",
+                "Certifiers request organic seed use",
+                "Seed saved or traded (\\%)",
+                "Values organic seed",
+                "Farm size (log acres)",
+                "Crop diversity",
+                "Barrier: Buyer requirements",
+                "Barrier: Insufficient quantity",
+                "Barrier: Undesirable traits",
+                "Barrier: Organic availability",
+               "Constant") 
+stargazer::stargazer(m_list,  type = "latex",
+                     covariate.labels = core_vars,
+                     dep.var.labels = "Proportion of organic land planted with conventional seed", 
+                     intercept.bottom = T,
+                     model.numbers = F, nobs = TRUE, dep.var.caption = "", 
+                     no.space = TRUE, header = FALSE, 
+                     title = "Comparison of model builds", 
+                     table.placement = "!h", keep.stat = c("n", "ll", 'rsq','aic'))
+```
+
+```{r, echo = F, eval = F}
+# skipping this for now because GOF stats are given in stargazey pie
+tablea4 <- read.csv('tables/tablea3x.csv') 
+colnames(tablea4) <- c("Model", "AIC", "BIC", "Log likelihood") ; 
+kbl(tablea4, booktabs = T, caption = 'Goodness of fit across models') %>% kable_styling(latex_options = c("hold_position")) 
+```
+
+\pagebreak 
+## Additional model considerations 
+
+Two sources of potential interpretation challenges include 1) the bias in the convenience sample and 2) the variation in certifiers.
+
+```{r, echo = F, results = "asis"}
+m_list <- readRDS('tables/tablesa5_models.RDS')
+core_vars2 <- c("Barrier: Organic availability",
+                "Barrier: Buyer requirements",
+                "Barrier: Undesirable traits",
+                "Barrier: Insufficient quantity",
+                "Year: 2015 (vs. 2010)",
+                "Year: 2020 (vs. 2010)",
+                "Values organic seed",
+                "Farm size (log acres)",
+                "Crop diversity",
+                "Seed saved or traded (\\%)",
+                "Certifiers request organic seed use",
+                "Forage crops (vs. Field)",
+                "Vegetable crops (vs. Field)",
+                "Western region (vs. North Central)",
+                "Northeastern region (vs. North Central)",
+                "Southern region (vs. North Central)")
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           covariate.labels = c(core_vars2[-(5:6)], "Random data collection (versus convenience)",
+                "Constant"), 
+           model.numbers = F, nobs = TRUE, dep.var.caption = "", 
+           intercept.bottom = T,
+           no.space = TRUE, header = FALSE, 
+           title = "Considering sampling results for 2021 only", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq'))
+```
+\pagebreak 
+
+```{r, echo = F, results = "asis"}
+m_list <- readRDS('tables/tablesa6_models.RDS')
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           covariate.labels = c(core_vars2[-9], "Certifier 7", "Certifier 42",
+                                "Certifier 34", "Certifier 27", "Certifier 24", 
+                                "Certifier 2", "Constant"), 
+           model.numbers = F, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, intercept.bottom = T,
+           title = "Considering certifiers", 
+           table.placement = "H", keep.stat = c("n", "ll", 'rsq'))
+```
+
+\pagebreak 
+## Full model results  
+
+```{r, echo = F, results = "asis"}
+#tablea6 <- read.csv('tables/tablea7.csv') ; 
+#colnames(tablea5) <- c("Term", "Mean estimate", "Standard error") ; 
+#kbl(tablea6, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = c("HOLD_position")) 
+
+m_list <- readRDS('tables/tablea7_model.RDS')
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           covariate.labels = c(core_vars2, "Constant"), 
+           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, 
+           title = "Final model results", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
+
+```
+
+\pagebreak 
+## Predicted conventional seed use  
+
+```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for field crop growers of two farmer profiles.'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea1.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+```
+```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for forage crop growers of two farmer profiles.'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea2.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+```
+

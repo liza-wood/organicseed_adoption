@@ -1,6 +1,13 @@
-"model","aic","bic","mlik"
-"Model 1",-4309,-4260,2163
-"Model 2",-4244,-4216,2127
-"Model 3",-4352,-4303,2185
-"Model 4",-4490,-4402,2261
-"Model 5",-4495,-4397,2266
+"survey_year","Region","sample_n_operations","usda_census_n_operations","representativeness_ops","sample_avg_farm_size","usda_census_avg_farm_size","representation_acres"
+2011,"North Central",304,2986,10.2,195,212,-17
+2011,"Northeast",51,1897,2.7,142,142,0
+2011,"South",51,540,9.4,105,180,-75
+2011,"West",139,3296,4.2,194,248,-54
+2016,"North Central",395,4689,8.4,307,184,123
+2016,"Northeast",139,3246,4.3,142,135,7
+2016,"South",75,1096,6.8,144,215,-71
+2016,"West",190,4529,4.2,358,260,98
+2021,"North Central",177,5824,3,323,204,119
+2021,"Northeast",95,3888,2.4,205,143,62
+2021,"South",39,1209,3.2,847,279,568
+2021,"West",97,5273,1.8,329,284,45
