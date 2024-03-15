@@ -22,17 +22,74 @@ kbl(tablea1, align = 'c', booktabs = T, caption = 'Convenience and random sample
   column_spec(2:4, width = '4cm')
 ```
 
+\pagebreak 
+
 ## Survey representativeness 
 
-While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution and approximate average farm size of our sample to USDA Agricultural Census data. We use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. We compare the number of operations in our sample (n) to the population (N) by region. PICK BACK UP HERE
-```{r, echo = F}
-tablea2 <- read.csv('tables/tablea2.csv')  
-meansd_ul <- mean(tablea2$representativeness_ops) + sd(tablea2$representativeness_ops)
-meansd_ll <- mean(tablea2$representativeness_ops) - sd(tablea2$representativeness_ops)
+While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution and approximate average farm size of our sample to USDA Agricultural Census data. We use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. We compare the number of operations in our sample (n) to the population (N) by region. PICK BACK UP HERE FOR 2021...
+
+Across the three survey periods, the number of respondents represented 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. For each survey period we calculated the standard deviation of the proportion of operations represented, which we used to identify regions that are over or under-represented (mean(% operations represented) +/- sd(% operations represented)). Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2011 do we see large variation in representation across geographies...
+
+We also calculate the mean acreage in our sample, as well as the mean acreare according to the USDA census (N operations/total acreage) for a given year-region combination. Using the mean here provides limited information, given that farm sizes vary considerably. For instances, in our sample farm sizes in our sample are highly skewed, with many small farms and few really large farms. Similarly, county profiles from various states show ... (get country profiles with farm size bins). Though crude, these averages suggest relative similarity in average farm size.
+
+Regarding concerns of sampling approach, we model the effect of sampling method with our 2020 survey data, including a term for responses that were gathered by random sampling compared to convenience sampling (Table 4). We see negligible changes int he results between the models run with and without the sampling consideration, and in the model in which sampling is considered the effect is small and not significant. 
+
+```{r, echo = F, eval = F}
+df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") 
+ggplot(df.full, aes(y = TotalAcreage)) + geom_density()
+ggplot(df.full, aes(x = log(TotalAcreage))) + geom_histogram()
+```
+
+```{r, echo = F, message = F, warning = F}
+tablea2 <- read.csv('tables/tablea2.csv') 
+tablea2 <- tablea2 %>% 
+  group_by(survey_year) %>%   
+  summarize(mean_rep = round(100*(sum(sample_n_operations)/sum(usda_census_n_operations)), 2)) %>% 
+  right_join(tablea2) %>% 
+  mutate(meansd_ul = mean_rep + sd(representativeness_ops),
+         meansd_ll = mean_rep - sd(representativeness_ops))
+## Should I be using mean_rep or mean(tablea2$representativeness_ops)??
+mean_reps <- unique(tablea2$mean_rep)
 tablea2$representativeness_ops = cell_spec(tablea2$representativeness_ops, 
-                                         color = ifelse(tablea2$representativeness_ops > meansd_ul, "green", 
-                                                 ifelse(tablea2$representativeness_ops < meansd_ll, "red", "black")))
-colnames(tablea2) <- c("Year", "Region", "Operations in\nsample (n)",
+                                         color = ifelse(tablea2$representativeness_ops > tablea2$meansd_ul, "green", 
+                                                 ifelse(tablea2$representativeness_ops < tablea2$meansd_ll, "red", "black")))
+tablea2 <- select(tablea2, -c(mean_rep, meansd_ul, meansd_ll))
+colnames(tablea2) <- c("Year", "Region", "Operations in sample (n)",
+                        #"Proportion of\ntotal n", 
+                       "Operations in USDA census (N)",
+                        #"Proportion of\ntotal N", 
+                       #"Operation\nrepresentation",
+                       "Percent of operations represented (n/N)",
+                        "Mean acreage in sample", "Mean acreage in USDA Census",
+                        "Mean acreage difference")
+
+kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 6)),
+    caption = 'Sample representativeness compared to USDA Censuses (2011, 2016, 2021)') %>% 
+  kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
+  #kableExtra::landscape() %>% 
+  column_spec(1:8, 
+              width = c('1cm','2.2cm','1.8cm','2cm', '2.8cm', 
+                        '2cm', '2.2cm', '2cm'))
+```
+
+
+```{r, echo = F, eval = F, message = F, warning = F}
+# Doing this with crops, but not including for now 
+tablea2 <- read.csv('tables/tableaX.csv') 
+tablea2 <- tablea2 %>% 
+  group_by(survey_year, maincrop) %>%   
+  summarize(mean_rep = round(100*(sum(sample_n_operations)/sum(usda_census_n_operations)), 2)) %>% 
+  right_join(tablea2) %>% 
+  mutate(meansd_ul = mean_rep + sd(representativeness_ops),
+         meansd_ll = mean_rep - sd(representativeness_ops))
+## Should I be using mean_rep or mean(tablea2$representativeness_ops)??
+tablea2$mean_rep
+tablea2$representativeness_ops = cell_spec(tablea2$representativeness_ops, 
+                                         color = ifelse(tablea2$representativeness_ops > tablea2$meansd_ul, "green", 
+                                                 ifelse(tablea2$representativeness_ops < tablea2$meansd_ll, "red", "black")))
+tablea2 <- select(tablea2, -c(mean_rep, meansd_ul, meansd_ll))
+colnames(tablea2) <- c("Year", "Crop category",  "Region", 
+                       "Operations in\nsample (n)",
                         #"Proportion of\ntotal n", 
                        "Operations USDA\nCensus (N)",
                         #"Proportion of\ntotal N", 
@@ -41,14 +98,16 @@ colnames(tablea2) <- c("Year", "Region", "Operations in\nsample (n)",
                         "Mean acreage\nin sample", "Mean acreage\nUSDA Census",
                         "Acreage difference")
 
-kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 6)),
+kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
     caption = 'Sample representativeness compared to USDA Censuses (2011, 2016, 2021)') %>% 
   kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
   #kableExtra::landscape() %>% 
-  column_spec(3:8, width = '2.2cm') 
+  column_spec(3:9, width = '2.2cm') %>% 
+  column_spec(1:8, extra_css = "vertical-align:middle;")
 ```
 
 \pagebreak 
+
 ## Model selection and fit
 
 ```{r, echo = F, results = "asis"}
@@ -95,6 +154,7 @@ kbl(tablea4, booktabs = T, caption = 'Goodness of fit across models') %>% kable_
 ```
 
 \pagebreak 
+
 ## Additional model considerations 
 
 Two sources of potential interpretation challenges include 1) the bias in the convenience sample and 2) the variation in certifiers.
@@ -127,6 +187,7 @@ stargazer::stargazer(m_list,  type = "latex",
            title = "Considering sampling results for 2021 only", 
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq'))
 ```
+
 \pagebreak 
 
 ```{r, echo = F, results = "asis"}
@@ -143,6 +204,7 @@ stargazer::stargazer(m_list,  type = "latex",
 ```
 
 \pagebreak 
+
 ## Full model results  
 
 ```{r, echo = F, results = "asis"}

@@ -369,3 +369,5 @@ table_aX <- table_aX %>%
          usda_census_n_operations, representativeness_ops,
          sample_avg_farm_size, usda_census_avg_farm_size, representation_acres) 
 table_aX 
+
+write.csv(table_aX, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tableaX.csv", row.names = F)
