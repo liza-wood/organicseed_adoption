@@ -13,6 +13,7 @@ df11f <- readRDS("data2011_cleaned.rds") %>%
                AddStepsOther)) %>% 
   select(codebook$qcode_11_16, IncreasedOGSeed)
 df11f$data_coll_method <- "Convenience"
+table(df11f$SurveyID)
 
 df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGVegSeed,
                                                     IncreasedOGFieldSeed, IncreasedOGForageSeed,
@@ -50,14 +51,16 @@ for(i in 1:ncol(df21f)){
   }
 }
 
+df21f$data_coll_method <- df21f$SurveyID
+df21f$SurveyID <- df21f$Group
 df21f <- select(df21f, codebook$qcode_11_16, 
                 NoOGSeedTreat, NoOGSeedProcessor,
                 NoOGSeedQuant, NoOGSeedSave, NoOGSeedQual,NoOGSeedPrice,
                 NoOGSeedVar, NoOGSeedTrait,
                 IncreasedOGVegSeed,
                 IncreasedOGFieldSeed, IncreasedOGForageSeed,
-                AddStepsTimely, AddStepsContract)
-df21f$data_coll_method <- df21f$SurveyID
+                AddStepsTimely, AddStepsContract, data_coll_method)
+
 
 df11f$survey_year = 2011
 df16f$survey_year = 2016

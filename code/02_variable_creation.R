@@ -22,6 +22,7 @@ df$IncreasedOGForageSeedf <- as.numeric(factor(df$IncreasedOGForageSeed,
 df$IncreasedOGSeed_avg <- round(rowMeans(df[, (ncol(df)-2):ncol(df)], na.rm = T), 0)
 df$IncreasedOGSeed_avg <- ifelse(df$IncreasedOGSeed_avg == "NaN", NA, df$IncreasedOGSeed_avg)
 
+
 # One way to think about main crop is to assign each producer to a single crop, or mix
 # Last year how many organic acres did you have in annual vegetables. Please fill in number
 df$VegiAcreage <- ifelse(is.na(df$VegiAcreage), 0 , df$VegiAcreage)

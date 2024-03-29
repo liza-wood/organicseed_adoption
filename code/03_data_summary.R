@@ -4,7 +4,12 @@ library(lubridate)
 library(ggplot2)
 library(kableExtra)
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
-df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
+df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds")
+table(df$Region) # loss of 4
+table(df$maincrop)
+table(df$survey_year, df$data_coll_method)
+table(df$survey_year, df$SurveyID)
+df <- df %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
   select(maincrop, OGseed_percent_maincrop, IncreasedOGSeed,
          VegiAcreage, FieldAcreage, ForageAcreage, # Total acres for each crop
@@ -21,8 +26,9 @@ df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rd
          contains("barrier"), # barriers
          noncommercial_seedsource,
          contains("AddSteps"),
-         YearsCertified) 
-
+         YearsCertified, 
+         data_coll_method) 
+table(df$survey_year)
 df.full <- select(df, OGseed_percent_maincrop,
                   OGseed_percent_maincrop, 
                   OGSeedOGIntegrityn,
@@ -35,12 +41,14 @@ df.full <- select(df, OGseed_percent_maincrop,
                   barrier_buyerReq,
                   barrier_insuffQuantity,
                   barrier_lackdesiredTraits,
-                  barrier_availability) %>% 
+                  barrier_availability, 
+                  data_coll_method) %>% 
   na.omit() %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
          CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop)
 
 table(df.full$survey_year)
+table(df.full$survey_year, df.full$data_coll_method)
 
 df11 <- filter(df.full, survey_year == 2011)
 df16 <- filter(df.full, survey_year == 2016)

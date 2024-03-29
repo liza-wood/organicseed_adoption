@@ -1,6 +1,6 @@
-# 0. Read in data just like for data summary ----
 library(dplyr)
 library(stringr)
+# 0. Read in data just like for data summary ----
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
   mutate(maincrop_acrage = case_when(
@@ -42,7 +42,13 @@ df.full <- select(df, OGseed_percent_maincrop,
                   barrier_availability, data_coll_method) %>% 
   na.omit() %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
-         CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop)
+         CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop) %>% 
+  mutate(survey_year = case_when(
+    survey_year == 2011 ~ 2010,
+    survey_year == 2016 ~ 2015,
+    survey_year == 2021 ~ 2020,
+    T ~ survey_year
+  ))
 
 western <- c("CA", "OR", "WA", "ID", "NV", "AZ", "UT", "NM", "CO", "WY", "MT", 
              "AK", "HI")
@@ -104,7 +110,7 @@ source('code/keys.R')
 ## domains <- data.frame(allDomain)
 dataitems <- data.frame("dataItems" = tidyUSDA::allDataItem)
 
-## Aggregate crop data on acreage and operations ----
+## Aggregate data on acreage and operations ----
 organic_acres <- getQuickstat(
   key = usda_quickstats_key,
   data_item = 'AG LAND, CROPLAND, ORGANIC - ACRES',
@@ -124,6 +130,14 @@ organic_n_operations <- getQuickstat(
   lower48 = F) %>% 
   select(state_name, state_alpha, year, Value) %>% 
   rename(operations_count = Value)
+
+## Text: aggregate representativeness ----
+totals <- organic_n_operations %>% 
+  group_by(year) %>% 
+  summarize(total = sum(operations_count))
+
+## This is what we can estimate
+round(100*(tablea1$`Total complete responses`/totals$total), 1)
 
 organic_summary_by_state <- left_join(organic_acres, organic_n_operations) 
 organic_summary_by_region <- organic_summary_by_state %>% 
@@ -270,8 +284,8 @@ organic_crop_ops_agg <- organic_crop_ops %>%
   group_by(state_name, state_alpha, year, group_desc, commodity_desc) %>%
   summarize(operations_count = sum(operations_count, na.rm = T)) %>% ungroup()
 crop_summary_by_state <- left_join(organic_crop_ops_agg, organic_crop_acres_agg)
-
 table(crop_summary_by_state$group_desc)
+
 ## Group by crop type and assign region -- without fruit or horticulture
 crop_summary_by_region <- crop_summary_by_state %>% 
   mutate(region = case_when(

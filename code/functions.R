@@ -40,6 +40,7 @@ coef_order_stargazer <- c("Barrier\\: Organic availability",
                 "Certifier 24",
                 "Certifier 2",
                 "Random sample \\(vs\\. convenience\\)",
+                "Distributor: OSA (vs. Other)",
                 "Constant")
 
 coef_order <- c("Barrier: Organic availability",
@@ -66,7 +67,8 @@ coef_order <- c("Barrier: Organic availability",
                 "Certifier 27",
                 "Certifier 24",
                 "Certifier 2",
-                "Random sample (vs. convenience)")
+                "Random sample (vs. convenience)",
+                "Distributor: OSA (vs. Other)")
 
 shapes <- 21:25
 prep_inla_data <- function(m){
@@ -132,6 +134,7 @@ prep_betreg_data <- function(m){
       term == "certifier_codenamecertifier24" ~ "Certifier 24",
       term == "certifier_codenamecertifier2" ~ "Certifier 2",
       term == "data_coll_methodRandom" ~ "Random sample (vs. convenience)",
+      term == "distributorOSA" ~  "Distributor: OSA (vs. Other)",
       T ~ term)) %>% 
     mutate(term = factor(term, rev(coef_order))) %>% 
     arrange(term)
