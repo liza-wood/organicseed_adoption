@@ -20,6 +20,7 @@ df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, Increa
                                                     AddStepsTimely, AddStepsContract, AddStepsOther)
 df16f$EmailAddress <- ifelse(str_detect(df16f$EmailAddress, '@'), df16f$EmailAddress, NA)
 table(df16f$SurveyID)
+sort(unique((df16f$SurveyID)))
 df16f$data_coll_method <- ifelse(df16f$SurveyID %in% c("Email Invitation 1",
                                                        "Sample Group Manual Entry"),
                                 "Random", "Convenience")
@@ -60,7 +61,8 @@ df21f <- select(df21f, codebook$qcode_11_16,
                 IncreasedOGVegSeed,
                 IncreasedOGFieldSeed, IncreasedOGForageSeed,
                 AddStepsTimely, AddStepsContract, data_coll_method)
-
+sort(unique(df21f$SurveyID))
+# What was group? different survey order
 
 df11f$survey_year = 2011
 df16f$survey_year = 2016

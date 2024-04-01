@@ -15,11 +15,11 @@ knitr::opts_knit$set(root.dir = '~/Documents/Davis/R-Projects/organicseed_adopti
 
 Surveys were collected using a mix of convenience and random sampling, with the approach varying across the three time periods.  
 
-* 2010: In the 2010 survey period, data were collected by convenience sample only, shared by 23 organizations, including non-profits and foundations, organic certifiers, and departments of agriculture. We received a total of 1,029 responses, 545 of which included complete enough data for our analysis. 
+* 2010: In the 2010 survey period, data were collected by convenience sample only, shared by 23 organizations, including non-profits and foundations, organic certifiers, and departments of agriculture. Surveys were distributed **[JARED please let me know, mail/email process]**. We received a total of 1,029 responses, 545 of which included complete enough data for our analysis. 
 
-* 2015: In the 2015 survey period, data were collected by both random and convenience sampling. For the random sample, 800 certified organic producers were randomly selected from the approximately 12,000 organic producers that use seed recorded in the NOP database. To encourage responsiveness, three follow-up emails were sent following an initial email, paper copies were mailed on request, and individual phone calls were made to follow-up. From these 800, 197 (25%) responded and 127 (16%) were complete enough to use in our analyses. For the convenience sample, surveys were shared by 41 organizations, again including non-profits and foundations, organic certifiers, and departments of agriculture. We received a total of 1,148 responses, 672 of which included complete enough data for our analysis. In total we had 799 usable responses.
+* 2015: In the 2015 survey period, data were collected by both random and convenience sampling. For the random sample, 800 certified organic producers were randomly selected from the approximately 12,000 organic producers that use seed recorded in the NOP database. To encourage responsiveness, three follow-up emails were sent following an initial email, paper copies were mailed on request, and individual phone calls were made to follow-up. From these 800, 197 (25%) responded and 127 (16%) were complete enough to use in our analyses. For the convenience sample, surveys were shared by 41 organizations, again including non-profits and foundations, organic certifiers, and departments of agriculture. Surveys were distributed **[JARED please let me know, mail/email process]**. We received a total of 1,148 responses from the convenience sample, 672 of which included complete enough data for our analysis. In total we had 799 usable responses.
 
-* 2020: In the 2020 survey period, again data were collected by both random and convenience sampling. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database. To encourage responsiveness, the survey was offered as both an online version and a paper questionnaire, and respondents had the option of completing either. After an initial postcard invitation, non-respondents received follow-up contacts by mail, email, and phone. From these 2,000, 448 (22%) responded (206 web surveys and 242 paper surveys) and 193 (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed to all remaining certified organic operations over email. For the convenience sample, surveys were shared by OFRF and OSA, social and traditional media, and through organic certifiers and organic farming membership organizations. We received a total of 611 responses, 215 of which included complete enough data for our analysis. In total we had 408 usable responses.
+* 2020: In the 2020 survey period, again data were collected by both random and convenience sampling. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database. To encourage responsiveness, the survey was offered as both an online version and a paper questionnaire, and respondents had the option of completing either. After an initial postcard invitation, non-respondents received follow-up contacts by mail, email, and phone. Survey distribution was managed by Washington State University’s Social and Economic Sciences Research Center. From these 2,000 surveys, 448 (22%) responded (206 web surveys and 242 paper surveys) and 193 (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed to all remaining certified organic operations over email. For the convenience sample, surveys were shared by OFRF and OSA, social and traditional media, and through organic certifiers and organic farming membership organizations **UPDATE**. We received a total of 611 responses from the convenience sample, 215 of which included complete enough data for our analysis. In total we had 408 usable responses.
 
 The breakdown between random and convenience sampling used in our analysis is summarized in Table 1. We also consider the effect of sampling method, as well as survey distributor, through models in Table 4. 
 
@@ -43,6 +43,9 @@ Across the three survey periods, the number of respondents represented approxima
 In Table 2 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented (mean of % operations represented +/- sd of % operations represented). Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2011 do we see variation in representation across regions, with the North Central and Western regions over-represented and the Northeast under-represented. 
 
 We also calculate the mean acreage in our sample, as well as the mean acreage according to the USDA census (N operations/total acreage) for a given year-region combination. Using the mean here provides limited information, given that farm sizes vary considerably in ways that are not captured in aggregate data available in the USDA census. Though crude, these averages suggest relative similarity in average farm size.
+
+**We calculate farm size as acreage planted to 3 major crop categories -- probably underestimates compared to USDA, because they may account for all land (look into that?)**
+**Can we put categorical farm size into the model to double check largest farms aren't pulling up effect**
 
 
 ```{r, echo = F, eval = F}
@@ -117,12 +120,16 @@ kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
   column_spec(1:8, extra_css = "vertical-align:middle;")
 ```
 
+<!----
 To try to better compare the representativeness of farm size, we look at the only available nationally reported data on farm size distribution that we could find: USDA 2017 state-level farm profiles, which report the number of farms across different size categories. The distribution of those farm sizes, compared against our survey data from 2015 and 2020, are presented in Figure 1. While these comparisons show and over-representation of small farms and under-representation of medium-size farms, it is important to note that here we are comparing our surveys of organic growers against _all_ operations, conventional and organic, in the US. However, across each four regions, organic farms account for only 0.7, 2.6, 0.06, and 2% of operations in the North Central, Northeast, South, and West, respectively, making it hard to estimate representativeness without available data on organic farm size distribution. 
+
+** Should I just remove this? -- yes
 
 ```{r fig1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Sample farm size distribution compared to all US operations, conventional and organic'}
 knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea3.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
 
+---> 
 \pagebreak 
 
 <!----
@@ -176,7 +183,7 @@ kbl(tablea4, booktabs = T, caption = 'Goodness of fit across models') %>% kable_
 
 ## Checking for biases induced by data collection methods  
 
-In order to test how our data collection methods may bias the sample, we consider the effect of the data collection method and survey distributor. 
+In order to test how our data collection methods may bias the sample, we consider the effect of the sampling approach and survey distributor. 
 
 Regarding concerns of sampling approach, we model the effect of sampling method with our 2015 and 2020 survey data (the only survey periods where we had both sampling approaches), including a term for responses that were gathered by random sampling compared to convenience sampling (Table 3, Model 1). We see a small and insignificant effect for sampling method, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 2). 
 
@@ -226,7 +233,7 @@ stargazer::stargazer(m_list,  type = "latex",
 
 ## Certifiers' role 
 
-An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently (cite), but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by that certifier. In Table 5 we model the effect of different certifiers...
+An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently **(cite)**, but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by them. In Table 5, Model 1 we model the effect of five distinct certifiers and one 'other' category, compared against compared to a baseline of the most popular certifier in our limited dataset. We see a small and insignificant effect for different certifiers compared to a baseline certifier group, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 2). 
 
 ```{r tbl5, echo = F, results = "asis"}
 m_list <- readRDS('tables/tablesa6_models.RDS')
@@ -235,7 +242,7 @@ stargazer::stargazer(m_list,  type = "latex",
            covariate.labels = c(core_vars2[-9], "Certifier 7", "Certifier 42",
                                 "Certifier 34", "Certifier 27", "Certifier 24", 
                                 "Certifier 2", "Constant"), 
-           model.numbers = F, nobs = TRUE, dep.var.caption = "", 
+           model.numbers = T, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, intercept.bottom = T,
            title = "Model checks for certifier effects", 
            table.placement = "H", keep.stat = c("n", "ll", 'rsq'),

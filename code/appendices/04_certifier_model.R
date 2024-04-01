@@ -56,9 +56,9 @@ df.full$certifier_codename <- ifelse(df.full$certifier_codename %in%
                                        cert_n$certifier_codename[cert_n$n > 20],
                                      df.full$certifier_codename, "other_certifier")
 table(df.full$certifier_codename)
-lvls <- rev(names(table(df.full$certifier_codename)))
+lvls <- names(table(df.full$certifier_codename))
 df.full$certifier_codename <- factor(df.full$certifier_codename, lvls)
-
+table(df.full$certifier_codename)
 # Relationship between certifier request use and not:
 df.full %>% 
   filter(CVseed_percent_maincrop_prop <= .99) %>% 
@@ -67,9 +67,17 @@ df.full %>%
             mean_request_n = mean(CertifierRequestn))
 
 df.full %>% 
+  ggplot(aes(x = certifier_codename, y = CVseed_percent_maincrop_prop))+
+  geom_boxplot()
+
+df.full %>% 
   filter(CVseed_percent_maincrop_prop <= .99) %>% 
   group_by(certifier_codename, CertifierRequestn) %>% 
   count()
+
+lvls <- c("certifier34", "other_certifier","certifier2","certifier24","certifier27",
+          "certifier42","certifier7")
+df.full$certifier_codename <- factor(df.full$certifier_codename, lvls)
 
 df.full_rounded <- df.full
 df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$CVseed_percent_maincrop_prop))
