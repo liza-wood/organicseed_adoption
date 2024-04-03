@@ -94,6 +94,28 @@ table_a1$Random <- paste0(table_a1$Random, " (",
 table_a1 <- select(table_a1, -c(conv_perc, ran_perc))
 write.csv(table_a1, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea1.csv", row.names = F)
 
+## Table A2 ----
+## Also farm size??
+#df.full %>% 
+#  group_by(data_coll_method, survey_year, Region, maincrop) %>% 
+#  summarize(mean_farmsize = mean(TotalAcreage))
+table_a2 <- df.full %>% 
+  group_by(data_coll_method, survey_year, Region, maincrop) %>% 
+  count() %>% 
+  ungroup() %>% 
+  group_by(data_coll_method, survey_year) %>% 
+  mutate(total = sum(n),
+         prop = round(100*(n/total)),
+         n = paste0(n, " (", prop, "%)")) %>% 
+  select(-c(total, prop)) %>% 
+  pivot_wider(names_from = data_coll_method, values_from = n) %>% 
+  filter(survey_year != 2010) %>% 
+  ungroup()
+table_a2_2015 <- filter(table_a2, survey_year == 2015) %>% select(-survey_year)
+table_a2_2020 <- filter(table_a2, survey_year == 2020)  %>% select(-c(Region, maincrop,survey_year))
+
+table_a2 <- cbind(table_a2_2015, table_a2_2020)
+write.csv(table_a2, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea2.csv", row.names = F)
 # 2. Compare whole sample to census ----
 ## Understand tidyUSDA ----
 library(tidyUSDA)
@@ -168,7 +190,7 @@ organic_summary_by_region <- organic_summary_by_state %>%
 # Based on these outputs, it looks like:
 # source: census; sector: economics; group: farm & land assets; commodity: ag land; category: area OR operations OR net income; domain: organic status
 
-### Table A2a ----
+### Table A3a ----
 ## Year-region operations count
 usda_ops <- select(organic_summary_by_region,
        year, region, prop_operations, total_operations_count) %>% 
@@ -176,7 +198,7 @@ usda_ops <- select(organic_summary_by_region,
          usda_census_n_operations = total_operations_count)
 usda_ops
 
-table_a2a <- df.full %>% 
+table_a3a <- df.full %>% 
   group_by(survey_year, Region) %>% 
   count() %>% 
   rename(total_operations_count = n) %>% 
@@ -189,9 +211,9 @@ table_a2a <- df.full %>%
          sample_n_operations = total_operations_count) %>% 
   cbind(usda_ops[,3:4]) %>% 
   mutate(representation_n_ops = sample_prop_operations-usda_census_prop_operations)
-table_a2a
+table_a3a
 
-### Table A2b ----
+### Table A3b ----
 ## Year-region average acreage
 ## Can't get distributions of size with the USDA data
 usda_acre <- select(organic_summary_by_region,
@@ -199,19 +221,19 @@ usda_acre <- select(organic_summary_by_region,
   rename(usda_census_avg_farm_size = avg_farm_size)
 usda_acre
 
-table_a2b <- df.full %>% 
+table_a3b <- df.full %>% 
   group_by(survey_year, Region) %>% 
   summarize(avg_farm_size = round(mean(TotalAcreage)),
             median_farm_size = round(median(TotalAcreage))) %>% 
   rename(sample_avg_farm_size = avg_farm_size) %>% 
   cbind(usda_acre[,3])  %>% 
   mutate(representation_acres = sample_avg_farm_size-usda_census_avg_farm_size)
-table_a2b
+table_a3b
 
-### Table 2 ----
-table_a2 <- left_join(table_a2a, table_a2b)
+### Table 3 ----
+table_a3 <- left_join(table_a3a, table_a3b)
 
-table_a2 <- table_a2 %>% 
+table_a3 <- table_a3 %>% 
   select(survey_year, Region, sample_n_operations,
          sample_prop_operations, usda_census_n_operations,
          usda_census_prop_operations,  representation_n_ops, 
@@ -220,14 +242,14 @@ table_a2 <- table_a2 %>%
 ## Right now it is overwhelming to compare proportions of each response
 ## I think it makes sense to make this less elaborate
 
-table_a2 <- table_a2 %>% 
+table_a3 <- table_a3 %>% 
   mutate(representativeness_ops = 
            round(100*(sample_n_operations/usda_census_n_operations),1)) %>% 
   select(survey_year, Region, sample_n_operations,
          usda_census_n_operations, representativeness_ops,
          sample_avg_farm_size, usda_census_avg_farm_size, representation_acres) 
 
-write.csv(table_a2, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea2.csv", row.names = F)
+write.csv(table_a3, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea3.csv", row.names = F)
 
 ## Crop-specific data ----
 # Then there seem to be crop-specific approaches 
@@ -385,3 +407,4 @@ table_aX <- table_aX %>%
 table_aX 
 
 write.csv(table_aX, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tableaX.csv", row.names = F)
+

@@ -21,7 +21,7 @@ Surveys were collected using a mix of convenience and random sampling, with the 
 
 * 2020: In the 2020 survey period, again data were collected by both random and convenience sampling. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database. To encourage responsiveness, the survey was offered as both an online version and a paper questionnaire, and respondents had the option of completing either. After an initial postcard invitation, non-respondents received follow-up contacts by mail, email, and phone. Survey distribution was managed by Washington State University’s Social and Economic Sciences Research Center. From these 2,000 surveys, 448 (22%) responded (206 web surveys and 242 paper surveys) and 193 (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed to all remaining certified organic operations over email. For the convenience sample, surveys were shared by OFRF and OSA, social and traditional media, and through organic certifiers and organic farming membership organizations **UPDATE**. We received a total of 611 responses from the convenience sample, 215 of which included complete enough data for our analysis. In total we had 408 usable responses.
 
-The breakdown between random and convenience sampling used in our analysis is summarized in Table 1. We also consider the effect of sampling method, as well as survey distributor, through models in Table 4. 
+The breakdown between random and convenience sampling used in our analysis is summarized in Table 1 and Table 2. We also consider the effect of sampling method, as well as survey distributor, through models in Table 4. 
 
 
 ```{r tbl1, echo = F}
@@ -32,6 +32,16 @@ kbl(tablea1, align = 'c', booktabs = T, caption = 'Convenience and random sample
   column_spec(2:4, width = '4cm')
 ```
 
+```{r tbl2, echo = F}
+tablea2 <- read.csv('tables/tablea2.csv') ; 
+colnames(tablea2) <- c("Region", "Main crop", "Convenience", "Random", "Convenience", "Random")
+kbl(tablea2, align = c('l','l', rep('c', 4)), 
+    booktabs = T, caption = 'Number and percentage of region-crop combinations within convenience and random samples in 2015 and 2020 survey periods') %>% 
+  kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
+  #column_spec(2:4, width = '4cm') %>%
+  add_header_above(c(" " = 2, "2015" = 2, "2020" = 2))
+```
+
 \pagebreak 
 
 ## Sample representativeness 
@@ -40,7 +50,7 @@ While the mix of sampling methods creates a challenge for determining the sample
 
 Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years, though these timelines are not exactly set to match. 
 
-In Table 2 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented (mean of % operations represented +/- sd of % operations represented). Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2011 do we see variation in representation across regions, with the North Central and Western regions over-represented and the Northeast under-represented. 
+In Table 3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented (mean of % operations represented +/- sd of % operations represented). Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2011 do we see variation in representation across regions, with the North Central and Western regions over-represented and the Northeast under-represented. 
 
 We also calculate the mean acreage in our sample, as well as the mean acreage according to the USDA census (N operations/total acreage) for a given year-region combination. Using the mean here provides limited information, given that farm sizes vary considerably in ways that are not captured in aggregate data available in the USDA census. Though crude, these averages suggest relative similarity in average farm size.
 
@@ -54,21 +64,21 @@ ggplot(df.full, aes(y = TotalAcreage)) + geom_density()
 ggplot(df.full, aes(x = log(TotalAcreage))) + geom_histogram()
 ```
 
-```{r tbl2, echo = F, message = F, warning = F}
-tablea2 <- read.csv('tables/tablea2.csv') 
-tablea2 <- tablea2 %>% 
+```{r tbl3, echo = F, message = F, warning = F}
+tablea3 <- read.csv('tables/tablea3.csv') 
+tablea3 <- tablea3 %>% 
   group_by(survey_year) %>%   
   summarize(mean_rep = round(100*(sum(sample_n_operations)/sum(usda_census_n_operations)), 2)) %>% 
-  right_join(tablea2) %>% 
+  right_join(tablea3) %>% 
   mutate(meansd_ul = mean_rep + sd(representativeness_ops),
          meansd_ll = mean_rep - sd(representativeness_ops))
-## Should I be using mean_rep or mean(tablea2$representativeness_ops)??
-mean_reps <- unique(tablea2$mean_rep)
-tablea2$representativeness_ops = cell_spec(tablea2$representativeness_ops, 
-                                         color = ifelse(tablea2$representativeness_ops > tablea2$meansd_ul, "green", 
-                                                 ifelse(tablea2$representativeness_ops < tablea2$meansd_ll, "red", "black")))
-tablea2 <- select(tablea2, -c(mean_rep, meansd_ul, meansd_ll))
-colnames(tablea2) <- c("Year", "Region", "Operations in sample (n)",
+## Should I be using mean_rep or mean(tablea3$representativeness_ops)??
+mean_reps <- unique(tablea3$mean_rep)
+tablea3$representativeness_ops = cell_spec(tablea3$representativeness_ops, 
+                                         color = ifelse(tablea3$representativeness_ops > tablea3$meansd_ul, "green", 
+                                                 ifelse(tablea3$representativeness_ops < tablea3$meansd_ll, "red", "black")))
+tablea3 <- select(tablea3, -c(mean_rep, meansd_ul, meansd_ll))
+colnames(tablea3) <- c("Year", "Region", "Operations in sample (n)",
                         #"Proportion of\ntotal n", 
                        "Operations in USDA census (N)",
                         #"Proportion of\ntotal N", 
@@ -77,7 +87,7 @@ colnames(tablea2) <- c("Year", "Region", "Operations in sample (n)",
                         "Mean acreage in sample", "Mean acreage in USDA Census",
                         "Mean acreage difference")
 
-kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 6)),
+kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 6)),
     caption = 'Sample representativeness compared to USDA Censuses (2011, 2016, 2021)') %>% 
   kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
   #kableExtra::landscape() %>% 
@@ -89,20 +99,20 @@ kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 6)),
 
 ```{r, echo = F, eval = F, message = F, warning = F}
 # Doing this with crops, but not including for now 
-tablea2 <- read.csv('tables/tableaX.csv') 
-tablea2 <- tablea2 %>% 
+tablea3 <- read.csv('tables/tableaX.csv') 
+tablea3 <- tablea3 %>% 
   group_by(survey_year, maincrop) %>%   
   summarize(mean_rep = round(100*(sum(sample_n_operations)/sum(usda_census_n_operations)), 2)) %>% 
-  right_join(tablea2) %>% 
+  right_join(tablea3) %>% 
   mutate(meansd_ul = mean_rep + sd(representativeness_ops),
          meansd_ll = mean_rep - sd(representativeness_ops))
-## Should I be using mean_rep or mean(tablea2$representativeness_ops)??
-tablea2$mean_rep
-tablea2$representativeness_ops = cell_spec(tablea2$representativeness_ops, 
-                                         color = ifelse(tablea2$representativeness_ops > tablea2$meansd_ul, "green", 
-                                                 ifelse(tablea2$representativeness_ops < tablea2$meansd_ll, "red", "black")))
-tablea2 <- select(tablea2, -c(mean_rep, meansd_ul, meansd_ll))
-colnames(tablea2) <- c("Year", "Crop category",  "Region", 
+## Should I be using mean_rep or mean(tablea3$representativeness_ops)??
+tablea3$mean_rep
+tablea3$representativeness_ops = cell_spec(tablea3$representativeness_ops, 
+                                         color = ifelse(tablea3$representativeness_ops > tablea3$meansd_ul, "green", 
+                                                 ifelse(tablea3$representativeness_ops < tablea3$meansd_ll, "red", "black")))
+tablea3 <- select(tablea3, -c(mean_rep, meansd_ul, meansd_ll))
+colnames(tablea3) <- c("Year", "Crop category",  "Region", 
                        "Operations in\nsample (n)",
                         #"Proportion of\ntotal n", 
                        "Operations USDA\nCensus (N)",
@@ -112,7 +122,7 @@ colnames(tablea2) <- c("Year", "Crop category",  "Region",
                         "Mean acreage\nin sample", "Mean acreage\nUSDA Census",
                         "Acreage difference")
 
-kbl(tablea2, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
+kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
     caption = 'Sample representativeness compared to USDA Censuses (2011, 2016, 2021)') %>% 
   kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
   #kableExtra::landscape() %>% 
@@ -185,9 +195,9 @@ kbl(tablea4, booktabs = T, caption = 'Goodness of fit across models') %>% kable_
 
 In order to test how our data collection methods may bias the sample, we consider the effect of the sampling approach and survey distributor. 
 
-Regarding concerns of sampling approach, we model the effect of sampling method with our 2015 and 2020 survey data (the only survey periods where we had both sampling approaches), including a term for responses that were gathered by random sampling compared to convenience sampling (Table 3, Model 1). We see a small and insignificant effect for sampling method, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 2). 
+Regarding concerns of sampling approach, we model the effect of sampling method with our 2015 and 2020 survey data (the only survey periods where we had both sampling approaches), including a term for responses that were gathered by random sampling compared to convenience sampling (Table 4, Model 1). We see a small and insignificant effect for sampling method, and negligible changes in the results between the models run with and without the sampling consideration (Table 4, Model 2). 
 
-Regarding concerns of survey distributor (i.e. that the distribution by Organic Seed Alliance (OSA) elicited responses from a select type of organic farmer), we model the effect of sampling method with our 2010 and 2015 survey data (the only survey periods that identified specific distributors), including a term for responses that were gathered by OSA compared to all others (Table 3, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 4). 
+Regarding concerns of survey distributor (i.e. that the distribution by Organic Seed Alliance (OSA) elicited responses from a select type of organic farmer), we model the effect of sampling method with our 2010 and 2015 survey data (the only survey periods that identified specific distributors), including a term for responses that were gathered by OSA compared to all others (Table 4, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the sampling consideration (Table 4, Model 4). 
 
 ```{r, echo = F}
 core_vars2 <- c("Barrier: Organic availability",
@@ -239,9 +249,9 @@ An additional consideration in our analysis is the effect of certifier. We expec
 m_list <- readRDS('tables/tablesa6_models.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
            dep.var.labels = "Proportion of organic land planted with conventional seed", 
-           covariate.labels = c(core_vars2[-9], "Certifier 7", "Certifier 42",
-                                "Certifier 34", "Certifier 27", "Certifier 24", 
-                                "Certifier 2", "Constant"), 
+           covariate.labels = c(core_vars2[-9],"Certifier Other",
+                                "Certifier 24", "Certifier 2", "Certifier 27",
+                                "Certifier 42", "Certifier 7", "Constant"), 
            model.numbers = T, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, intercept.bottom = T,
            title = "Model checks for certifier effects", 

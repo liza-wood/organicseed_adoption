@@ -5,10 +5,7 @@ library(ggplot2)
 library(kableExtra)
 # This is the dataframe where I have identified main crops of growers, so each observation is only one grower
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds")
-table(df$Region) # loss of 4
-table(df$maincrop)
-table(df$survey_year, df$data_coll_method)
-table(df$survey_year, df$SurveyID)
+
 df <- df %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
   select(maincrop, OGseed_percent_maincrop, IncreasedOGSeed,
@@ -18,6 +15,9 @@ df <- df %>%
          OGSeedOGIntegrity, 
          OGSeedOGIntegrityf, 
          OGSeedOGIntegrityn, # Belief that organic seed is important
+         OGVarietiesSuccess, 
+         OGVarietiesSuccessf, 
+         OGVarietiesSuccessn, # Success
          CertifierRequest,
          CertifierRequestn, # Certifier has requested
          survey_year, # year variables (funding)
@@ -32,6 +32,7 @@ table(df$survey_year)
 df.full <- select(df, OGseed_percent_maincrop,
                   OGseed_percent_maincrop, 
                   OGSeedOGIntegrityn,
+                  OGVarietiesSuccessn,
                   CertifierRequestn,
                   maincrop, survey_year, Region, 
                   TotalAcreage, cropcat_n, 

@@ -1,13 +1,13 @@
-"survey_year","Region","sample_n_operations","usda_census_n_operations","representativeness_ops","sample_avg_farm_size","usda_census_avg_farm_size","representation_acres"
-2010,"North Central",304,2986,10.2,195,212,-17
-2010,"Northeast",51,1897,2.7,142,142,0
-2010,"South",51,540,9.4,105,180,-75
-2010,"West",139,3296,4.2,194,248,-54
-2015,"North Central",395,4689,8.4,307,184,123
-2015,"Northeast",139,3246,4.3,142,135,7
-2015,"South",75,1096,6.8,144,215,-71
-2015,"West",190,4529,4.2,358,260,98
-2020,"North Central",177,5824,3,323,204,119
-2020,"Northeast",95,3888,2.4,205,143,62
-2020,"South",39,1209,3.2,847,279,568
-2020,"West",97,5273,1.8,329,284,45
+"Region","maincrop","Convenience","Random","Convenience","Random"
+"North Central","Field","229 (34%)","20 (16%)","44 (20%)","62 (32%)"
+"North Central","Forage","63 (9%)","4 (3%)","10 (5%)","17 (9%)"
+"North Central","Vegetables","71 (11%)","8 (6%)","25 (12%)","19 (10%)"
+"Northeast","Field","20 (3%)","8 (6%)","11 (5%)","21 (11%)"
+"Northeast","Forage","24 (4%)","8 (6%)","4 (2%)","10 (5%)"
+"Northeast","Vegetables","55 (8%)","24 (19%)","31 (14%)","18 (9%)"
+"South","Field","13 (2%)","1 (1%)","9 (4%)","4 (2%)"
+"South","Forage","7 (1%)","1 (1%)","3 (1%)",NA
+"South","Vegetables","47 (7%)","6 (5%)","12 (6%)","11 (6%)"
+"West","Field","22 (3%)","9 (7%)","10 (5%)","10 (5%)"
+"West","Forage","21 (3%)","9 (7%)","9 (4%)","5 (3%)"
+"West","Vegetables","100 (15%)","29 (23%)","47 (22%)","16 (8%)"

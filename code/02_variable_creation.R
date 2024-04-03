@@ -130,6 +130,19 @@ df$OGVarietiesSuccessf <- factor(df$OGVarietiesSuccess, levels = c("Strongly dis
                                                                  "Strongly agree"))
 df$OGVarietiesSuccessn <- as.numeric(df$OGVarietiesSuccessf)
 
+## Checking integrity to build construct?
+cor(df$OGVarietiesSuccessn, df$OGSeedOGIntegrityn, use = "complete.obs")
+df$CropsNeedBreedn <- as.numeric(factor(df$CropsNeedBreed, c("No", "Yes")))
+cor(df$OGVarietiesSuccessn, df$CropsNeedBreedn, use = "complete.obs")
+cor(df$OGSeedOGIntegrityn, df$CropsNeedBreedn, use = "complete.obs")
+
+df %>% 
+  group_by(CropsNeedBreed, OGSeedOGIntegrityf) %>% 
+  count()
+ltm::cronbach.alpha(df[,c('OGVarietiesSuccessn', 'OGSeedOGIntegrityn')],
+                    na.rm = T)
+
+df$OG_value <- rowMeans(df[,c('OGVarietiesSuccessn', 'OGSeedOGIntegrityn')], na.rm = T)
 df$CertifierRequestn <- ifelse(df$CertifierRequest == "No", 0,
                                ifelse(df$CertifierRequest == "Yes", 1, NA))
 

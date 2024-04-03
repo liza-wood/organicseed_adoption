@@ -80,6 +80,7 @@ prep_inla_data <- function(m){
     mutate(term = case_when(
       term == "legitimation_user_s" ~ "Values organic seed",
       term == "CertifierRequestn_s" ~ "Certifiers request organic seed use",
+      term == "CertifierRequestn" ~ "Certifiers request organic seed use",
       term == "noncommercial_seedsource_s" ~ "Seed saved or traded (%)", 
       term == "acreage_s" ~ "Farm size (log acres)", 
       term == "cropcat_n_s" ~ "Crop diversity", 
@@ -111,6 +112,7 @@ prep_betreg_data <- function(m){
     mutate(term = case_when(
       term == "legitimation_user_s" ~ "Values organic seed",
       term == "CertifierRequestn_s" ~ "Certifiers request organic seed use",
+      term == "CertifierRequestn" ~ "Certifiers request organic seed use",
       term == "noncommercial_seedsource_s" ~ "Seed saved or traded (%)", 
       term == "acreage_s" ~ "Farm size (log acres)", 
       term == "cropcat_n_s" ~ "Crop diversity", 
