@@ -1,8 +1,8 @@
 ﻿Data description,Hypothesis,Variable name,Data type
 Dependent variable,,,
 "Last year, what approximate percentage",,Acreage planted to,Proportion 
-of total acreage of [crop] was planted with,,conventional seed,(0-1)
-conventional seed? ,,,
+of total acreage of [crop] was planted with,,organic seed,(0-1)
+organic seed? ,,,
 Independent variables,,,
 "Over the last three years, how much ",,,
 were each of the following a factor in,,,
@@ -13,8 +13,6 @@ your decision NOT to purchase organic seed?,,,
 ,,quantity,(1-4)
     Lack of desirable genetic traits,H1a,Barrier: Undesirable ,Likert scale
 ,,traits,(1-4)
-    Processor/buyer requires or supplies   ,H1a,Barrier: Buyer,Likert scale
-     varieties that are not available,,requirements,(1-4)
 Survey year,H1b,Survey year,Categorical
 ,,,"(2010, 2015, 2020)"
 Please indicate your level of agreement with ,,,Likert scale

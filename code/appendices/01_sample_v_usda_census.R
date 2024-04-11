@@ -10,36 +10,19 @@ df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rd
     T ~ NA
   )) %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
-  select(maincrop, OGseed_percent_maincrop, IncreasedOGSeed,
-         #VegiAcreage, FieldAcreage, ForageAcreage, # Total acres for each crop
-         #OGVegiSeed, OGFieldSeed, OGForageSeed, # % organic seed used
-         TotalAcreage, maincrop_acrage,
-         OGSeedOGIntegrity, 
-         OGSeedOGIntegrityf, 
-         OGSeedOGIntegrityn, # Belief that organic seed is important
-         CertifierRequest,
-         CertifierRequestn, # Certifier has requested
-         survey_year, # year variables (funding)
-         cropcat_n, 
-         Region, # regional variables (region and seed production)
-         contains("barrier"), # barriers
+  select(OGseed_percent_maincrop,
+         OGseed_percent_maincrop, 
+         OGSeedOGIntegrityn,
+         CertifierRequestn,
+         maincrop, survey_year, Region, 
+         TotalAcreage, cropcat_n, 
+         maincrop_acrage,
          noncommercial_seedsource,
-         contains("AddSteps"),
-         YearsCertified, data_coll_method) 
-
-df.full <- select(df, OGseed_percent_maincrop,
-                  OGseed_percent_maincrop, 
-                  OGSeedOGIntegrityn,
-                  CertifierRequestn,
-                  maincrop, survey_year, Region, 
-                  TotalAcreage, cropcat_n, 
-                  maincrop_acrage,
-                  noncommercial_seedsource,
-                  #YearsCertified
-                  barrier_buyerReq,
-                  barrier_insuffQuantity,
-                  barrier_lackdesiredTraits,
-                  barrier_availability, data_coll_method) %>% 
+         #YearsCertified
+         barrier_buyerReq,
+         barrier_insuffQuantity,
+         barrier_lackdesiredTraits,
+         barrier_availability, data_coll_method) %>% 
   na.omit() %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
          CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop) %>% 

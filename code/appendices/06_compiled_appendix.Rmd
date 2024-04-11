@@ -11,7 +11,9 @@ source('code/functions.R')
 knitr::opts_knit$set(root.dir = '~/Documents/Davis/R-Projects/organicseed_adoption')
 ```
 
-## Survey sampling method 
+# Survey sample 
+
+## 1. Survey sampling method 
 
 Surveys were collected using a mix of convenience and random sampling, with the approach varying across the three time periods.  
 
@@ -44,7 +46,56 @@ kbl(tablea2, align = c('l','l', rep('c', 4)),
 
 \pagebreak 
 
-## Sample representativeness 
+## 2. Checking for biases induced by data collection methods  
+
+In order to test how our data collection methods may bias the sample, we consider the effect of the sampling approach and survey distributor. 
+
+Regarding concerns of sampling approach, we model the effect of sampling method with our 2015 and 2020 survey data (the only survey periods where we had both sampling approaches), including a term for responses that were gathered by random sampling compared to convenience sampling (Table 4, Model 1). We see a small and insignificant effect for sampling method, and negligible changes in the results between the models run with and without the sampling consideration (Table 4, Model 2). 
+
+Regarding concerns of survey distributor (i.e. that the distribution by Organic Seed Alliance (OSA) elicited responses from a select type of organic farmer), we model the effect of sampling method with our 2010 and 2015 survey data (the only survey periods that identified specific distributors), including a term for responses that were gathered by OSA compared to all others (Table 4, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the sampling consideration (Table 4, Model 4). 
+
+```{r, echo = F}
+core_vars2 <- c("Barrier: Organic availability",
+                "Barrier: Buyer requirements",
+                "Barrier: Undesirable traits",
+                "Barrier: Insufficient quantity",
+                "Year: 2015 (vs. 2010)",
+                "Year: 2020 (vs. 2010)",
+                "Values organic seed",
+                "Farm size (log acres)",
+                "Crop diversity",
+                "Seed saved or traded (\\%)",
+                "Certifiers request organic seed use",
+                "Forage crops (vs. Field)",
+                "Vegetable crops (vs. Field)",
+                "Western region (vs. North Central)",
+                "Northeastern region (vs. North Central)",
+                "Southern region (vs. North Central)")
+```
+
+
+```{r tbl4, echo = F, results = "asis", eval = T}
+m_list <- readRDS('tables/tablesa5_models.RDS')
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           covariate.labels = c(core_vars2[-(6)], "Random data collection (versus convenience)",
+              "Distributor: OSA (vs. Other)",
+                "Constant"), 
+          column.labels = c("\\shortstack{Including\\\\sampling\\\\method\\\\(2015, 2020)}", 
+                            "\\shortstack{Without\\\\sampling\\\\method\\\\(2015, 2020)}", 
+                            "\\shortstack{Including\\\\survey\\\\distributor\\\\(2010, 2015)}", 
+                            "\\shortstack{Without\\\\survey\\\\distributor\\\\(2010, 2015)}"), #c("Comparing sampling (2015 & 2020)", "Without sampling (2015 & 2020)", "Comparing survey distributor (2020)", "Without distributor (2020)"),
+           model.numbers = T, 
+          nobs = TRUE, dep.var.caption = "", 
+           intercept.bottom = T,
+           no.space = TRUE, header = FALSE, 
+           title = "Model checks for sampling and distributor effects", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq'))
+```
+
+\pagebreak 
+
+## 3. Sample representativeness 
 
 While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution and approximate average farm size of our sample to USDA Agricultural Census data. We use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. 
 
@@ -141,6 +192,80 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 
 ---> 
 \pagebreak 
+# Model checks 
+## 4. Full model results  
+
+```{r, echo = F, results = "asis"}
+#tablea6 <- read.csv('tables/tablea7.csv') ; 
+#colnames(tablea5) <- c("Term", "Mean estimate", "Standard error") ; 
+#kbl(tablea6, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = c("HOLD_position")) 
+
+m_list <- readRDS('tables/tablea7_model.RDS')
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           covariate.labels = c(core_vars2, "Constant"), 
+           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, 
+           title = "Final model results", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
+
+```
+
+\pagebreak
+
+## 5. Barrier mediation analysis
+
+## 6. Predicted organic seed use figures
+
+```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for field crop growers of two farmer profiles.'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea1.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+```
+```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for forage crop growers of two farmer profiles.'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea2.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+```
+
+
+## 7. Self-reported behavior change
+
+\pagebreak 
+## 8. Certifiers' role
+
+An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently **(cite)**, but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by them. In Table 5, Model 1 we model the effect of five distinct certifiers and one 'other' category, compared against compared to a baseline of the most popular certifier in our limited dataset. We see a small and insignificant effect for different certifiers compared to a baseline certifier group, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 2). 
+
+```{r tbl5, echo = F, results = "asis"}
+m_list <- readRDS('tables/tablesa6_models.RDS')
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           covariate.labels = c(core_vars2[-9],"Certifier Other",
+                                "Certifier 24", "Certifier 2", "Certifier 27",
+                                "Certifier 42", "Certifier 7", "Constant"), 
+           model.numbers = T, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, intercept.bottom = T,
+           title = "Model checks for certifier effects", 
+           table.placement = "H", keep.stat = c("n", "ll", 'rsq'),
+           label=knitr::opts_current$get("label"))
+```
+
+
+
+\pagebreak
+## Model results over time
+
+```{r, echo = F, results = "asis"}
+m_list <- readRDS('tables/table_a8.rds')
+stargazer::stargazer(m_list,  type = "latex", 
+                     column.labels = c("2010", "2015", "2020"),
+           dep.var.labels = "", 
+           covariate.labels = c(core_vars2[-c(2,5,6)], "Constant"), 
+           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, 
+           title = "Model results by year", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
+
+```
+
+\pagebreak 
+
 
 <!----
 ## Model selection and fit
@@ -190,102 +315,3 @@ kbl(tablea4, booktabs = T, caption = 'Goodness of fit across models') %>% kable_
 
 \pagebreak 
 ---->
-
-## Checking for biases induced by data collection methods  
-
-In order to test how our data collection methods may bias the sample, we consider the effect of the sampling approach and survey distributor. 
-
-Regarding concerns of sampling approach, we model the effect of sampling method with our 2015 and 2020 survey data (the only survey periods where we had both sampling approaches), including a term for responses that were gathered by random sampling compared to convenience sampling (Table 4, Model 1). We see a small and insignificant effect for sampling method, and negligible changes in the results between the models run with and without the sampling consideration (Table 4, Model 2). 
-
-Regarding concerns of survey distributor (i.e. that the distribution by Organic Seed Alliance (OSA) elicited responses from a select type of organic farmer), we model the effect of sampling method with our 2010 and 2015 survey data (the only survey periods that identified specific distributors), including a term for responses that were gathered by OSA compared to all others (Table 4, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the sampling consideration (Table 4, Model 4). 
-
-```{r, echo = F}
-core_vars2 <- c("Barrier: Organic availability",
-                "Barrier: Buyer requirements",
-                "Barrier: Undesirable traits",
-                "Barrier: Insufficient quantity",
-                "Year: 2015 (vs. 2010)",
-                "Year: 2020 (vs. 2010)",
-                "Values organic seed",
-                "Farm size (log acres)",
-                "Crop diversity",
-                "Seed saved or traded (\\%)",
-                "Certifiers request organic seed use",
-                "Forage crops (vs. Field)",
-                "Vegetable crops (vs. Field)",
-                "Western region (vs. North Central)",
-                "Northeastern region (vs. North Central)",
-                "Southern region (vs. North Central)")
-```
-
-
-
-```{r tbl4, echo = F, results = "asis", eval = T}
-m_list <- readRDS('tables/tablesa5_models.RDS')
-stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "Proportion of organic land planted with conventional seed", 
-           covariate.labels = c(core_vars2[-(6)], "Random data collection (versus convenience)",
-              "Distributor: OSA (vs. Other)",
-                "Constant"), 
-          column.labels = c("\\shortstack{Including\\\\sampling\\\\method\\\\(2015, 2020)}", 
-                            "\\shortstack{Without\\\\sampling\\\\method\\\\(2015, 2020)}", 
-                            "\\shortstack{Including\\\\survey\\\\distributor\\\\(2010, 2015)}", 
-                            "\\shortstack{Without\\\\survey\\\\distributor\\\\(2010, 2015)}"), #c("Comparing sampling (2015 & 2020)", "Without sampling (2015 & 2020)", "Comparing survey distributor (2020)", "Without distributor (2020)"),
-           model.numbers = T, 
-          nobs = TRUE, dep.var.caption = "", 
-           intercept.bottom = T,
-           no.space = TRUE, header = FALSE, 
-           title = "Model checks for sampling and distributor effects", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq'))
-```
-
-\pagebreak 
-
-## Certifiers' role 
-
-An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently **(cite)**, but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by them. In Table 5, Model 1 we model the effect of five distinct certifiers and one 'other' category, compared against compared to a baseline of the most popular certifier in our limited dataset. We see a small and insignificant effect for different certifiers compared to a baseline certifier group, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 2). 
-
-```{r tbl5, echo = F, results = "asis"}
-m_list <- readRDS('tables/tablesa6_models.RDS')
-stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "Proportion of organic land planted with conventional seed", 
-           covariate.labels = c(core_vars2[-9],"Certifier Other",
-                                "Certifier 24", "Certifier 2", "Certifier 27",
-                                "Certifier 42", "Certifier 7", "Constant"), 
-           model.numbers = T, nobs = TRUE, dep.var.caption = "", 
-           no.space = TRUE, header = FALSE, intercept.bottom = T,
-           title = "Model checks for certifier effects", 
-           table.placement = "H", keep.stat = c("n", "ll", 'rsq'),
-           label=knitr::opts_current$get("label"))
-```
-
-\pagebreak 
-
-## Full model results  
-
-```{r, echo = F, results = "asis"}
-#tablea6 <- read.csv('tables/tablea7.csv') ; 
-#colnames(tablea5) <- c("Term", "Mean estimate", "Standard error") ; 
-#kbl(tablea6, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = c("HOLD_position")) 
-
-m_list <- readRDS('tables/tablea7_model.RDS')
-stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "Proportion of organic land planted with conventional seed", 
-           covariate.labels = c(core_vars2, "Constant"), 
-           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
-           no.space = TRUE, header = FALSE, 
-           title = "Final model results", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
-
-```
-
-\pagebreak 
-## Predicted conventional seed use  
-
-```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for field crop growers of two farmer profiles.'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea1.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
-```
-```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for forage crop growers of two farmer profiles.'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea2.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
-```
-

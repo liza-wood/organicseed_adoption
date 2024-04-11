@@ -1,15 +1,15 @@
 coef_order_core <- c("Barrier: Organic availability",
-                     "Barrier: Buyer requirements",
+                     #"Barrier: Buyer requirements",
                      "Barrier: Undesirable traits",
                      "Barrier: Insufficient quantity",
-                     "Year: 2015 (vs. 2010)",
-                     "Year: 2020 (vs. 2010)",
+                     "Year: 2010 (vs. 2015)",
+                     "Year: 2020 (vs. 2015)",
                      "Values organic seed",
                      "Farm size (log acres)",
                      "Crop diversity", 
                      "Years certified organic",
-                     "Seed saved or traded (\\%)",
                      "Certifiers request organic seed use",
+                     "Seed saved or traded (\\%)",
                      "Forage crops (vs. Field)",
                      "Vegetable crops (vs. Field)",
                      "Western region (vs. North Central)",
@@ -17,17 +17,17 @@ coef_order_core <- c("Barrier: Organic availability",
                      "Southern region (vs. North Central)")
 
 coef_order_stargazer <- c("Barrier\\: Organic availability",
-                "Barrier\\: Buyer requirements",
+                #"Barrier\\: Buyer requirements",
                 "Barrier\\: Undesirable traits",
                 "Barrier\\: Insufficient quantity",
-                "Year\\: 2015 \\(vs\\. 2010\\)",
-                "Year\\: 2020 \\(vs\\. 2010\\)",
+                "Year\\: 2010 \\(vs\\. 2015\\)",
+                "Year\\: 2020 \\(vs\\. 2015\\)",
                 "Values organic seed",
                 "Farm size \\(log acres\\)",
                 "Crop diversity", 
                 "Years certified organic",
-                "Seed saved or traded \\(\\%\\)",
                 "Certifiers request organic seed use",
+                "Seed saved or traded \\(\\%\\)",
                 "Forage crops \\(vs\\. Field\\)",
                 "Vegetable crops \\(vs\\. Field\\)",
                 "Western region \\(vs\\. North Central\\)",
@@ -44,17 +44,17 @@ coef_order_stargazer <- c("Barrier\\: Organic availability",
                 "Constant")
 
 coef_order <- c("Barrier: Organic availability",
-                "Barrier: Buyer requirements",
+               # "Barrier: Buyer requirements",
                 "Barrier: Undesirable traits",
                 "Barrier: Insufficient quantity",
-                "Year: 2015 (vs. 2010)",
-                "Year: 2020 (vs. 2010)",
+               "Year: 2010 (vs. 2015)",
+               "Year: 2020 (vs. 2015)",
                 "Values organic seed",
                 "Farm size (log acres)",
                 "Crop diversity", 
                 "Years certified organic",
+               "Certifiers request organic seed use",
                 "Seed saved or traded (%)",
-                "Certifiers request organic seed use",
                 "Forage crops (vs. Field)",
                 "Vegetable crops (vs. Field)",
                 "Western region (vs. North Central)",
@@ -71,36 +71,7 @@ coef_order <- c("Barrier: Organic availability",
                 "Distributor: OSA (vs. Other)")
 
 shapes <- 21:25
-prep_inla_data <- function(m){
-  mdf <- m$summary.fixed
-  mdf$term = rownames(mdf)
-  mdf$se <- mdf$sd/sqrt(nrow(m$summary.linear.predictor))
-  colnames(mdf)[c(3,5)] <- c('LCI', 'UCI')
-  mdf <- mdf %>% 
-    mutate(term = case_when(
-      term == "legitimation_user_s" ~ "Values organic seed",
-      term == "CertifierRequestn_s" ~ "Certifiers request organic seed use",
-      term == "CertifierRequestn" ~ "Certifiers request organic seed use",
-      term == "noncommercial_seedsource_s" ~ "Seed saved or traded (%)", 
-      term == "acreage_s" ~ "Farm size (log acres)", 
-      term == "cropcat_n_s" ~ "Crop diversity", 
-      term == "years_certified_s" ~ "Years certified organic", 
-      term == "barrier_buyerReq_s" ~ "Barrier: Buyer requirements",
-      term == "barrier_insuffQuantity_s" ~ "Barrier: Insufficient quantity", 
-      term == "barrier_lackdesiredTraits_s" ~ "Barrier: Undesirable traits", 
-      term == "barrier_availability_s" ~ "Barrier: Organic availability", 
-      term == "maincropForage" ~ "Forage crops (vs. Field)", 
-      term == "maincropVegetables" ~ "Vegetable crops (vs. Field)", 
-      term == "RegionWest" ~ "Western region (vs. North Central)",
-      term == "RegionNortheast" ~ "Northeastern region (vs. North Central)", 
-      term == "RegionSouth" ~ "Southern region (vs. North Central)", 
-      term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
-      term == "survey_year2021" ~ "Year: 2020 (vs. 2010)",
-      T ~ term)) %>% 
-    mutate(term = factor(term, rev(coef_order))) %>% 
-    arrange(term)
-  return(mdf)
-}
+
 prep_betreg_data <- function(m){
   ms <- summary(m)
   mdf <- data.frame(ms$coefficients$mean)
@@ -110,11 +81,11 @@ prep_betreg_data <- function(m){
   colnames(mdf)[c(1,2,6,7)] <- c('mean', 'se', 'LCI', 'UCI')
   mdf <- mdf %>% 
     mutate(term = case_when(
-      term == "legitimation_user_s" ~ "Values organic seed",
-      term == "CertifierRequestn_s" ~ "Certifiers request organic seed use",
+      term == "OG_value_s" ~ "Values organic seed",
+      #term == "CertifierRequestn_s" ~ "Certifiers request organic seed use",
       term == "CertifierRequestn" ~ "Certifiers request organic seed use",
       term == "noncommercial_seedsource_s" ~ "Seed saved or traded (%)", 
-      term == "acreage_s" ~ "Farm size (log acres)", 
+      term == "acreage_log_s" ~ "Farm size (log acres)", 
       term == "cropcat_n_s" ~ "Crop diversity", 
       term == "years_certified_s" ~ "Years certified organic", 
       term == "barrier_buyerReq_s" ~ "Barrier: Buyer requirements",
@@ -126,8 +97,9 @@ prep_betreg_data <- function(m){
       term == "RegionWest" ~ "Western region (vs. North Central)",
       term == "RegionNortheast" ~ "Northeastern region (vs. North Central)", 
       term == "RegionSouth" ~ "Southern region (vs. North Central)", 
-      term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
-      term == "survey_year2021" ~ "Year: 2020 (vs. 2010)",
+      #term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
+      term == "survey_year2011" ~ "Year: 2010 (vs. 2015)",
+      term == "survey_year2021" ~ "Year: 2020 (vs. 2015)",
       # For extra tests in the appendix
       term == "certifier_codenameother_certifier" ~ "Certifier Other",
       term == "certifier_codenamecertifier7" ~ "Certifier 7",
@@ -144,7 +116,7 @@ prep_betreg_data <- function(m){
   return(mdf)
 }
 
-plot_inla_models <- function(mdf, nmodels){
+plot_betareg_models <- function(mdf, nmodels){
   if(nmodels == 1){
     p <- mdf  %>% 
       ggplot(aes(x = mean, 
@@ -194,16 +166,16 @@ plot_inla_models <- function(mdf, nmodels){
 make_pp_df <- function(subset){
   row.names(subset) <- NULL
   df <- suppressWarnings(
-    data.frame(acreage_s = quantile(subset$acreage_s, na.rm = T)[c(2,5)],
-                   legitimation_user_s = quantile(subset$legitimation_user_s, 
-                                                  na.rm = T)[c(5,2)],
-                   cropcat_n_s = quantile(subset$cropcat_n_s, na.rm = T)[c(5,2)],
-                   CertifierRequestn_s = rep(0, 2),
+    data.frame(acreage_log_s = quantile(subset$acreage_log_s, na.rm = T)[c(2,4)],
+                   OG_value_s = quantile(subset$OG_value_s, 
+                                                  na.rm = T)[c(4,2)],
+                   cropcat_n_s = quantile(subset$cropcat_n_s, na.rm = T)[c(4,2)],
+                   CertifierRequestn = rep(0, 2),
                    noncommercial_seedsource_s = 
                      rep(median(subset$noncommercial_seedsource_s, 
                                 na.rm = T), 2),
-                   barrier_buyerReq_s = rep(median(subset$barrier_buyerReq_s,
-                                                   na.rm = T), 2),
+                   #barrier_buyerReq_s = rep(median(subset$barrier_buyerReq_s,
+                   #                                na.rm = T), 2),
                    barrier_insuffQuantity_s = 
                      rep(median(subset$barrier_insuffQuantity_s, na.rm = T), 2),
                    barrier_lackdesiredTraits_s = 
@@ -238,7 +210,7 @@ plot_predicted_probs <- function(pred_df, ymin = 0.2, ymax = 0.8){
           axis.title.x = element_text(size = 12),
           text = element_text(size = 14, family = "Times"),
           panel.grid.major.x = element_line(linetype = "solid")) + 
-    labs(x = "", shape = "", color = "", y = "Predicted acreage planted\nto conventional seed") +
+    labs(x = "", shape = "", color = "", y = "Predicted acreage planted\nto organic seed") +
     ylim(c(ymin,ymax))
   p
 } 
