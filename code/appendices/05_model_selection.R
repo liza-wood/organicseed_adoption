@@ -1,49 +1,40 @@
-# Setup ----
 library(dplyr)
 library(tidyr)
-library(ggplot2)
-library(jtools)
-#library(INLA)
 library(betareg)
+library(ggplot2)
+library(cowplot)
+library(jtools)
 source('code/functions.R')
-setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
-df.full <- readRDS("~/Box/organicseed_adoption/df_scaled.rds") %>% 
-  mutate(acreage_s = acreage_log,
-         cropcat_n_s = cropcat_n) %>% 
-  select(CVseed_percent_maincrop_prop,
-         legitimation_user_s,
-         CertifierRequestn_s,
+
+df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
+  select(OGseed_percent_maincrop_prop,
+         OG_value_s,
+         CertifierRequestn,
          noncommercial_seedsource_s,
-         #acreage_log_s,
-         acreage_s,
+         acreage_log_s,
          cropcat_n_s,
-         barrier_buyerReq_s,
+         #barrier_buyerReq_s,
          barrier_insuffQuantity_s,
          barrier_lackdesiredTraits_s,
          barrier_availability_s,
          maincrop,
          Region,
-         survey_year) 
+         survey_year) %>% 
+  na.omit()
 
-
-# Round the numbers
 df.full_rounded <- df.full
-df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full$CVseed_percent_maincrop_prop == 0, 0.001,
-                                                       ifelse(df.full$CVseed_percent_maincrop_prop == 1, 0.999,df.full$CVseed_percent_maincrop_prop))
+df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
+
 
 # Model comparison ----
-#m0 <- inla(CVseed_percent_maincrop_prop ~ 1, 
-#           data = df.full_rounded,
-#           family = "beta",
-#           control.compute = list(cpo= T, waic= T))
-#summary(m0)
-m0 <- betareg(CVseed_percent_maincrop_prop ~ 1, 
+
+m0 <- betareg(OGseed_percent_maincrop_prop ~ 1, 
               data = df.full_rounded,
               link = "logit", link.phi = NULL, type = "ML")
 summary(m0)
 
 # Key system variables only
-#m1 <- inla(CVseed_percent_maincrop_prop ~ 
+#m1 <- inla(OGseed_percent_maincrop_prop ~ 
 #             maincrop +
 #             Region +
 #             survey_year, 
@@ -51,7 +42,7 @@ summary(m0)
 #           family = "beta",
 #           control.compute = list(cpo= T, waic= T))
 
-m1 <- betareg(CVseed_percent_maincrop_prop ~ 
+m1 <- betareg(OGseed_percent_maincrop_prop ~ 
              maincrop +
              Region +
              survey_year, 
@@ -59,27 +50,26 @@ m1 <- betareg(CVseed_percent_maincrop_prop ~
            link = "logit", link.phi = NULL, type = "ML")
 
 # Key operation variables
-#m2 <- inla(CVseed_percent_maincrop_prop ~ 
-#             legitimation_user_s + 
-#             acreage_s + 
+#m2 <- inla(OGseed_percent_maincrop_prop ~ 
+#             OG_value_s + 
+#             acreage_log_s + 
 #             cropcat_n_s,
 #           data = df.full_rounded,
 #           family = "beta",
 #           control.compute = list(cpo= T, waic= T))
 
-m2 <- betareg(CVseed_percent_maincrop_prop ~ 
-             legitimation_user_s + 
-             acreage_s + 
+m2 <- betareg(OGseed_percent_maincrop_prop ~ 
+             OG_value_s + 
+             acreage_log_s + 
              cropcat_n_s,
            data = df.full_rounded, 
            link = "logit", link.phi = NULL, type = "ML")
 
 # Adding barriers
-#m3 <- inla(CVseed_percent_maincrop_prop ~ 
-#             legitimation_user_s + 
-#             acreage_s + 
+#m3 <- inla(OGseed_percent_maincrop_prop ~ 
+#             OG_value_s + 
+#             acreage_log_s + 
 #             cropcat_n_s +
-#             barrier_buyerReq_s +
 #             barrier_insuffQuantity_s +
 #             barrier_lackdesiredTraits_s +
 #             barrier_availability_s,
@@ -87,11 +77,10 @@ m2 <- betareg(CVseed_percent_maincrop_prop ~
 #           family = "beta",
 #           control.compute = list(cpo= T, waic= T))
 
-m3 <- betareg(CVseed_percent_maincrop_prop ~ 
-             legitimation_user_s + 
-             acreage_s + 
+m3 <- betareg(OGseed_percent_maincrop_prop ~ 
+             OG_value_s + 
+             acreage_log_s + 
              cropcat_n_s +
-             barrier_buyerReq_s +
              barrier_insuffQuantity_s +
              barrier_lackdesiredTraits_s +
              barrier_availability_s,
@@ -99,11 +88,10 @@ m3 <- betareg(CVseed_percent_maincrop_prop ~
            link = "logit", link.phi = NULL, type = "ML")
 
 # More 'system' controls
-#m4 <- inla(CVseed_percent_maincrop_prop ~ 
-#             legitimation_user_s + 
-#             acreage_s + 
+#m4 <- inla(OGseed_percent_maincrop_prop ~ 
+#             OG_value_s + 
+#             acreage_log_s + 
 #             cropcat_n_s +
-#             barrier_buyerReq_s +
 #             barrier_insuffQuantity_s +
 #             barrier_lackdesiredTraits_s +
 #             barrier_availability_s +
@@ -114,11 +102,10 @@ m3 <- betareg(CVseed_percent_maincrop_prop ~
 #           family = "beta",
 #           control.compute = list(cpo= T, waic= T))
 
-m4 <- betareg(CVseed_percent_maincrop_prop ~ 
-             legitimation_user_s + 
-             acreage_s + 
+m4 <- betareg(OGseed_percent_maincrop_prop ~ 
+             OG_value_s + 
+             acreage_log_s + 
              cropcat_n_s +
-             barrier_buyerReq_s +
              barrier_insuffQuantity_s +
              barrier_lackdesiredTraits_s +
              barrier_availability_s +
@@ -129,36 +116,34 @@ m4 <- betareg(CVseed_percent_maincrop_prop ~
            link = "logit", link.phi = NULL, type = "ML")
 
 # Controls
-#m5 <- inla(CVseed_percent_maincrop_prop ~ 
-#             legitimation_user_s + 
-#             acreage_s + 
+#m5 <- inla(OGseed_percent_maincrop_prop ~ 
+#             OG_value_s + 
+#             acreage_log_s + 
 #             cropcat_n_s +
-#             barrier_buyerReq_s +
 #             barrier_insuffQuantity_s +
 #             barrier_lackdesiredTraits_s +
 #             barrier_availability_s +
 #             maincrop +
 #             Region +
 #             survey_year +
-#             CertifierRequestn_s + 
+#             CertifierRequestn + 
 #             noncommercial_seedsource_s, 
 #             #years_certified_s, 
 #           data = df.full_rounded,
 #           family = "beta",
 #           control.compute = list(cpo= T, waic= T))
 
-m5 <- betareg(CVseed_percent_maincrop_prop ~ 
-             legitimation_user_s + 
-             acreage_s + 
+m5 <- betareg(OGseed_percent_maincrop_prop ~ 
+                OG_value_s + 
+             acreage_log_s + 
              cropcat_n_s +
-             barrier_buyerReq_s +
              barrier_insuffQuantity_s +
              barrier_lackdesiredTraits_s +
              barrier_availability_s +
              maincrop +
              Region +
              survey_year +
-             CertifierRequestn_s + 
+             CertifierRequestn + 
              noncommercial_seedsource_s, 
            #years_certified_s, 
            data = df.full_rounded, 
@@ -172,7 +157,7 @@ m5 <- betareg(CVseed_percent_maincrop_prop ~
 #m5df <- prep_inla_data(m5) %>% mutate(model = 5)
 
 # Can I try stargazer here to get significance symbols
-saveRDS(list(m1,m2,m3,m4,m5), 'tables/tablesa3_models.RDS')
+saveRDS(list(m1,m2,m3,m4,m5), 'tables/append_model_compare.RDS')
 
 m1df <- prep_betreg_data(m1) %>% mutate(model = 1)
 m2df <- prep_betreg_data(m2) %>% mutate(model = 2)
@@ -186,7 +171,7 @@ compare_df <- m1df %>%
   rbind(m4df) %>% 
   rbind(m5df) 
 
-plot_inla_models(compare_df, 5)
+plot_betareg_models(compare_df, 5)
 
 tablea1 <- m5df %>% 
   select(term, mean, se) %>% 
@@ -205,12 +190,7 @@ tablea1 <- select(tablea1, Term, `Mean 1`, `SE 1`, `Mean 2`, `SE 2`,
                      `Mean 3`, `SE 3`, `Mean 4`, `SE 4`, `Mean 5`, `SE 5`)
 tablea1[,2:ncol(tablea1)] <- sapply(tablea1[,2:ncol(tablea1)], function(x){round(x,3)})
 
-write.csv(tablea1, 'tables/tablea3.csv', row.names = F)
-
-colnames(tablea1) <- c("Term", rep(c("Mean", "SE"), 5)) ; 
-tablea1[is.na(tablea1)] <- "" ; 
-kbl(tablea1, booktabs = T, caption = 'Model comparison results') %>% kable_styling(latex_options = "scale_down") %>% 
-  add_header_above(c(" " = 1, "Model 1" = 2, "Model 2" = 2, "Model 3" = 2, "Model 4" = 2, "Model 5" = 2))
+write.csv(tablea1, 'tables/append_model_comparet1.csv', row.names = F)
 
 # Compare goodness of fit measures ----
 # Wants lowest value
@@ -254,7 +234,7 @@ tablea3x$aic <- round(tablea3x$aic)
 tablea3x$bic <- round(tablea3x$bic)
 tablea3x$mlik <- round(tablea3x$mlik)
 
-write.csv(tablea3x, 'tables/tablea3x.csv', row.names = F)
+write.csv(tablea3x, 'tables/append_model_comparet2.csv', row.names = F)
 
 colnames(tablea3x) <- c("Model", "AIC", "BIC", "Log likelihood") ; 
 kbl(tablea3x, booktabs = T, caption = 'Goodness of fit across models') 

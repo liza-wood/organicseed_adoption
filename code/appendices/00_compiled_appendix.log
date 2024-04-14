@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  9 APR 2024 12:36
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  14 APR 2024 17:47
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**06_compiled_appendix.tex
-(./06_compiled_appendix.tex
+**00_compiled_appendix.tex
+(./00_compiled_appendix.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-03-06> (/usr/local/texlive/2020/texmf-dist/tex/latex
 /base/article.cls
@@ -458,7 +458,13 @@ Package: xurl 2020/01/24 v 0.09 modify URL breaks
 File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count291
 \l__pdf_internal_box=\box65
-) (./06_compiled_appendix.aux
+) (./00_compiled_appendix.aux
+
+LaTeX Warning: Label `' multiply defined.
+
+
+LaTeX Warning: Label `' multiply defined.
+
 
 LaTeX Warning: Label `' multiply defined.
 
@@ -466,7 +472,7 @@ LaTeX Warning: Label `' multiply defined.
 LaTeX Warning: Label `' multiply defined.
 
 )
-\openout1 = `06_compiled_appendix.aux'.
+\openout1 = `00_compiled_appendix.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 94.
 LaTeX Font Info:    ... okay on input line 94.
@@ -617,75 +623,100 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-05.
+08.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 166.
+(Font)              <10> on input line 169.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 166.
+(Font)              <7> on input line 169.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 166.
+(Font)              <5> on input line 169.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[2]
-Overfull \hbox (16.46849pt too wide) in paragraph at lines 296--347
+Overfull \hbox (16.46849pt too wide) in paragraph at lines 202--253
  [][] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[3] [4] [5]
-Overfull \vbox (3.60945pt too high) has occurred while \output is active []
+[2] [3]
+</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
+_repf1_usda.png, id=39, 505.89pt x 289.08pt>
+File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
+ppend_repf1_usda.png Graphic file (type png)
+<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_repf1_usda.png>
+Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
+_adoption/figures/append_repf1_usda.png  used on input line 339.
+(pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
+[4] [5 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures
+/append_repf1_usda.png>] [6] [7] [8]
+<00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf, id=77, 953.5625pt 
+x 107.40125pt>
+File: 00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf Graphic file (
+type pdf)
+<use 00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf>
+Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med1 diagram-1
+.pdf  used on input line 531.
+(pdftex.def)             Requested size: 352.3179pt x 39.68211pt.
+<00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf, id=78, 953.5625pt 
+x 106.3975pt>
+File: 00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf Graphic file (
+type pdf)
+<use 00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf>
+Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med2 diagram-1
+.pdf  used on input line 575.
+(pdftex.def)             Requested size: 352.3179pt x 39.31125pt.
 
-[6] [7] [8]
-</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/figure
-a1.png, id=68, 505.89pt x 289.08pt>
-File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/f
-igurea1.png Graphic file (type png)
-<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/fi
-gurea1.png>
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[9 <./00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf> <./00_compile
+d_appendix_files/figure-latex/med2 diagram-1.pdf>]
+</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
+_field_pp.png, id=110, 505.89pt x 289.08pt>
+File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
+ppend_field_pp.png Graphic file (type png)
+<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_field_pp.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/figurea1.png  used on input line 549.
+_adoption/figures/append_field_pp.png  used on input line 614.
 (pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
-</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/figure
-a2.png, id=70, 505.89pt x 289.08pt>
-File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/f
-igurea2.png Graphic file (type png)
-<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/fi
-gurea2.png>
+</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
+_forage_pp.png, id=111, 505.89pt x 289.08pt>
+File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
+ppend_forage_pp.png Graphic file (type png)
+<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_forage_pp.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/figurea2.png  used on input line 557.
+_adoption/figures/append_forage_pp.png  used on input line 623.
 (pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 564.
-[9 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/fig
-urea1.png> </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/fig
-ures/figurea2.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 564.
-(./06_compiled_appendix.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 564.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 564.
+[10 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_field_pp.png>] [11 </Users/lizawood/Documents/Davis/R-Projects/organicseed
+_adoption/figures/append_forage_pp.png>] [12] [13] [14]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 768.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 768.
+(./00_compiled_appendix.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 768.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 768.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14446 strings out of 480608
- 211982 string characters out of 5903631
- 534264 words of memory out of 5000000
- 29971 multiletter control sequences out of 15000+600000
- 579727 words of font info for 94 fonts, out of 8000000 for 9000
+ 14516 strings out of 480608
+ 214256 string characters out of 5903631
+ 528780 words of memory out of 5000000
+ 30008 multiletter control sequences out of 15000+600000
+ 586056 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 41i,13n,42p,819b,333s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 41i,13n,42p,819b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
 cal/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/20
 20/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2020/texmf-dist/
@@ -699,10 +730,10 @@ ist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2020/texmf-dist/fonts/t
 ype1/public/lm/lmr7.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/
 lm/lmri10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.
 pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on 06_compiled_appendix.pdf (9 pages, 501981 bytes).
+Output written on 00_compiled_appendix.pdf (14 pages, 636517 bytes).
 PDF statistics:
- 151 PDF objects out of 1000 (max. 8388607)
- 124 compressed objects within 2 object streams
- 33 named destinations out of 1000 (max. 500000)
- 12355 words of extra memory for PDF output out of 14400 (max. 10000000)
+ 236 PDF objects out of 1000 (max. 8388607)
+ 194 compressed objects within 2 object streams
+ 54 named destinations out of 1000 (max. 500000)
+ 12410 words of extra memory for PDF output out of 14400 (max. 10000000)
 

@@ -1,3 +1,111 @@
+region_text <- function(df){
+  n.by.state <- df %>% 
+    group_by(Region, State) %>% 
+    count() %>% 
+    ungroup() %>% 
+    mutate(StateN = sum(n), 
+           Stateprop = n/StateN,
+           StatePercent = paste(round(100*(n/StateN), 1), "%"),
+           StateN = sum(n), ) %>% 
+    rename("Staten" = n) 
+  n.by.region <- df %>% 
+    group_by(Region) %>% 
+    count() %>% 
+    ungroup() %>% 
+    mutate(RegionN = sum(n), 
+           Regionprop = n/RegionN,
+           RegionPercent = paste(round(100*(n/RegionN), 1), "%")) %>% 
+    rename("Regionn" = n) %>% 
+    ungroup()
+  
+  counts <- left_join(n.by.state, n.by.region)
+  
+  return(counts)
+}
+
+make_map <- function(df, mapdf){
+  # This one is finnicky but works
+  us_states <- left_join(us_states_og, mapdf, by = c("abbr" = "State")) %>% 
+    rename("State" = "full") %>% 
+    mutate(State = trimws(State)) 
+  
+  # For the states that weren't in the dataset
+  us_states <- us_states %>% 
+    mutate(Region = case_when(
+      State %in% western ~ "West",
+      State %in% northcentral ~ "North Central",
+      State %in% southern ~ "South",
+      State %in% northeast ~ "Northeast",
+      T ~ NA_character_)) %>% 
+    mutate(Regionn = case_when(
+      is.na(Regionn) & Region == "Northeast" ~ 
+        unique(mapdf$Regionn[mapdf$Region == "Northeast"]),
+      is.na(Regionn) & Region == "West" ~ 
+        unique(mapdf$Regionn[mapdf$Region == "West"]),
+      is.na(Regionn) & Region == "South" ~ 
+        unique(mapdf$Regionn[mapdf$Region == "South"]),
+      is.na(Regionn) & Region == "North Central" ~ 
+        unique(mapdf$Regionn[mapdf$Region == "North Central"]),
+      T ~ Regionn),
+      RegionPercent = case_when(
+        is.na(RegionPercent) & Region == "Northeast" ~ unique(mapdf$RegionPercent[mapdf$Region == "Northeast"]),
+        is.na(RegionPercent) & Region == "West" ~ unique(mapdf$RegionPercent[mapdf$Region == "West"]),
+        is.na(RegionPercent) & Region == "North Central" ~ unique(mapdf$RegionPercent[mapdf$Region == "North Central"]),
+        is.na(RegionPercent) & Region == "South" ~ unique(mapdf$RegionPercent[mapdf$Region == "South"]),
+        T ~ RegionPercent))
+  
+  # To plot points on the map
+  loc <- data.frame(lon = df$long, lat = df$lat, year = df$year)
+  transformed <- usmap_transform(loc) %>% 
+    rename(x = lon.1, y = lat.1) %>% 
+    filter(lat < 51 & lat > 21)
+  transformed <- transformed %>% 
+    mutate(year = case_when(year == 2011 ~ 2010, year == 2016 ~ 2015,
+                            year == 2021 ~ 2020, T ~ NA)) 
+
+  #plot_usmap() +
+  #  geom_point(data = transformed, aes(x = x, y = y), colour = "#2d677f", shape=21, size = 2)
+  
+  # To plot regional blocks
+  counts <- data.frame(us_states) %>% select(Region, Regionn) %>% 
+    unique() %>% arrange(Regionn)
+  
+  us_states$n <- factor(us_states$Regionn)
+  levels(us_states$n) <- c(paste(counts[1,1], counts[1,2], sep = ": "),
+                           paste(counts[2,1], counts[2,2], sep = ": "),
+                           paste(counts[3,1], counts[3,2], sep = ": "),
+                           paste(counts[4,1], counts[4,2], sep = ": "))
+  
+  p <- ggplot() +
+    geom_polygon(data = us_states, fill = "white", size = 0.2,
+                 color = "black",
+                 aes(x = x, y = y, 
+                     #color = factor(Regionn), 
+                     group = group)) + 
+    geom_point(data = transformed, aes(x = x, y = y, colour = factor(year)) , 
+               alpha = .4,shape=20, size = 2,
+               position=position_jitter(width=10000, height=10000)) +
+    scale_color_manual(values = mako[c(2,5,8)]) + 
+    labs(title = "",
+         color = "",
+         x = "", y = "") + 
+    theme_light(base_size = 10)  +
+    theme(
+      #legend.position="bottom", # was bottom
+      legend.position = c(0.5, 0.05),
+      legend.direction = "horizontal",
+      panel.grid = element_blank(),
+      line = element_blank(),
+      rect = element_blank(),
+      axis.text = element_blank(),
+      text = element_text(family = "Times", size = 14)
+      #axis.title = element_text(family = FONTTYPE, size = TITLESIZE)
+    ) +
+    guides(color = guide_legend(override.aes = list(size = 10)))
+  return(p)
+  
+}
+
 coef_order_core <- c("Barrier: Organic availability",
                      #"Barrier: Buyer requirements",
                      "Barrier: Undesirable traits",

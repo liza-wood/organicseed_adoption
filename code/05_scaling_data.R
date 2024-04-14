@@ -43,13 +43,5 @@ df <- df %>%
          #years_certified_s = c(scale(YearsCertified, scale = T))
          )
 
-# log scale and mean centered
-lsmc <- c(scale(log(df$TotalAcreage), scale = F))
-summary(log(df$TotalAcreage))
-summary(lsmc)
-# mean centered and log scaled -- cant' do this
-mcls <- log(c(scale(df$TotalAcreage, scale = F)))
-summary(df$acreage_log_s)
-
 saveRDS(df, "~/Box/organicseed_adoption/df_scaled.rds")
 saveRDS(df, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds")

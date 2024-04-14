@@ -1,56 +1,47 @@
 library(dplyr)
 library(ggplot2)
+library(betareg)
 source('code/functions.R')
 # Model using only certifier data
+
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
   filter(Region != "International", maincrop != "Other") %>% 
   select(RespondentID, 
-         OGseed_percent_maincrop, #dependent variable
-         #OGVarietiesSuccessn, # legitimation
-         OGSeedOGIntegrityn,
-         CertifierRequestn, # guidance of the search
-         maincrop, survey_year, Region, # system level features
-         TotalAcreage, cropcat_n, # operation controls
-         #contains('barrier_'),
-         barrier_buyerReq,
+         OGseed_percent_maincrop, 
+         barrier_availability,
          barrier_insuffQuantity,
          barrier_lackdesiredTraits,
-         barrier_availability,
+         barrier_buyerReq,
+         barrier_price,
+         OG_value,
+         CertifierRequestn, 
+         maincrop, survey_year, Region, 
+         TotalAcreage, cropcat_n,
          noncommercial_seedsource,
-         certifier_codename#,
-         #YearsCertified
+         certifier_codename
   ) %>% 
   na.omit() %>%  # do this now so that it scales around the sample we are using
-  mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
-         CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop) %>%  # do this now so that it
   mutate(Region = factor(Region, levels = c("North Central", "West", 
-                                            "Northeast", "South"))) %>% 
+                                            "Northeast", "South")),
+         survey_year = factor(survey_year, c(2016, 2011, 2021))) %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
-         CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop,
          acreage_log = log(TotalAcreage),
-         acreage_log_s = c(scale(acreage_log, scale = T)), 
-         acreage_s = c(scale(TotalAcreage, scale = T)), 
+         acreage_log_s = c(scale(acreage_log, scale = F)),
          cropcat_n_s = c(scale(cropcat_n, scale = T)),
-         CertifierRequestn_s = c(scale(CertifierRequestn, scale = T)),
-         legitimation_user_s = c(scale(OGSeedOGIntegrityn, scale = T)),
+         OG_value_s = c(scale(OG_value, scale = T)),
          survey_year = factor(survey_year),
-         #barrier_price_s = c(scale(barrier_price, scale = T)),
          barrier_availability_s = c(scale(barrier_availability, scale = T)),
-         #barrier_distrustQuality_s = c(scale(barrier_distrustQuality, scale = T)),
-         barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = T)),
-         #barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = T)),
          barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                               scale = T)),
-         #years_certified_s = c(scale(YearsCertified, scale = T))
-  ) %>% 
-  mutate(acreage_s = acreage_log,
-         cropcat_n_s = cropcat_n) 
+         barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = T)),
+         barrier_price_s = c(scale(barrier_price, scale = T))
+  )
+
 cert_n <- df.full %>% 
   group_by(certifier_codename) %>% count() %>% 
   arrange(-n)
-
 
 df.full$certifier_codename <- ifelse(df.full$certifier_codename %in% 
                                        cert_n$certifier_codename[cert_n$n > 20],
@@ -61,18 +52,17 @@ df.full$certifier_codename <- factor(df.full$certifier_codename, lvls)
 table(df.full$certifier_codename)
 # Relationship between certifier request use and not:
 df.full %>% 
-  filter(CVseed_percent_maincrop_prop <= .99) %>% 
+  filter(OGseed_percent_maincrop_prop <= .99) %>% 
   group_by(certifier_codename) %>% 
-  summarize(mean_request_s = mean(CertifierRequestn_s),
-            mean_request_n = mean(CertifierRequestn))
+  summarize(mean_request_n = mean(CertifierRequestn))
 
 df.full %>% 
-  ggplot(aes(x = certifier_codename, y = CVseed_percent_maincrop_prop))+
+  ggplot(aes(x = certifier_codename, y = OGseed_percent_maincrop_prop))+
   geom_boxplot()
 
 df.full %>% 
-  filter(CVseed_percent_maincrop_prop <= .99) %>% 
-  group_by(certifier_codename, CertifierRequestn) %>% 
+  filter(OGseed_percent_maincrop_prop <= .99) %>% 
+  group_by(certifier_codename) %>% 
   count()
 
 lvls <- c("certifier34", "other_certifier","certifier2","certifier24","certifier27",
@@ -80,40 +70,36 @@ lvls <- c("certifier34", "other_certifier","certifier2","certifier24","certifier
 df.full$certifier_codename <- factor(df.full$certifier_codename, lvls)
 
 df.full_rounded <- df.full
-df.full_rounded$CVseed_percent_maincrop_prop <- ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$CVseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$CVseed_percent_maincrop_prop))
+df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
 
 df.full_rounded$maincrop <- factor(df.full_rounded$maincrop, c("Field", "Forage", "Vegetables"))
-df.full_rounded$Region <- factor(df.full_rounded$Region, c("North Central", "West", "Northeast", "South"))
 
-library(betareg)
 set.seed(19)
-m_cert <- betareg(CVseed_percent_maincrop_prop ~ 
+m_cert <- betareg(OGseed_percent_maincrop_prop ~ 
                barrier_availability_s +
-               barrier_buyerReq_s +
                barrier_lackdesiredTraits_s +
                barrier_insuffQuantity_s +
                survey_year +
-               legitimation_user_s + 
-               acreage_s + 
+               OG_value_s + 
+               acreage_log_s + 
                cropcat_n_s +
                noncommercial_seedsource_s +
-               #CertifierRequestn_s +
+               #CertifierRequestn +
                maincrop +
                Region +
                certifier_codename, 
              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(m_cert)
 m_cert_df <- prep_betreg_data(m_cert)
-plot_inla_models(m_cert_df, 1)
+plot_betareg_models(m_cert_df, 1)
 
-m <- betareg(CVseed_percent_maincrop_prop ~ 
+m <- betareg(OGseed_percent_maincrop_prop ~ 
                     barrier_availability_s +
-                    barrier_buyerReq_s +
                     barrier_lackdesiredTraits_s +
                     barrier_insuffQuantity_s +
                     survey_year +
-                    legitimation_user_s + 
-                    acreage_s + 
+                    OG_value_s + 
+                    acreage_log_s + 
                     cropcat_n_s +
                     noncommercial_seedsource_s +
                     #CertifierRequestn_s +
@@ -122,9 +108,9 @@ m <- betareg(CVseed_percent_maincrop_prop ~
                   data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(m)
 m_df <- prep_betreg_data(m)
-plot_inla_models(m_df, 1)
+plot_betareg_models(m_df, 1)
 
-saveRDS(list(m_cert, m), 'tables/tablesa6_models.RDS')
+saveRDS(list(m_cert, m), 'tables/append_certifier_model.RDS')
 # With certifier request
 #Log-likelihood: 631.5 on 24 Df
 #Pseudo R-squared: 0.2698

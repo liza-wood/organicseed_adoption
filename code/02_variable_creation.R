@@ -96,14 +96,9 @@ df$IncreasedOGSeed <- ifelse(df$OGseed_percent_maincrop == 100 &
                                is.na(df$IncreasedOGSeed), "Already at 100%", 
                              df$IncreasedOGSeed)
 
-table(df$IncreasedOGSeed)
-table(df$maincrop)
-table(df$maincrop, df$survey_year)
-
 filter(df, survey_year == 2021) %>% 
   select(ForageAcreage, FieldAcreage, VegiAcreage, TotalAcreage, maincrop) %>% 
   filter(ForageAcreage != 0)
-
 
 df <- df %>% 
   mutate(year_range = case_when(
@@ -113,7 +108,6 @@ df <- df %>%
     T ~ NA_character_
   ))
 
-# Removed the matched funds thing to regional_data script
 
 ## Creating a few new variables
 df$OGSeedOGIntegrityf <- factor(df$OGSeedOGIntegrity, levels = c("Strongly disagree",
@@ -202,6 +196,7 @@ df <- df %>%
          barrier_lackdesiredTraits = ifelse(NoOGSeedTrait %in% rmv, NA, 
                                             as.numeric(factor(NoOGSeedTrait, levels = levels_b))),
          barrier_text = NoOGSeedText)
+
 df$barrier_seedTreatlackf = factor(df$barrier_seedTreatlack)
 levels(df$barrier_seedTreatlackf) = levels_b
 df$barrier_buyerReqf = factor(df$barrier_buyerReq)
@@ -229,21 +224,9 @@ df <- select(df, -contains("NoOG"))
 mat <- df %>% 
   filter(!is.na(RespondentID)) %>% 
   tibble::column_to_rownames("RespondentID") %>% 
-  dplyr::select(barrier_seedTreatlack:barrier_lackdesiredTraits) #%>%
-#map_dfr(~ ifelse(. == "Not applicable", NA, .)) #%>%  
-#filter(. != "Not applicable") #   Getting rid of only all the NAs
+  dplyr::select(barrier_seedTreatlack:barrier_lackdesiredTraits) 
 
 ResponseId <- rownames(mat)
-
-#mat <- mat %>% 
-#  map_dfr(~ ifelse(is.na(.), "No response", .)) %>% # Then converting
-#  map_dfr(~ factor(., levels =
-#                     c("No response",
-#                       "Not a factor",
-#                       "Slight factor",
-#                       "Moderate factor",
-#                       "Significant factor"))) %>%
-#  map_dfr(~ as.numeric(.))
 
 nrow(mat[complete.cases(mat),])
 mat.nona <- mat[complete.cases(mat),]

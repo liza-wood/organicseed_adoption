@@ -55,7 +55,7 @@ df <- df %>%
   ) %>% 
   select(colnames(df.full), IncreasedOGSeedf)
 
-m2 <- glm(IncreasedOGSeedf ~ 
+m <- glm(IncreasedOGSeedf ~ 
             barrier_availability_s +
             barrier_lackdesiredTraits_s +
             barrier_insuffQuantity_s +
@@ -68,4 +68,6 @@ m2 <- glm(IncreasedOGSeedf ~
             maincrop +
             Region, 
           data = df, family = binomial(link = "logit"))
-summary(m2)
+summary(m)
+
+saveRDS(m, 'tables/append_increase_model.RDS')

@@ -1,31 +1,31 @@
 library(dplyr)
 library(stringr)
+library(tidyUSDA)
+source('code/keys.R')
+
 # 0. Read in data just like for data summary ----
-# This is the dataframe where I have identified main crops of growers, so each observation is only one grower
-df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
+df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
+  filter(Region != "International", maincrop != "Unknown") %>% 
   mutate(maincrop_acrage = case_when(
     maincrop == "Field" ~ FieldAcreage,
     maincrop == "Forage" ~ ForageAcreage,
     maincrop == "Vegetables" ~ VegiAcreage,
     T ~ NA
   )) %>% 
-  filter(Region != "International", maincrop != "Unknown") %>% 
   select(OGseed_percent_maincrop,
-         OGseed_percent_maincrop, 
-         OGSeedOGIntegrityn,
-         CertifierRequestn,
-         maincrop, survey_year, Region, 
-         TotalAcreage, cropcat_n, 
-         maincrop_acrage,
-         noncommercial_seedsource,
-         #YearsCertified
-         barrier_buyerReq,
+         #barrier_buyerReq,
          barrier_insuffQuantity,
          barrier_lackdesiredTraits,
-         barrier_availability, data_coll_method) %>% 
+         barrier_availability, 
+         OG_value,
+         CertifierRequestn,
+         maincrop, survey_year, Region, 
+         maincrop_acrage,
+         TotalAcreage, cropcat_n, 
+         VegiAcreage, FieldAcreage, ForageAcreage,
+         noncommercial_seedsource, data_coll_method) %>% 
   na.omit() %>% 
-  mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
-         CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop) %>% 
+  mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100) %>% 
   mutate(survey_year = case_when(
     survey_year == 2011 ~ 2010,
     survey_year == 2016 ~ 2015,
@@ -42,67 +42,8 @@ southern <- c("TX", "OK", "AR", "LA", "KY", "TN", "MS", "AL", "FL", "GA", "SC",
 northeast <- c("WV", "MD", "DE", "NJ", "PA", "NY", "CT", "RI", "MA", "VT", 
                "NH", "ME")
 
-# 1. Compare convenience versus random ----
-table(df.full$data_coll_method, df.full$survey_year)
-
-## Counts ----
-## Counts comparison region x year
-df.full %>% 
-  group_by(data_coll_method, Region, survey_year) %>% 
-  count() %>% 
-  ungroup() %>% 
-  group_by(Region, survey_year) %>% 
-  mutate(total = sum(n)) %>% 
-  tidyr::pivot_wider(names_from = data_coll_method, values_from = n) %>% 
-  mutate(conv_perc = paste(round(100*(Convenience/total)),"%"),
-         ran_perc = paste(round(100*(Random/total)),"%"))
-
-## Counts comparison year only
-table_a1 <- df.full %>% 
-  group_by(data_coll_method, survey_year) %>% 
-  count() %>% 
-  ungroup() %>% 
-  group_by(survey_year) %>% 
-  mutate(total = sum(n)) %>% 
-  tidyr::pivot_wider(names_from = data_coll_method, values_from = n) %>% 
-  mutate(conv_perc = paste(round(100*(Convenience/total)),"%"),
-         ran_perc = paste(round(100*(Random/total)),"%"))
-table_a1
-
-## Table A1 ----
-table_a1$Convenience <- paste0(table_a1$Convenience, " (",
-                               table_a1$conv_perc, ")")
-table_a1$Random <- paste0(table_a1$Random, " (",
-                          table_a1$ran_perc, ")")
-table_a1 <- select(table_a1, -c(conv_perc, ran_perc))
-write.csv(table_a1, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea1.csv", row.names = F)
-
-## Table A2 ----
-## Also farm size??
-#df.full %>% 
-#  group_by(data_coll_method, survey_year, Region, maincrop) %>% 
-#  summarize(mean_farmsize = mean(TotalAcreage))
-table_a2 <- df.full %>% 
-  group_by(data_coll_method, survey_year, Region, maincrop) %>% 
-  count() %>% 
-  ungroup() %>% 
-  group_by(data_coll_method, survey_year) %>% 
-  mutate(total = sum(n),
-         prop = round(100*(n/total)),
-         n = paste0(n, " (", prop, "%)")) %>% 
-  select(-c(total, prop)) %>% 
-  pivot_wider(names_from = data_coll_method, values_from = n) %>% 
-  filter(survey_year != 2010) %>% 
-  ungroup()
-table_a2_2015 <- filter(table_a2, survey_year == 2015) %>% select(-survey_year)
-table_a2_2020 <- filter(table_a2, survey_year == 2020)  %>% select(-c(Region, maincrop,survey_year))
-
-table_a2 <- cbind(table_a2_2015, table_a2_2020)
-write.csv(table_a2, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea2.csv", row.names = F)
-# 2. Compare whole sample to census ----
-## Understand tidyUSDA ----
-library(tidyUSDA)
-source('code/keys.R')
+# 1. Compare whole sample to USDA NASS organic survey census ----
+## Understand tidyUSDA 
 ## Here are the parameters: https://quickstats.nass.usda.gov/
 # These seem to be base: Program > Sector > Group > Commodity > Category > Data Iterm
 ## allProgram
@@ -136,14 +77,21 @@ organic_n_operations <- getQuickstat(
   select(state_name, state_alpha, year, Value) %>% 
   rename(operations_count = Value)
 
+# Based on these outputs, it looks like:
+# source: census; sector: economics; group: farm & land assets; commodity: ag land; category: area OR operations OR net income; domain: organic status
+
 ## Text: aggregate representativeness ----
 totals <- organic_n_operations %>% 
   group_by(year) %>% 
   summarize(total = sum(operations_count))
+totals
+# These numbers are different than their reports, but this is focused on crops
+# and so it is destined to be smaller. Unclear whether exempt farms (<$5,000/year)
+# are included in here
+# https://www.nass.usda.gov/Publications/Highlights/2015/2014_Organic_Survey_Highlights.pdf
+# https://www.nass.usda.gov/Publications/Highlights/2022/2022_Organic_Highlights.pdf
 
-## This is what we can estimate
-round(100*(tablea1$`Total complete responses`/totals$total), 1)
-
+## Summarize by state, region
 organic_summary_by_state <- left_join(organic_acres, organic_n_operations) 
 organic_summary_by_region <- organic_summary_by_state %>% 
   mutate(region = case_when(
@@ -170,8 +118,6 @@ organic_summary_by_region <- organic_summary_by_state %>%
          prop_acres = round(total_acres/national_acres, 2)) %>% 
   ungroup()
 
-# Based on these outputs, it looks like:
-# source: census; sector: economics; group: farm & land assets; commodity: ag land; category: area OR operations OR net income; domain: organic status
 
 ### Table A3a ----
 ## Year-region operations count
@@ -232,9 +178,9 @@ table_a3 <- table_a3 %>%
          usda_census_n_operations, representativeness_ops,
          sample_avg_farm_size, usda_census_avg_farm_size, representation_acres) 
 
-write.csv(table_a3, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tablea3.csv", row.names = F)
+write.csv(table_a3, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/append_rept1.csv", row.names = F)
 
-## Crop-specific data ----
+# 2. Crop-specific data - NOT INCLUDING ----
 # Then there seem to be crop-specific approaches 
 ## But I cannot get the data in aggregate, so I will group together
 
@@ -326,7 +272,13 @@ crop_summary_by_region <- crop_summary_by_state %>%
 usda_crop_ops <- select(crop_summary_by_region,
                    survey_year, Region, maincrop, prop_operations, total_operations_count) %>% 
   rename(usda_census_prop_operations = prop_operations,
-         usda_census_n_operations = total_operations_count)
+         usda_census_n_operations = total_operations_count) %>% 
+  mutate(survey_year = case_when(
+    survey_year == 2011 ~ 2010,
+    survey_year == 2016 ~ 2015,
+    survey_year == 2021 ~ 2020,
+    T ~ survey_year
+  ))
 usda_crop_ops
 
 table_aXa <- df.full %>% 
@@ -348,7 +300,13 @@ table_aXa
 ### Table AXb ----
 usda_crop_acre <- select(crop_summary_by_region,
                          survey_year, Region, maincrop, avg_farm_size) %>% 
-  rename(usda_census_avg_farm_size = avg_farm_size)
+  rename(usda_census_avg_farm_size = avg_farm_size) %>% 
+  mutate(survey_year = case_when(
+    survey_year == 2011 ~ 2010,
+    survey_year == 2016 ~ 2015,
+    survey_year == 2021 ~ 2020,
+    T ~ survey_year
+  ))
 usda_crop_acre
 
 table_aXb <- df.full %>% 
@@ -389,5 +347,5 @@ table_aX <- table_aX %>%
          sample_avg_farm_size, usda_census_avg_farm_size, representation_acres) 
 table_aX 
 
-write.csv(table_aX, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/tableaX.csv", row.names = F)
+write.csv(table_aX, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/append_rept2.csv", row.names = F)
 

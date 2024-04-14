@@ -1,0 +1,13 @@
+"survey_year","Region","sample_n_operations","usda_census_n_operations","representativeness_ops","sample_avg_farm_size","usda_census_avg_farm_size","representation_acres"
+2010,"North Central",307,2986,10.3,195,212,-17
+2010,"Northeast",51,1897,2.7,142,142,0
+2010,"South",52,540,9.6,103,180,-77
+2010,"West",139,3296,4.2,194,248,-54
+2015,"North Central",401,4689,8.6,309,184,125
+2015,"Northeast",142,3246,4.4,140,135,5
+2015,"South",76,1096,6.9,143,215,-72
+2015,"West",191,4529,4.2,356,260,96
+2020,"North Central",178,5824,3.1,323,204,119
+2020,"Northeast",98,3888,2.5,199,143,56
+2020,"South",39,1209,3.2,847,279,568
+2020,"West",98,5273,1.9,326,284,42

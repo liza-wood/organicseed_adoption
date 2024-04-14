@@ -1,4 +1,5 @@
 library(dplyr)
+library(betareg)
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds")
 
 # Scale data per year ----
@@ -59,9 +60,6 @@ df21 <- filter(df.full_rounded, survey_year == 2021) %>%
                                               scale = T))
   )
 
-
-
-library(betareg)
 set.seed(19)
 m11 <- betareg(OGseed_percent_maincrop_prop ~ 
                barrier_availability_s +
@@ -108,4 +106,4 @@ summary(m11)
 summary(m16)
 summary(m21)
 m_list <- list(m11, m16, m21)
-saveRDS(m_list, 'tables/table_a8.rds')
+saveRDS(m_list, 'tables/append_models_over_time.rds')

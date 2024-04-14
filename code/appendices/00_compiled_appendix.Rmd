@@ -26,16 +26,16 @@ Surveys were collected using a mix of convenience and random sampling, with the 
 The breakdown between random and convenience sampling used in our analysis is summarized in Table 1 and Table 2. We also consider the effect of sampling method, as well as survey distributor, through models in Table 4. 
 
 
-```{r tbl1, echo = F}
-tablea1 <- read.csv('tables/tablea1.csv') ; 
+```{r, echo = F}
+tablea1 <- read.csv('tables/append_samplet1.csv') ; 
 tablea1[1,4] <- "0 (0 %)"
 colnames(tablea1) <- c("Year", "Total complete responses", "Convenience responses (%)", "Random responses (%)")
 kbl(tablea1, align = 'c', booktabs = T, caption = 'Convenience and random samples') %>% kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
   column_spec(2:4, width = '4cm')
 ```
 
-```{r tbl2, echo = F}
-tablea2 <- read.csv('tables/tablea2.csv') ; 
+```{r, echo = F, eval = F}
+tablea2 <- read.csv('tables/append_samplet2.csv') ; 
 colnames(tablea2) <- c("Region", "Main crop", "Convenience", "Random", "Convenience", "Random")
 kbl(tablea2, align = c('l','l', rep('c', 4)), 
     booktabs = T, caption = 'Number and percentage of region-crop combinations within convenience and random samples in 2015 and 2020 survey periods') %>% 
@@ -56,16 +56,16 @@ Regarding concerns of survey distributor (i.e. that the distribution by Organic 
 
 ```{r, echo = F}
 core_vars2 <- c("Barrier: Organic availability",
-                "Barrier: Buyer requirements",
+                #"Barrier: Buyer requirements",
                 "Barrier: Undesirable traits",
                 "Barrier: Insufficient quantity",
-                "Year: 2015 (vs. 2010)",
-                "Year: 2020 (vs. 2010)",
+                "Year: 2010 (vs. 2015)",
+                "Year: 2020 (vs. 2015)",
                 "Values organic seed",
                 "Farm size (log acres)",
                 "Crop diversity",
-                "Seed saved or traded (\\%)",
                 "Certifiers request organic seed use",
+                "Seed saved or traded (\\%)",
                 "Forage crops (vs. Field)",
                 "Vegetable crops (vs. Field)",
                 "Western region (vs. North Central)",
@@ -74,11 +74,14 @@ core_vars2 <- c("Barrier: Organic availability",
 ```
 
 
-```{r tbl4, echo = F, results = "asis", eval = T}
-m_list <- readRDS('tables/tablesa5_models.RDS')
+```{r, echo = F, results = "asis", eval = T}
+m_list <- readRDS('tables/append_sample_models.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "Proportion of organic land planted with conventional seed", 
-           covariate.labels = c(core_vars2[-(6)], "Random data collection (versus convenience)",
+           dep.var.labels = "Proportion of organic land planted with organic seed", 
+           covariate.labels = c(core_vars2[1:3], core_vars2[5],
+                                core_vars2[4],
+                                core_vars2[6:15],
+                                "Random data collection (versus convenience)",
               "Distributor: OSA (vs. Other)",
                 "Constant"), 
           column.labels = c("\\shortstack{Including\\\\sampling\\\\method\\\\(2015, 2020)}", 
@@ -89,7 +92,7 @@ stargazer::stargazer(m_list,  type = "latex",
           nobs = TRUE, dep.var.caption = "", 
            intercept.bottom = T,
            no.space = TRUE, header = FALSE, 
-           title = "Model checks for sampling and distributor effects", 
+           title = "Model results for sampling and distributor effects", 
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq'))
 ```
 
@@ -105,18 +108,8 @@ In Table 3 we compare the number of operations in our sample (n) to the populati
 
 We also calculate the mean acreage in our sample, as well as the mean acreage according to the USDA census (N operations/total acreage) for a given year-region combination. Using the mean here provides limited information, given that farm sizes vary considerably in ways that are not captured in aggregate data available in the USDA census. Though crude, these averages suggest relative similarity in average farm size.
 
-**We calculate farm size as acreage planted to 3 major crop categories -- probably underestimates compared to USDA, because they may account for all land (look into that?)**
-**Can we put categorical farm size into the model to double check largest farms aren't pulling up effect**
-
-
-```{r, echo = F, eval = F}
-df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") 
-ggplot(df.full, aes(y = TotalAcreage)) + geom_density()
-ggplot(df.full, aes(x = log(TotalAcreage))) + geom_histogram()
-```
-
-```{r tbl3, echo = F, message = F, warning = F}
-tablea3 <- read.csv('tables/tablea3.csv') 
+```{r, echo = F, message = F, warning = F}
+tablea3 <- read.csv('tables/append_rept1.csv') 
 tablea3 <- tablea3 %>% 
   group_by(survey_year) %>%   
   summarize(mean_rep = round(100*(sum(sample_n_operations)/sum(usda_census_n_operations)), 2)) %>% 
@@ -150,7 +143,7 @@ kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 6)),
 
 ```{r, echo = F, eval = F, message = F, warning = F}
 # Doing this with crops, but not including for now 
-tablea3 <- read.csv('tables/tableaX.csv') 
+tablea3 <- read.csv('tables/append_rept2.csv') 
 tablea3 <- tablea3 %>% 
   group_by(survey_year, maincrop) %>%   
   summarize(mean_rep = round(100*(sum(sample_n_operations)/sum(usda_census_n_operations)), 2)) %>% 
@@ -181,28 +174,29 @@ kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
   column_spec(1:8, extra_css = "vertical-align:middle;")
 ```
 
-<!----
-To try to better compare the representativeness of farm size, we look at the only available nationally reported data on farm size distribution that we could find: USDA 2017 state-level farm profiles, which report the number of farms across different size categories. The distribution of those farm sizes, compared against our survey data from 2015 and 2020, are presented in Figure 1. While these comparisons show and over-representation of small farms and under-representation of medium-size farms, it is important to note that here we are comparing our surveys of organic growers against _all_ operations, conventional and organic, in the US. However, across each four regions, organic farms account for only 0.7, 2.6, 0.06, and 2% of operations in the North Central, Northeast, South, and West, respectively, making it hard to estimate representativeness without available data on organic farm size distribution. 
 
-** Should I just remove this? -- yes
+To try to better compare the representativeness of farm size, we look at the only available nationally reported data on organic farm size distribution that we could find: USDA Census organic tabulations, reporting for the [2012](https://agcensus.library.cornell.edu/wp-content/uploads/2012-organictab-1.pdf) and [2017](https://www.nass.usda.gov/Publications/AgCensus/2017/Online_Resources/Organics_Tabulation/organictab.pdf) censuses. 
 
-```{r fig1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Sample farm size distribution compared to all US operations, conventional and organic'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea3.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+We compare these USDA Census data against our survey sample, presented in Figure 1. These comparisons show a consistent over-representation of the smallest farms (1-9 acres) by 12-18% and under-representation of the largest farms.  Still, we have faith that our sample captures the overall distribution of organic farm size. Additionally, an important consideration is that we calculate farm size as reported acreage planted to three major crop categories. This approach likely underestimates acreage generally compared to USDA approach, which reports all certified land.  
+
+```{r fig1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Sample farm size distribution compared to USDA Organic Census data'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_repf1_usda.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
 
----> 
+
 \pagebreak 
 # Model checks 
+
 ## 4. Full model results  
 
-```{r, echo = F, results = "asis"}
+```{r full model, echo = F, results = "asis"}
 #tablea6 <- read.csv('tables/tablea7.csv') ; 
 #colnames(tablea5) <- c("Term", "Mean estimate", "Standard error") ; 
 #kbl(tablea6, booktabs = T, caption = 'Full model results') %>% kable_styling(latex_options = c("HOLD_position")) 
 
-m_list <- readRDS('tables/tablea7_model.RDS')
+m_list <- readRDS('tables/append_fullmodel.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           dep.var.labels = "\\shortstack{Proportion of production acreage\\\\planted with organic seed}", 
            covariate.labels = c(core_vars2, "Constant"), 
            model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
@@ -212,30 +206,130 @@ stargazer::stargazer(m_list,  type = "latex",
 ```
 
 \pagebreak
+## Model results over time
 
-## 5. Barrier mediation analysis
+```{r time models, echo = F, results = "asis"}
+m_list <- readRDS('tables/append_models_over_time.rds')
+stargazer::stargazer(m_list,  type = "latex", 
+                     column.labels = c("2010", "2015", "2020"),
+           dep.var.labels = "\\shortstack{Proportion of production acreage\\\\planted with organic seed}", 
+           covariate.labels = c(core_vars2[-c(4,5)], "Constant"), 
+           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, 
+           title = "Model results by year", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
 
-## 6. Predicted organic seed use figures
-
-```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for field crop growers of two farmer profiles.'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea1.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
-```{r, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for forage crop growers of two farmer profiles.'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figurea2.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+
+\pagebreak
+## 5. Considering other barriers
+
+```{r barrier model, echo = F, results = "asis"}
+m_list <- readRDS('tables/append_models_barriers.rds')
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "\\shortstack{Proportion of production acreage\\\\planted with organic seed}", 
+           covariate.labels = c(core_vars2[1:3], "Barrier: Price",
+                                "Barrier: Buyer requirement", 
+                                core_vars2[4:15], "Constant"), 
+           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, 
+           title = "Model results including additional barriers", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
+
 ```
 
+\pagebreak
+## 6. Mediation analysis  
 
-## 7. Self-reported behavior change
+To check for mediated effects of barriers on operational attributes, we run two mediation analyses. We first addresses the potential mediation effect of experiencing organic seed quantity barriers on larger farms. In other words, might larger farms be more likely to experience the barrier of limited organic seed quantity, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 2. 
+
+```{r med1 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Farm size and organic seed quantity'}
+DiagrammeR::grViz("
+digraph {
+  graph []
+  node [shape = plaintext]
+    X [label ='Farm size', shape = box, color = black]
+    Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
+    M [label ='Barrier: Insufficient quantity', shape = box]
+  edge [minlen = 2]
+    X->M  
+    M->Y 
+    X->Y [color = black]
+  { rank = same; X; Y; M }
+}
+")
+```
+
+We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 5) with results of a model that regresses the same variables on the potential mediator: the quantity barrier. Results are presented in Table 8, where the Average Causal Mediation Effect (ACME) is small (-0.001) and not significant. The value suggests how much the effect of farm size on organic seed use (Total Effect) is mediated by this barrier. In this case, the mediated effect is small and the total and Average Direct Effects (ADE) are larger and significant. In short, the quantity barrier is not influencing the effect of farm size. 
+```{r mediation1, echo = F}
+table <- read.csv('tables/append_mediation1.csv')  
+colnames(table) <- c("Effects", "Estimate", "p-value")
+kbl(table, align = 'c', booktabs = T, 
+    caption = 'Mediation analysis of quantity barrier on farm size') %>% kable_styling(latex_options = c("scale_down", "hold_position")) #%>% 
+  #column_spec(2:4, width = '4cm')
+```
+
+Next we addresses the potential mediation effect of experiencing organic seed availability barriers on more diverse farms. In other words, are farms that use a wider variety of seeds more likely to experience the barrier of limited organic seed availability, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 3. 
+```{r med2 diagram,echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Crop diversity and organic seed availability'}
+DiagrammeR::grViz("
+digraph {
+  graph []
+  node [shape = plaintext]
+    X [label ='Crop diversity', shape = box, color = black]
+    Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
+    M [label ='Barrier: Availability', shape = box]
+  edge [minlen = 2]
+    X->M  
+    M->Y 
+    X->Y [color = black]
+  { rank = same; X; Y; M }
+}
+")
+```
+
+Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: the availability barrier. Results are presented in Table 9, where again the ACME is small (-0.002) and not significant. In short, the availability barrier is not influencing the effect of crop diversity. 
+```{r mediation2, echo = F}
+table <- read.csv('tables/append_mediation2.csv')  
+colnames(table) <- c("Effects", "Estimate", "p-value")
+kbl(table, align = 'c', booktabs = T, 
+    caption = 'Mediation analysis of quantity barrier on farm size') %>% kable_styling(latex_options = c("scale_down", "hold_position")) #%>% 
+  #column_spec(2:4, width = '4cm')
+```
+
+\pagebreak
+## 7. Predicted organic seed use figures
+
+```{r pp f1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for field crop growers of two farmer profiles.'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_field_pp.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+```
+
+```{r pp f2, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted conventional seed use for forage crop growers of two farmer profiles.'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_forage_pp.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+```
+
+\pagebreak
+## 8. Self-reported behavior change
+
+```{r, results = "asis", echo = F}
+m_list <- readRDS('tables/append_increase_model.RDS')
+stargazer::stargazer(m_list,  type = "latex", 
+           dep.var.labels = "Self-reported increase in organic seed usage", 
+           covariate.labels = c(core_vars2, "Constant"), 
+           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
+           no.space = TRUE, header = FALSE, 
+           title = "Self-reported increase model", 
+           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
+```
 
 \pagebreak 
-## 8. Certifiers' role
+## 9. Certifiers' role
 
 An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently **(cite)**, but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by them. In Table 5, Model 1 we model the effect of five distinct certifiers and one 'other' category, compared against compared to a baseline of the most popular certifier in our limited dataset. We see a small and insignificant effect for different certifiers compared to a baseline certifier group, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 2). 
 
-```{r tbl5, echo = F, results = "asis"}
-m_list <- readRDS('tables/tablesa6_models.RDS')
+```{r cert model, echo = F, results = "asis"}
+m_list <- readRDS('tables/append_certifier_model.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "Proportion of organic land planted with conventional seed", 
+           dep.var.labels = "\\shortstack{Proportion of production acreage\\\\planted with organic seed}", 
            covariate.labels = c(core_vars2[-9],"Certifier Other",
                                 "Certifier 24", "Certifier 2", "Certifier 27",
                                 "Certifier 42", "Certifier 7", "Constant"), 
@@ -248,29 +342,13 @@ stargazer::stargazer(m_list,  type = "latex",
 
 
 
-\pagebreak
-## Model results over time
-
-```{r, echo = F, results = "asis"}
-m_list <- readRDS('tables/table_a8.rds')
-stargazer::stargazer(m_list,  type = "latex", 
-                     column.labels = c("2010", "2015", "2020"),
-           dep.var.labels = "", 
-           covariate.labels = c(core_vars2[-c(2,5,6)], "Constant"), 
-           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
-           no.space = TRUE, header = FALSE, 
-           title = "Model results by year", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
-
-```
-
 \pagebreak 
 
 
 <!----
 ## Model selection and fit
 
-```{r, echo = F, results = "asis"}
+```{r, echo = F, results = "asis", eval = F}
 #tablea3 <- read.csv('tables/tablea3.csv') ; 
 #colnames(tablea3) <- c("Term", rep(c("Mean", "SE"), 5)) ; 
 #tablea1[is.na(tablea3)] <- "" ; 
