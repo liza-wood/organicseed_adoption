@@ -17,11 +17,98 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          barrier_availability_s,
          maincrop,
          Region,
-         survey_year) %>% 
+         survey_year,
+         OG_value,
+         CertifierRequestn,
+         noncommercial_seedsource,
+         TotalAcreage,
+         cropcat_n,
+         barrier_insuffQuantity,
+         barrier_lackdesiredTraits,
+         barrier_availability) %>% 
   na.omit()
 
 df.full_rounded <- df.full
 df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
+
+# Farm size and values----
+s1 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s  +
+                barrier_lackdesiredTraits_s  +
+                barrier_insuffQuantity  +
+                survey_year +
+                OG_value_s  + 
+                #acreage_log_s  + 
+                cropcat_n_s  +
+                CertifierRequestn +
+                noncommercial_seedsource_s  +
+                maincrop +
+                Region, 
+              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(s1)
+# first part indirect
+s2 <- lm(acreage_log_s  ~ 
+           barrier_availability_s  +
+           barrier_lackdesiredTraits_s  +
+           barrier_insuffQuantity +
+           survey_year +
+           OG_value_s  + 
+           #acreage_log_s  + 
+           cropcat_n_s  +
+           CertifierRequestn +
+           noncommercial_seedsource_s  +
+           maincrop +
+           Region, 
+         data = df.full_rounded)
+summary(s2)
+
+s3 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s  +
+                barrier_lackdesiredTraits_s  +
+                barrier_insuffQuantity_s  +
+                survey_year +
+                #OG_value_s  + 
+                acreage_log_s  + 
+                cropcat_n_s  +
+                CertifierRequestn +
+                noncommercial_seedsource_s  +
+                maincrop +
+                Region, 
+              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(s3)
+
+s4 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s  +
+                barrier_lackdesiredTraits_s  +
+                barrier_insuffQuantity_s  +
+                survey_year +
+                OG_value_s  + 
+                acreage_log_s  + 
+                cropcat_n_s  +
+                CertifierRequestn +
+                noncommercial_seedsource_s  +
+                maincrop +
+                Region, 
+              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+
+summary(s4)
+value_sum <- summary(df.full$OG_value_s)
+results1 <- mediation::mediate(s2, s4, treat= 'OG_value_s', 
+                               mediator= 'acreage_log_s' ,boot=TRUE, sims=500,
+                               control.value = value_sum[[2]],
+                               treat.value = value_sum[[5]])
+summary(results1)
+
+sum1 <- data.frame("Names" = c("ACME (avg)", 
+                               "ADE (avg)",
+                               "Prop. Mediated (avg) ", 
+                               "Totel Effect"),
+                   "Estimate" = round(c(results1$d.avg, results1$z.avg,
+                                        results1$n.avg, results1$tau.coef), 3),
+                   "p-value" = c(results1$d.avg.p, results1$z.avg.p, 
+                                 results1$n.avg.p, results1$tau.p))
+
+write.csv(sum1, 'tables/append_mediation1.csv', row.names = F)
 
 
 # Farm size and quantity ----
@@ -29,7 +116,7 @@ df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_pe
 set.seed(19)
 # total effect
 s1 <- betareg(OGseed_percent_maincrop_prop ~ 
-                barrier_availability_s  +
+               barrier_availability_s  +
                 barrier_lackdesiredTraits_s  +
                # barrier_insuffQuantity  +
                 survey_year +
@@ -102,22 +189,22 @@ bda::mediation.test(df.full_rounded$barrier_insuffQuantity_s,
 # Recent research has used Bootstrapping over the Sobel Test when assessing the statistical significance of a mediation effect. Bootstrapping has several advantages over the Sobel Test when assessing mediation effects
 
 acre_sum <- summary(df.full$acreage_log_s)
-results1 <- mediation::mediate(s2, s4, treat= 'acreage_log_s', 
+results2 <- mediation::mediate(s2, s4, treat= 'acreage_log_s', 
                    mediator= 'barrier_insuffQuantity_s' ,boot=TRUE, sims=1000,
                    control.value = acre_sum[[2]],
                    treat.value = acre_sum[[5]])
-summary(results1)
+summary(results2)
 
-sum1 <- data.frame("Names" = c("ACME (avg)", 
+sum2 <- data.frame("Names" = c("ACME (avg)", 
                        "ADE (avg)",
                        "Prop. Mediated (avg) ", 
                        "Totel Effect"),
-           "Estimate" = round(c(results1$d.avg, results1$z.avg,
-                          results1$n.avg, results1$tau.coef), 3),
-           "p-value" = c(results1$d.avg.p, results1$z.avg.p, 
-                         results1$n.avg.p, results1$tau.p))
+           "Estimate" = round(c(results2$d.avg, results2$z.avg,
+                          results2$n.avg, results2$tau.coef), 3),
+           "p-value" = c(results2$d.avg.p, results2$z.avg.p, 
+                         results2$n.avg.p, results2$tau.p))
 
-write.csv(sum1, 'tables/append_mediation1.csv', row.names = F)
+write.csv(sum2, 'tables/append_mediation2.csv', row.names = F)
 
 # Crop diversity and availabilty ----
 
@@ -153,6 +240,20 @@ s2 <- lm(barrier_availability_s ~
          data = df.full_rounded)
 summary(s2)
 
+s4 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s  +
+                barrier_lackdesiredTraits_s  +
+                barrier_insuffQuantity_s  +
+                survey_year +
+                OG_value_s  + 
+                acreage_log_s  + 
+                cropcat_n_s  +
+                CertifierRequestn +
+                noncommercial_seedsource_s  +
+                maincrop +
+                Region, 
+              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+
 b1 = s1$coefficients$mean[[8]]
 b2 = s2$coefficients[[8]]
 b3 = s4$coefficients$mean[[2]]
@@ -170,23 +271,304 @@ bda::mediation.test(df.full_rounded$barrier_availability,
                     df.full_rounded$cropcat_n)
 
 crop_sum <- summary(df.full$cropcat_n_s)
-results2 <- mediation::mediate(s2, s4, treat= 'cropcat_n_s', 
+results3 <- mediation::mediate(s2, s4, treat= 'cropcat_n_s', 
                               mediator= 'barrier_availability_s' ,
                               boot=TRUE, sims=1000,
                               control.value = crop_sum[[2]],
                               treat.value = crop_sum[[5]])
-summary(results2)
+summary(results3)
 
-sum2 <- data.frame("Names" = c("ACME (avg)", 
+sum3 <- data.frame("Names" = c("ACME (avg)", 
                                "ADE (avg)",
                                "Prop. Mediated (avg) ", 
                                "Totel Effect"),
-                   "Estimate" = round(c(results2$d.avg, results2$z.avg,
-                                  results2$n.avg, results2$tau.coef), 3),
-                   "p-value" = c(results2$d.avg.p, results2$z.avg.p, 
-                                 results2$n.avg.p, results2$tau.p))
+                   "Estimate" = round(c(results3$d.avg, results3$z.avg,
+                                  results3$n.avg, results3$tau.coef), 3),
+                   "p-value" = c(results3$d.avg.p, results3$z.avg.p, 
+                                 results3$n.avg.p, results3$tau.p))
 
-write.csv(sum2, 'tables/append_mediation2.csv', row.names = F)
+write.csv(sum3, 'tables/append_mediation3.csv', row.names = F)
+
+
+# Farm size and quantity by year ----
+df11 <- filter(df.full_rounded, survey_year == 2011) %>% 
+  na.omit() %>% 
+  mutate(acreage_log = log(TotalAcreage),
+         acreage_log_s = c(scale(acreage_log, scale = F)),
+         cropcat_n_s = c(scale(cropcat_n, scale = T)),
+         OG_value_s = c(scale(OG_value, scale = T)),
+         barrier_availability_s = c(scale(barrier_availability, scale = T)),
+         barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
+         barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
+                                              scale = T))
+  )
+
+df16 <- filter(df.full_rounded, survey_year == 2016) %>% 
+  mutate(acreage_log = log(TotalAcreage),
+         acreage_log_s = c(scale(acreage_log, scale = F)),
+         cropcat_n_s = c(scale(cropcat_n, scale = T)),
+         OG_value_s = c(scale(OG_value, scale = T)),
+         barrier_availability_s = c(scale(barrier_availability, scale = T)),
+         barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
+         barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
+                                              scale = T))
+  )
+df21 <- filter(df.full_rounded, survey_year == 2021) %>% 
+  mutate(acreage_log = log(TotalAcreage),
+         acreage_log_s = c(scale(acreage_log, scale = F)),
+         cropcat_n_s = c(scale(cropcat_n, scale = T)),
+         OG_value_s = c(scale(OG_value, scale = T)),
+         barrier_availability_s = c(scale(barrier_availability, scale = T)),
+         barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
+         barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
+                                              scale = T))
+  )
+
+mediation_fx1 <- function(df){
+  s1 <- betareg(OGseed_percent_maincrop_prop ~ 
+                  barrier_availability_s  +
+                  barrier_lackdesiredTraits_s  +
+                  # barrier_insuffQuantity  +
+                  OG_value_s  + 
+                  acreage_log_s  + 
+                  cropcat_n_s  +
+                  CertifierRequestn +
+                  noncommercial_seedsource_s  +
+                  maincrop +
+                  Region, 
+                data = df, link = "logit", link.phi = NULL, type = "ML")
+  s2 <- lm(barrier_insuffQuantity_s  ~ 
+             barrier_availability_s  +
+             barrier_lackdesiredTraits_s  +
+             #barrier_insuffQuantity +
+             OG_value_s  + 
+             acreage_log_s  + 
+             cropcat_n_s  +
+             CertifierRequestn +
+             noncommercial_seedsource_s  +
+             maincrop +
+             Region, 
+           data = df)
+  
+  s4 <- betareg(OGseed_percent_maincrop_prop ~ 
+                  barrier_availability_s  +
+                  barrier_lackdesiredTraits_s  +
+                  barrier_insuffQuantity_s  +
+                  OG_value_s  + 
+                  acreage_log_s  + 
+                  cropcat_n_s  +
+                  CertifierRequestn +
+                  noncommercial_seedsource_s  +
+                  maincrop +
+                  Region, 
+                data = df, link = "logit", link.phi = NULL, type = "ML")
+  
+  acre_sum <- summary(df$acreage_log_s)
+  results <- mediation::mediate(s2, s4, treat= 'acreage_log_s', 
+                                mediator= 'barrier_insuffQuantity_s' ,boot=TRUE, sims=500,
+                                control.value = acre_sum[[2]],
+                                treat.value = acre_sum[[5]])
+  sum <- data.frame("Names" = c("ACME (avg)", 
+                                "ADE (avg)",
+                                "Prop. Mediated (avg) ", 
+                                "Totel Effect"),
+                    "Estimate" = round(c(results$d.avg, results$z.avg,
+                                         results$n.avg, results$tau.coef), 3),
+                    "p-value" = c(results$d.avg.p, results$z.avg.p, 
+                                  results$n.avg.p, results$tau.p))
+  return(sum)
+}
+sum11 <- mediation_fx1(df11)
+sum16 <- mediation_fx1(df16)
+sum21 <- mediation_fx1(df21)
+
+# Crop diversity and availabilty by time ----
+mediation_fx2 <- function(df){
+  s1 <- betareg(OGseed_percent_maincrop_prop ~ 
+                  #barrier_availability_s  +
+                  barrier_lackdesiredTraits_s  +
+                  barrier_insuffQuantity  +
+                  OG_value_s  + 
+                  acreage_log_s  + 
+                  cropcat_n_s  +
+                  CertifierRequestn +
+                  noncommercial_seedsource_s  +
+                  maincrop +
+                  Region, 
+                data = df, link = "logit", link.phi = NULL, type = "ML")
+  s2 <- lm(barrier_availability_s  ~ 
+             #barrier_availability_s  +
+             barrier_lackdesiredTraits_s  +
+             barrier_insuffQuantity +
+             OG_value_s  + 
+             acreage_log_s  + 
+             cropcat_n_s  +
+             CertifierRequestn +
+             noncommercial_seedsource_s  +
+             maincrop +
+             Region, 
+           data = df)
+  
+  s4 <- betareg(OGseed_percent_maincrop_prop ~ 
+                  barrier_availability_s  +
+                  barrier_lackdesiredTraits_s  +
+                  barrier_insuffQuantity_s  +
+                  OG_value_s  + 
+                  acreage_log_s  + 
+                  cropcat_n_s  +
+                  CertifierRequestn +
+                  noncommercial_seedsource_s  +
+                  maincrop +
+                  Region, 
+                data = df, link = "logit", link.phi = NULL, type = "ML")
+  
+  crop_sum <- summary(df$cropcat_n_s)
+  results <- mediation::mediate(s2, s4, treat= 'cropcat_n_s', 
+                                 mediator= 'barrier_availability_s' ,
+                                 boot=TRUE, sims=1000,
+                                 control.value = crop_sum[[2]],
+                                 treat.value = crop_sum[[5]])
+  sum <- data.frame("Names" = c("ACME (avg)", 
+                                "ADE (avg)",
+                                "Prop. Mediated (avg) ", 
+                                "Totel Effect"),
+                    "Estimate" = round(c(results$d.avg, results$z.avg,
+                                         results$n.avg, results$tau.coef), 3),
+                    "p-value" = c(results$d.avg.p, results$z.avg.p, 
+                                  results$n.avg.p, results$tau.p))
+  return(sum)
+}
+sum11 <- mediation_fx2(df11)
+sum16 <- mediation_fx2(df16)
+sum21 <- mediation_fx2(df21)
+# Farm size and price ----
+
+df.price <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
+  filter(Region != "International", maincrop != "Other") %>% 
+  select(RespondentID, 
+         OGseed_percent_maincrop, 
+         barrier_availability,
+         barrier_insuffQuantity,
+         barrier_lackdesiredTraits,
+         barrier_buyerReq,
+         barrier_price,
+         OG_value,
+         CertifierRequestn, 
+         maincrop, survey_year, Region, 
+         TotalAcreage, cropcat_n,
+         noncommercial_seedsource
+  ) %>% 
+  na.omit() %>%  # do this now so that it scales around the sample we are using
+  mutate(Region = factor(Region, levels = c("North Central", "West", 
+                                            "Northeast", "South")),
+         survey_year = factor(survey_year, c(2016, 2011, 2021))) %>% 
+  mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
+         acreage_log = log(TotalAcreage),
+         acreage_log_s = c(scale(acreage_log, scale = F)),
+         cropcat_n_s = c(scale(cropcat_n, scale = T)),
+         OG_value_s = c(scale(OG_value, scale = T)),
+         survey_year = factor(survey_year),
+         barrier_availability_s = c(scale(barrier_availability, scale = T)),
+         barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
+         barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
+                                              scale = T)),
+         #barrier_distrustQuality_s = c(scale(barrier_distrustQuality, scale = T)),
+         #barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = T)),
+         #barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = T)),
+         barrier_price_s = c(scale(barrier_price, scale = T)),
+         #years_certified_s = c(scale(YearsCertified, scale = T))
+  )
+
+df.price_rounded <- df.price
+df.price_rounded$OGseed_percent_maincrop_prop <- ifelse(df.price_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.price_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.price_rounded$OGseed_percent_maincrop_prop))
+set.seed(19)
+# total effect
+s1 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s  +
+                barrier_lackdesiredTraits_s  +
+                barrier_insuffQuantity_s +
+                survey_year +
+                OG_value_s  + 
+                acreage_log_s  + 
+                cropcat_n_s  +
+                CertifierRequestn +
+                noncommercial_seedsource_s  +
+                maincrop +
+                Region, 
+              data = df.price_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(s1)
+# first part indirect
+s2 <- lm(barrier_price_s  ~ 
+           barrier_availability_s  +
+           barrier_lackdesiredTraits_s  +
+           barrier_insuffQuantity_s +
+           survey_year +
+           OG_value_s  + 
+           acreage_log_s  + 
+           cropcat_n_s  +
+           CertifierRequestn +
+           noncommercial_seedsource_s  +
+           maincrop +
+           Region, 
+         data = df.price_rounded)
+summary(s2)
+
+s4 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s  +
+                barrier_lackdesiredTraits_s  +
+                barrier_insuffQuantity_s  +
+                barrier_price_s +
+                survey_year +
+                OG_value_s  + 
+                acreage_log_s  + 
+                cropcat_n_s  +
+                CertifierRequestn +
+                noncommercial_seedsource_s  +
+                maincrop +
+                Region, 
+              data = df.price_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(s4)
+
+# Indirect effect: take coefficient from full model and subtract it from coefficient from model without mediator (barrier)
+s4$coefficients$mean[8] - s1$coefficients$mean[7]
+# Or: ^ these should be the same but they aren;t?
+s4$coefficients$mean[4]*s2$coefficients[7]
+
+b1 = s1$coefficients$mean[[7]]
+b2 = s2$coefficients[[7]]
+b3 = s4$coefficients$mean[[4]]
+b4 = s4$coefficients$mean[[8]] # If B4 is not significant or smaller than before in B1, suggests some mediation -- slightly smaller, still significant; partial mediation
+
+diff1 = b1 - b4 # total minus direct effect
+# The relative size of the mediated effect can be assessed using the proportion mediated, which represents the size of the indirect effect estimated relative to the total effect estimated.
+
+indirect_effect = b2*b3
+total_effect = b1
+
+100*(indirect_effect/total_effect)
+
+acre_sum <- summary(df.price$acreage_log_s)
+results3 <- mediation::mediate(s2, s4, treat= 'acreage_log_s', 
+                               mediator= 'barrier_price_s' ,boot=TRUE, sims=1000,
+                               control.value = acre_sum[[2]],
+                               treat.value = acre_sum[[5]])
+summary(results3)
+
+sum3 <- data.frame("Names" = c("ACME (avg)", 
+                               "ADE (avg)",
+                               "Prop. Mediated (avg) ", 
+                               "Totel Effect"),
+                   "Estimate" = round(c(results1$d.avg, results1$z.avg,
+                                        results1$n.avg, results1$tau.coef), 3),
+                   "p-value" = c(results1$d.avg.p, results1$z.avg.p, 
+                                 results1$n.avg.p, results1$tau.p))
+
+write.csv(sum3, 'tables/append_mediation3.csv', row.names = F)
+
 
 # Simple version ----
 # total effect

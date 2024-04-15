@@ -205,6 +205,7 @@ stargazer::stargazer(m_list,  type = "latex",
 
 ```
 
+
 \pagebreak
 ## Model results over time
 
@@ -220,7 +221,7 @@ stargazer::stargazer(m_list,  type = "latex",
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
 
 ```
-
+ 
 \pagebreak
 ## 5. Considering other barriers
 
@@ -239,11 +240,41 @@ stargazer::stargazer(m_list,  type = "latex",
 ```
 
 \pagebreak
-## 6. Mediation analysis  
+## 6. Mediation analyses  
 
-To check for mediated effects of barriers on operational attributes, we run two mediation analyses. We first addresses the potential mediation effect of experiencing organic seed quantity barriers on larger farms. In other words, might larger farms be more likely to experience the barrier of limited organic seed quantity, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 2. 
+To check for mediated effects of values and barriers on operational attributes, we run three mediation analyses. A mediating variable is one that transmits the effect one variable to another
 
-```{r med1 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Farm size and organic seed quantity'}
+We first addresses the potential mediation effect of larger farms on valuing organic seed. In other words, are those who value organic seed more likely to have smaller farms, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 2. 
+
+```{r med1 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Organic seed value and farm size'}
+DiagrammeR::grViz("
+digraph {
+  graph []
+  node [shape = plaintext]
+    X [label ='Values organic seed', shape = box, color = black]
+    Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
+    M [label ='Farm size', shape = box]
+  edge [minlen = 2]
+    X->M  
+    M->Y 
+    X->Y [color = black]
+  { rank = same; X; Y; M }
+}
+")
+```
+
+
+We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 5) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table 6, where the Average Causal Mediation Effect (ACME) is significant. This result suggests the effect of organic seed values on organic seed use (Total Effect) is mediated by farm size. 
+```{r mediation1, echo = F}
+table <- read.csv('tables/append_mediation1.csv')  
+colnames(table) <- c("Effects", "Estimate", "p-value")
+kbl(table, align = 'c', booktabs = T, 
+    caption = 'Mediation analysis of farm size on quantity barrier') %>% kable_styling(latex_options = c("scale_down", "hold_position"))
+  #column_spec(2:4, width = '4cm')
+```
+
+Next we addresses the potential mediation effect of experiencing organic seed quantity barriers on larger farms. In other words, might larger farms be more likely to experience the barrier of limited organic seed quantity, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 2. 
+```{r med2 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Farm size and organic seed quantity'}
 DiagrammeR::grViz("
 digraph {
   graph []
@@ -260,17 +291,17 @@ digraph {
 ")
 ```
 
-We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 5) with results of a model that regresses the same variables on the potential mediator: the quantity barrier. Results are presented in Table 8, where the Average Causal Mediation Effect (ACME) is small (-0.001) and not significant. The value suggests how much the effect of farm size on organic seed use (Total Effect) is mediated by this barrier. In this case, the mediated effect is small and the total and Average Direct Effects (ADE) are larger and significant. In short, the quantity barrier is not influencing the effect of farm size. 
-```{r mediation1, echo = F}
-table <- read.csv('tables/append_mediation1.csv')  
+We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 5) with results of a model that regresses the same variables on the potential mediator: the quantity barrier. Results are presented in Table 6, where the Average Causal Mediation Effect (ACME) is small (-0.001) and not significant. The value suggests how much the effect of farm size on organic seed use (Total Effect) is mediated by this barrier. In this case, the mediated effect is small and the total and Average Direct Effects (ADE) are larger and significant. In short, the quantity barrier is not influencing the effect of farm size. 
+```{r mediation2, echo = F}
+table <- read.csv('tables/append_mediation2.csv')  
 colnames(table) <- c("Effects", "Estimate", "p-value")
 kbl(table, align = 'c', booktabs = T, 
-    caption = 'Mediation analysis of quantity barrier on farm size') %>% kable_styling(latex_options = c("scale_down", "hold_position")) #%>% 
+    caption = 'Mediation analysis of farm size on quantity barrier') %>% kable_styling(latex_options = c("scale_down", "hold_position"))
   #column_spec(2:4, width = '4cm')
 ```
 
 Next we addresses the potential mediation effect of experiencing organic seed availability barriers on more diverse farms. In other words, are farms that use a wider variety of seeds more likely to experience the barrier of limited organic seed availability, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 3. 
-```{r med2 diagram,echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Crop diversity and organic seed availability'}
+```{r med3 diagram,echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Crop diversity and organic seed availability'}
 DiagrammeR::grViz("
 digraph {
   graph []
@@ -287,14 +318,16 @@ digraph {
 ")
 ```
 
-Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: the availability barrier. Results are presented in Table 9, where again the ACME is small (-0.002) and not significant. In short, the availability barrier is not influencing the effect of crop diversity. 
-```{r mediation2, echo = F}
-table <- read.csv('tables/append_mediation2.csv')  
+Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: the availability barrier. Results are presented in Table 7, where again the ACME is small (-0.002) and not significant. In short, the availability barrier is not influencing the effect of crop diversity. 
+
+```{r mediation3, echo = F}
+table <- read.csv('tables/append_mediation3.csv')  
 colnames(table) <- c("Effects", "Estimate", "p-value")
 kbl(table, align = 'c', booktabs = T, 
-    caption = 'Mediation analysis of quantity barrier on farm size') %>% kable_styling(latex_options = c("scale_down", "hold_position")) #%>% 
+    caption = 'Mediation analysis of crop diversity on availability barrier') %>% kable_styling(latex_options = c("scale_down", "hold_position"))
   #column_spec(2:4, width = '4cm')
 ```
+
 
 \pagebreak
 ## 7. Predicted organic seed use figures
@@ -324,7 +357,7 @@ stargazer::stargazer(m_list,  type = "latex",
 \pagebreak 
 ## 9. Certifiers' role
 
-An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently **(cite)**, but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by them. In Table 5, Model 1 we model the effect of five distinct certifiers and one 'other' category, compared against compared to a baseline of the most popular certifier in our limited dataset. We see a small and insignificant effect for different certifiers compared to a baseline certifier group, and negligible changes in the results between the models run with and without the sampling consideration (Table 3, Model 2). 
+An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently **(cite)**, but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by them. In Table 9, Model 1 we model the effect of five distinct certifiers and one 'other' category, compared against compared to a baseline of the most popular certifier in our limited dataset. We see a small and insignificant effect for different certifiers compared to a baseline certifier group, and negligible changes in the results between the models run with and without the sampling consideration (Table 9, Model 2). 
 
 ```{r cert model, echo = F, results = "asis"}
 m_list <- readRDS('tables/append_certifier_model.RDS')
