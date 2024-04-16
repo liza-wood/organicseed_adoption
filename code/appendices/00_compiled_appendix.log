@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  15 APR 2024 14:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  16 APR 2024 16:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -623,88 +623,92 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-08.
+09.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 169.
+(Font)              <10> on input line 166.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 169.
+(Font)              <7> on input line 166.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 169.
+(Font)              <5> on input line 166.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (16.46849pt too wide) in paragraph at lines 202--253
+Overfull \hbox (2.77399pt too wide) in paragraph at lines 199--250
  [][] 
  []
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[2] [3]
+[2]
+
+LaTeX Warning: Text page 3 contains only floats.
+
+[3]
 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
-_repf1_usda.png, id=39, 505.89pt x 289.08pt>
+_repf1_usda.png, id=37, 505.89pt x 289.08pt>
 File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
 ppend_repf1_usda.png Graphic file (type png)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_repf1_usda.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/append_repf1_usda.png  used on input line 339.
+_adoption/figures/append_repf1_usda.png  used on input line 326.
 (pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
 [4] [5 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures
 /append_repf1_usda.png>] [6] [7] [8]
-<00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf, id=77, 951.555pt x
+<00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf, id=76, 951.555pt x
  106.3975pt>
 File: 00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf Graphic file (
 type pdf)
 <use 00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf>
 Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med1 diagram-1
-.pdf  used on input line 533.
+.pdf  used on input line 524.
 (pdftex.def)             Requested size: 352.31667pt x 39.39404pt.
-<00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf, id=78, 953.5625pt 
+<00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf, id=77, 953.5625pt 
 x 107.40125pt>
 File: 00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf Graphic file (
 type pdf)
 <use 00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf>
 Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med2 diagram-1
-.pdf  used on input line 572.
+.pdf  used on input line 563.
 (pdftex.def)             Requested size: 352.3179pt x 39.68211pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf, id=79, 953.5625pt 
+<00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf, id=78, 953.5625pt 
 x 106.3975pt>
 File: 00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf Graphic file (
 type pdf)
 <use 00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf>
 Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med3 diagram-1
-.pdf  used on input line 616.
+.pdf  used on input line 607.
 (pdftex.def)             Requested size: 352.3179pt x 39.31125pt.
 [9 <./00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf> <./00_compile
 d_appendix_files/figure-latex/med2 diagram-1.pdf>] [10 <./00_compiled_appendix_
 files/figure-latex/med3 diagram-1.pdf>]
 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
-_field_pp.png, id=129, 505.89pt x 289.08pt>
+_field_pp.png, id=128, 505.89pt x 289.08pt>
 File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
 ppend_field_pp.png Graphic file (type png)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_field_pp.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/append_field_pp.png  used on input line 655.
+_adoption/figures/append_field_pp.png  used on input line 646.
 (pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
-_forage_pp.png, id=130, 505.89pt x 289.08pt>
+_forage_pp.png, id=129, 505.89pt x 289.08pt>
 File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
 ppend_forage_pp.png Graphic file (type png)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_forage_pp.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/append_forage_pp.png  used on input line 664.
+_adoption/figures/append_forage_pp.png  used on input line 655.
 (pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
 [11 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_field_pp.png> </Users/lizawood/Documents/Davis/R-Projects/organicseed_adop
@@ -712,25 +716,31 @@ tion/figures/append_forage_pp.png>] [12] [13]
 Overfull \vbox (13.93141pt too high) has occurred while \output is active []
 
 [14]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 811.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 811.
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 8
+00.
+(/usr/local/texlive/2020/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2009/10/30 v1.6 Font defs for Latin Modern
+)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 802.
+[15]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 802.
 (./00_compiled_appendix.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 811.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 811.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 802.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 802.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14531 strings out of 480608
- 214757 string characters out of 5903631
- 528938 words of memory out of 5000000
- 30016 multiletter control sequences out of 15000+600000
- 586222 words of font info for 102 fonts, out of 8000000 for 9000
+ 14586 strings out of 480608
+ 215567 string characters out of 5903631
+ 523951 words of memory out of 5000000
+ 30055 multiletter control sequences out of 15000+600000
+ 586956 words of font info for 108 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,13n,42p,819b,333s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
-cal/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/20
+{/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
+texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/20
 20/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2020/texmf-dist/
 fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2020/texmf-dist/fonts/enc/
 dvips/lm/lm-ts1.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/l
@@ -741,11 +751,12 @@ l/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2
 ist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2020/texmf-dist/fonts/t
 ype1/public/lm/lmr7.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/
 lm/lmri10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.
-pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on 00_compiled_appendix.pdf (14 pages, 643636 bytes).
+pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></usr/l
+ocal/texlive/2020/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on 00_compiled_appendix.pdf (15 pages, 658962 bytes).
 PDF statistics:
- 252 PDF objects out of 1000 (max. 8388607)
- 205 compressed objects within 3 object streams
- 56 named destinations out of 1000 (max. 500000)
+ 260 PDF objects out of 1000 (max. 8388607)
+ 211 compressed objects within 3 object streams
+ 57 named destinations out of 1000 (max. 500000)
  12415 words of extra memory for PDF output out of 14400 (max. 10000000)
 

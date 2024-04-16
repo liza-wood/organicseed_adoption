@@ -18,15 +18,14 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
   na.omit()
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
   filter(RespondentID %in% df.full$RespondentID) %>% 
-  filter(IncreasedOGSeed != "Already at 100%" & OGseed_percent_maincrop != 100)
+  filter(!is.na(IncreasedOGSeed))
 table(df$IncreasedOGSeed, df$CertifierRequest)
-df$IncreasedOGSeedf <- factor(df$IncreasedOGSeed)
+df$IncreasedOGSeedf <- factor(df$IncreasedOGSeed, c("No: About the same % or decreased",
+                                                    "Yes: Increased the %",
+                                                    "Already at 100%"))
 df$CertifierRequestf <- factor(df$CertifierRequest)
 
-cor(as.numeric(df$IncreasedOGSeedf), as.numeric(df$CertifierRequestf))
-chisq.test(df$IncreasedOGSeedf, df$CertifierRequestf)
-table(df$IncreasedOGSeedf, df$CertifierRequestf)
-prop.table(table(df$IncreasedOGSeedf, df$CertifierRequestf), margin = 2)
+
 
 df %>% 
   group_by(CertifierRequestf, IncreasedOGSeedf) %>% 
@@ -55,7 +54,9 @@ df <- df %>%
   ) %>% 
   select(colnames(df.full), IncreasedOGSeedf)
 
-m <- glm(IncreasedOGSeedf ~ 
+library(nnet)
+
+m <- multinom(IncreasedOGSeedf ~ 
             barrier_availability_s +
             barrier_lackdesiredTraits_s +
             barrier_insuffQuantity_s +
@@ -67,7 +68,22 @@ m <- glm(IncreasedOGSeedf ~
             noncommercial_seedsource_s +
             maincrop +
             Region, 
-          data = df, family = binomial(link = "logit"))
+          data = df)
 summary(m)
+table(df$IncreasedOGSeedf)
+#m <- glm(IncreasedOGSeedf ~ 
+#            barrier_availability_s +
+#            barrier_lackdesiredTraits_s +
+#            barrier_insuffQuantity_s +
+#            survey_year +
+#            OG_value_s + 
+#            acreage_log_s + 
+#            cropcat_n_s +
+#            CertifierRequestn +
+#            noncommercial_seedsource_s +
+#            maincrop +
+#            Region, 
+#          data = df, family = binomial(link = "logit"))
+#summary(m)
 
 saveRDS(m, 'tables/append_increase_model.RDS')
