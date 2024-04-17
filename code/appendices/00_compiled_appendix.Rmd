@@ -13,13 +13,13 @@ knitr::opts_knit$set(root.dir = '~/Documents/Davis/R-Projects/organicseed_adopti
 
 # Survey sample 
 
-## 1. Survey sampling method 
+## 1. Data collection method 
 
 * 2010: Data were collected by convenience sample only, shared by 23 organizations, including non-profits and foundations, organic certifiers, and departments of agriculture. Surveys were distributed primarily over email, but paper, phone, and in-person surveys were conducted at the request of the grower. We received a total of 1,027 responses (712 web-based, 315 paper-based), 549 of which included complete enough data for our analysis. 
 
-* 2015: Data were collected by both random and convenience sampling. For the random sample, 800 certified organic producers were randomly selected from the approximately 12,000 organic producers that use seed, recorded in the NOP database. To encourage responsiveness, three follow-up emails were sent following an initial email, paper copies were mailed on request, and individual phone calls were made to follow-up. From these 800, 197 (25%) responded (114 web-based, 83 paper-based) and 127 (16%) were complete enough to use in our analyses. For the convenience sample, surveys were shared by 41 organizations, primarily over email. We received a total of 1,148 responses from the convenience sample, 672 of which included complete enough data for our analysis. In total we had 810 usable responses.
+* 2015: Data were collected by both random and convenience sampling. For the random sample, 800 certified organic producers were randomly selected from the approximately 12,000 organic producers that use seed, recorded in the NOP database. To encourage responsiveness, three follow-up emails were sent following an initial email, paper copies were mailed on request, and individual phone calls were made to follow-up. From these 800, 197 (25%) responded (114 web-based, 83 paper-based) and 131 (16%) were complete enough to use in our analyses. For the convenience sample, surveys were shared by 41 organizations, primarily over email. We received a total of 1,148 responses from the convenience sample, 679 of which included complete enough data for our analysis. In total we had 810 usable responses.
 
-* 2020: Data were collected by both random and convenience sampling using methods similar to 2015. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database and given the option to complete the survey over email or paper. After an initial email and postcard invitation, growers received follow-up contacts by email, postcard, and phone, and hard copies of the survey sent. Survey distribution was managed by Washington State University’s Social and Economic Sciences Research Center (SESRC) and distributed alongside the Organic Farming Research Foundation's (OFRF) National Organic Research Agenda. From these 2,000 surveys, 448 (22%) responded (206 web-based and 242 paper-based) and 193 (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed by SESRC to all remaining certified organic operations over email, with postcard reminders. The survey was also advertised by OSA and OFRF. We received a total of 611 responses from the convenience sample, 215 of which included complete enough data for our analysis. In total we had 413 usable responses.
+* 2020: Data were collected by both random and convenience sampling using methods similar to 2015. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database and given the option to complete the survey over email or paper. After an initial email and postcard invitation, growers received follow-up contacts by email, postcard, and phone, and hard copies of the survey were sent. Survey distribution was managed by Washington State University’s Social and Economic Sciences Research Center (SESRC) and distributed alongside the Organic Farming Research Foundation's (OFRF) National Organic Research Agenda. From these 2,000 surveys, 448 (22%) responded (206 web-based and 242 paper-based) and 194 (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed by SESRC to all remaining certified organic operations over email, with postcard reminders. The survey was also advertised by Organic Seed Alliance (OSA) and OFRF. We received a total of 611 responses from the convenience sample, 219 of which included complete enough data for our analysis. In total we had 413 usable responses.
 
 The breakdown between random and convenience sampling used in our analysis is summarized in Table 1. We consider the effect of sampling method, as well as survey distributor, through models in Section 2. 
 
@@ -51,10 +51,11 @@ In order to test how our data collection methods may bias the sample, we conside
 Regarding concerns of survey distributor (i.e. that the distribution by OSA elicited responses from a select type of organic farmer), we model this effect with our 2010 and 2015 survey data (the only survey periods that identified specific distributors) by including a term for responses that were gathered through OSA channels compared to all others (Table 2, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the distributor consideration (Table 2, Model 4), suggesting no significant effect on results based on survey distributor. 
 
 ```{r, echo = F}
-core_vars2 <- c("Barrier: Organic availability",
+core_vars2 <- c("Barrier: Availability",
                 #"Barrier: Buyer requirements",
-                "Barrier: Undesirable traits",
-                "Barrier: Insufficient quantity",
+                "Barrier: Quality",
+                "Barrier: Quantity",
+                "Barrier: Form",
                 "Year: 2010 (vs. 2015)",
                 "Year: 2020 (vs. 2015)",
                 "Values organic seed",
@@ -74,9 +75,9 @@ core_vars2 <- c("Barrier: Organic availability",
 m_list <- readRDS('tables/append_sample_models.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
            dep.var.labels = "\\shortstack{Proportion of organic land planted with organic seed}", 
-           covariate.labels = c(core_vars2[1:3], core_vars2[5],
-                                core_vars2[4],
-                                core_vars2[6:15],
+           covariate.labels = c(core_vars2[1:4], core_vars2[6],
+                                core_vars2[5],
+                                core_vars2[7:15],
                                 "Random data collection (vs. convenience)",
               "Distributor: OSA (vs. Other)",
                 "Constant"), 
@@ -98,7 +99,7 @@ stargazer::stargazer(m_list,  type = "latex",
 
 While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution of operations and farm size distribution between our sample and USDA Census data. 
 
-We first use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table 3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2011 do we see variation in representation across regions, with the North Central and Western regions over-represented and the Northeast under-represented. 
+We first use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table 3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2010 do we see variation in representation across regions, with the North Central and Western regions over-represented and the Northeast under-represented. 
 
 
 ```{r, echo = F, message = F, warning = F}
@@ -229,9 +230,9 @@ stargazer::stargazer(m_list,  type = "latex",
 m_list <- readRDS('tables/append_models_barriers.rds')
 stargazer::stargazer(m_list,  type = "latex", 
            dep.var.labels = "\\shortstack{Proportion of production acreage\\\\planted with organic seed}", 
-           covariate.labels = c(core_vars2[1:3], "Barrier: Price",
+           covariate.labels = c(core_vars2[1:4], "Barrier: Price",
                                 "Barrier: Buyer requirement", 
-                                core_vars2[4:15], "Constant"), 
+                                core_vars2[5:16], "Constant"), 
            model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
            title = "Beta regression model results including non-allowable barriers", 
@@ -353,7 +354,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 \pagebreak
 ## 8. Self-reported behavior change
 
-Results to a multinomial regression below are based on the question, _Over the last three years have you increased the percentage of certified organic seed that you use?_
+Results to a multinomial regression below are based on the question, _Over the last three years have you increased the percentage of certified organic seed that you use?_ The baseline response is "No." 
 ```{r seflreport model, results = "asis", echo = F, eval = F}
 # I don't know why this is bugging so I paste the latex table below
 m_list <- readRDS('tables/append_increase_model.RDS')
@@ -409,6 +410,7 @@ stargazer::stargazer(m_list,  type = "latex",
   Constant & $-$0.645$^{***}$ & $-$0.214 \\ 
   & (0.149) & (0.185) \\ 
  \hline \\[-1.8ex] 
+ Observations: Baseline (611) & 841 & 265 \\ 
 \hline 
 \hline \\[-1.8ex] 
 \textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 

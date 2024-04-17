@@ -17,6 +17,7 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          barrier_insuffQuantity_s,
          barrier_lackdesiredTraits_s,
          barrier_availability_s,
+         barrier_seedTreatlack_s,
          maincrop,
          Region,
          survey_year) %>% 
@@ -81,9 +82,10 @@ m3 <- betareg(OGseed_percent_maincrop_prop ~
              OG_value_s + 
              acreage_log_s + 
              cropcat_n_s +
-             barrier_insuffQuantity_s +
+             barrier_availability_s +
              barrier_lackdesiredTraits_s +
-             barrier_availability_s,
+             barrier_insuffQuantity_s +
+            barrier_seedTreatlack_s,
            data = df.full_rounded, 
            link = "logit", link.phi = NULL, type = "ML")
 
@@ -106,9 +108,10 @@ m4 <- betareg(OGseed_percent_maincrop_prop ~
              OG_value_s + 
              acreage_log_s + 
              cropcat_n_s +
-             barrier_insuffQuantity_s +
-             barrier_lackdesiredTraits_s +
-             barrier_availability_s +
+               barrier_availability_s +
+               barrier_lackdesiredTraits_s +
+               barrier_insuffQuantity_s +
+               barrier_seedTreatlack_s +
              maincrop +
              Region +
              survey_year, 
@@ -137,9 +140,10 @@ m5 <- betareg(OGseed_percent_maincrop_prop ~
                 OG_value_s + 
              acreage_log_s + 
              cropcat_n_s +
-             barrier_insuffQuantity_s +
-             barrier_lackdesiredTraits_s +
-             barrier_availability_s +
+               barrier_availability_s +
+               barrier_lackdesiredTraits_s +
+               barrier_insuffQuantity_s +
+               barrier_seedTreatlack_s +
              maincrop +
              Region +
              survey_year +
@@ -238,75 +242,4 @@ write.csv(tablea3x, 'tables/append_model_comparet2.csv', row.names = F)
 
 colnames(tablea3x) <- c("Model", "AIC", "BIC", "Log likelihood") ; 
 kbl(tablea3x, booktabs = T, caption = 'Goodness of fit across models') 
-
-# https://becarioprecario.bitbucket.io/inla-gitbook/ch-INLA.html
-#ggplot(m1$summary.linear.predictor, 
-#       aes(x = 1:nrow(m1$summary.linear.predictor), y = m4$cpo$cpo)) +
-#  geom_point()
-#
-#ggplot(m1$summary.linear.predictor, 
-#       aes(x = 1:nrow(m1$summary.linear.predictor), y = m4$cpo$pit)) +
-#  geom_point()
-
-# Easy way
-plot(residuals(m1))
-plot(residuals(m2))
-plot(residuals(m3))
-plot(residuals(m4))
-plot(residuals(m5))
-
-# Manual way
-residm1 <- df.full$CVseed_percent_maincrop_prop - predict(m1)
-residm2 <- df.full$CVseed_percent_maincrop_prop - predict(m2)
-residm3 <- df.full$CVseed_percent_maincrop_prop - predict(m3)
-residm4 <- df.full$CVseed_percent_maincrop_prop - predict(m4)
-residm5 <- df.full$CVseed_percent_maincrop_prop - predict(m5)
-
-plot_resid <- function(resid, modelname){
-  ggplot(df.full, aes(x = 1:nrow(df.full), y = resid)) +
-    geom_point(alpha = .6) +
-    geom_smooth() +
-    theme_minimal() +
-    labs(x = "Observation", y = "Residual value", title = modelname) +
-    ylim(c(-.8, .8)) +
-    theme(text = element_text(family = "Times"),
-          plot.title = element_text(hjust = 0.5, size = 12))
-}
-
-plot_resid(residm1, "Model 1")
-plot_resid(residm2, "Model 2") 
-plot_resid(residm3, "Model 3")
-plot_resid(residm4, "Model 4") 
-plot_resid(residm5, "Model 5")
-
-# Misc other comparison for INLA ----
-# Check compare to censoring
-# censoring which rounds values down to 0 or 1... for whatever reason
-cens <- 0.05
-df.full$CVseed_percent_maincrop_prop[df.full$CVseed_percent_maincrop_prop <= cens] <- 0
-df.full$CVseed_percent_maincrop_prop[df.full$CVseed_percent_maincrop_prop >= 1-cens] <- 1
-m_cens <- inla(CVseed_percent_maincrop_prop ~ legitimation_user_s + 
-             CertifierRequestn_s + 
-             noncommercial_seedsource_s + 
-             acreage_s + 
-             cropcat_n_s +
-             barrier_buyerReq_s +
-             barrier_insuffQuantity_s +
-             barrier_lackdesiredTraits_s +
-             barrier_availability_s +
-             maincrop +
-             Region +
-             survey_year, 
-           data = df.full,
-           family = "beta",
-           control.compute = list(cpo=TRUE, waic=TRUE),
-           control.family = list(beta.censor.value = cens)
-)
-
-
-m5df$model = 'rounded'
-m_censdf <- prep_inla_data(m_cens)
-m_censdf$model = 'censored'
-m_compare <- rbind(m5df, m_censdf)
-plot_inla_models(m_compare, 2)
 

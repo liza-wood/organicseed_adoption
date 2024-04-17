@@ -11,6 +11,7 @@ df <- df %>%
          barrier_availability,
          barrier_insuffQuantity,
          barrier_lackdesiredTraits,
+         barrier_seedTreatlack,
          OG_value,
          CertifierRequestn, 
          maincrop, survey_year, Region, 
@@ -33,6 +34,7 @@ df11 <- filter(df.full_rounded, survey_year == 2011) %>%
          barrier_availability_s = c(scale(barrier_availability, scale = T)),
          barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         barrier_seedTreatlack_s = c(scale(barrier_seedTreatlack, scale = T)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                               scale = T))
   )
@@ -45,6 +47,7 @@ df16 <- filter(df.full_rounded, survey_year == 2016) %>%
          barrier_availability_s = c(scale(barrier_availability, scale = T)),
          barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         barrier_seedTreatlack_s = c(scale(barrier_seedTreatlack, scale = T)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                               scale = T))
   )
@@ -56,6 +59,7 @@ df21 <- filter(df.full_rounded, survey_year == 2021) %>%
          barrier_availability_s = c(scale(barrier_availability, scale = T)),
          barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         barrier_seedTreatlack_s = c(scale(barrier_seedTreatlack, scale = T)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                               scale = T))
   )
@@ -65,6 +69,7 @@ m11 <- betareg(OGseed_percent_maincrop_prop ~
                barrier_availability_s +
                barrier_lackdesiredTraits_s +
                barrier_insuffQuantity_s +
+               barrier_seedTreatlack_s +
                OG_value_s + 
                acreage_log_s + 
                cropcat_n_s +
@@ -79,6 +84,7 @@ m16 <- betareg(OGseed_percent_maincrop_prop ~
                  barrier_availability_s +
                  barrier_lackdesiredTraits_s +
                  barrier_insuffQuantity_s +
+                 barrier_seedTreatlack_s +
                  OG_value_s + 
                  acreage_log_s + 
                  cropcat_n_s +
@@ -93,6 +99,7 @@ m21 <- betareg(OGseed_percent_maincrop_prop ~
                  barrier_availability_s +
                  barrier_lackdesiredTraits_s +
                  barrier_insuffQuantity_s +
+                 barrier_seedTreatlack_s +
                  OG_value_s + 
                  acreage_log_s + 
                  cropcat_n_s +

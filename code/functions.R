@@ -106,10 +106,11 @@ make_map <- function(df, mapdf){
   
 }
 
-coef_order_core <- c("Barrier: Organic availability",
+coef_order_core <- c("Barrier: Availability",
                      #"Barrier: Buyer requirements",
-                     "Barrier: Undesirable traits",
-                     "Barrier: Insufficient quantity",
+                     "Barrier: Quality",
+                     "Barrier: Quantity",
+                     "Barrier: Form",
                      "Year: 2010 (vs. 2015)",
                      "Year: 2020 (vs. 2015)",
                      "Values organic seed",
@@ -124,10 +125,11 @@ coef_order_core <- c("Barrier: Organic availability",
                      "Northeastern region (vs. North Central)",
                      "Southern region (vs. North Central)")
 
-coef_order_stargazer <- c("Barrier\\: Organic availability",
+coef_order_stargazer <- c("Barrier\\: Availability",
                 #"Barrier\\: Buyer requirements",
-                "Barrier\\: Undesirable traits",
-                "Barrier\\: Insufficient quantity",
+                "Barrier\\: Quality",
+                "Barrier\\: Quantity",
+                "Barrier\\: Form",
                 "Year\\: 2010 \\(vs\\. 2015\\)",
                 "Year\\: 2020 \\(vs\\. 2015\\)",
                 "Values organic seed",
@@ -151,10 +153,11 @@ coef_order_stargazer <- c("Barrier\\: Organic availability",
                 "Distributor: OSA (vs. Other)",
                 "Constant")
 
-coef_order <- c("Barrier: Organic availability",
+coef_order <- c("Barrier: Availability",
                # "Barrier: Buyer requirements",
-                "Barrier: Undesirable traits",
-                "Barrier: Insufficient quantity",
+                "Barrier: Quality",
+                "Barrier: Quantity",
+               "Barrier: Form",
                "Year: 2010 (vs. 2015)",
                "Year: 2020 (vs. 2015)",
                 "Values organic seed",
@@ -197,9 +200,10 @@ prep_betreg_data <- function(m){
       term == "cropcat_n_s" ~ "Crop diversity", 
       term == "years_certified_s" ~ "Years certified organic", 
       term == "barrier_buyerReq_s" ~ "Barrier: Buyer requirements",
-      term == "barrier_insuffQuantity_s" ~ "Barrier: Insufficient quantity", 
-      term == "barrier_lackdesiredTraits_s" ~ "Barrier: Undesirable traits", 
-      term == "barrier_availability_s" ~ "Barrier: Organic availability", 
+      term == "barrier_seedTreatlack_s" ~ "Barrier: Form",
+      term == "barrier_insuffQuantity_s" ~ "Barrier: Quantity", 
+      term == "barrier_lackdesiredTraits_s" ~ "Barrier: Quality", 
+      term == "barrier_availability_s" ~ "Barrier: Availability", 
       term == "maincropForage" ~ "Forage crops (vs. Field)", 
       term == "maincropVegetables" ~ "Vegetable crops (vs. Field)", 
       term == "RegionWest" ~ "Western region (vs. North Central)",
@@ -284,6 +288,8 @@ make_pp_df <- function(subset){
                                 na.rm = T), 2),
                    #barrier_buyerReq_s = rep(median(subset$barrier_buyerReq_s,
                    #                                na.rm = T), 2),
+               barrier_seedTreatlack_s = 
+                 rep(median(subset$barrier_seedTreatlack_s, na.rm = T), 2),
                    barrier_insuffQuantity_s = 
                      rep(median(subset$barrier_insuffQuantity_s, na.rm = T), 2),
                    barrier_lackdesiredTraits_s = 

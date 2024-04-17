@@ -17,6 +17,7 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          barrier_insuffQuantity_s,
          barrier_lackdesiredTraits_s,
          barrier_availability_s,
+         barrier_seedTreatlack_s,
          maincrop,
          Region,
          survey_year) %>% 
@@ -31,6 +32,7 @@ m <- betareg(OGseed_percent_maincrop_prop ~
                barrier_availability_s +
                barrier_lackdesiredTraits_s +
                barrier_insuffQuantity_s +
+               barrier_seedTreatlack_s +
                survey_year +
                OG_value_s + 
                acreage_log_s + 
@@ -43,7 +45,7 @@ m <- betareg(OGseed_percent_maincrop_prop ~
 summary(m)
 mdf <- prep_betreg_data(m)
 plot_betareg_models(mdf, 1)
-ggsave("figures/figure2.png", width = 8, height = 3.9)
+ggsave("figures/figure2.png", width = 8, height = 4.2)
 saveRDS(m, 'tables/append_fullmodel.RDS')
 
 tablea3 <- mdf[,c('term', 'mean', 'se')]

@@ -19,10 +19,10 @@ df.full <- select(df, OGseed_percent_maincrop,
                   TotalAcreage, cropcat_n, 
                   noncommercial_seedsource,
                   #YearsCertified
-                  barrier_buyerReq,
+                  #barrier_buyerReq,
                   barrier_insuffQuantity,
                   barrier_lackdesiredTraits,
-                  barrier_availability) %>% 
+                  barrier_availability, barrier_seedTreatlack) %>% 
   na.omit() 
 
 acres_cat7 <- c("1 to 9", "10 to 49", "50 to 179", "180 to 499",

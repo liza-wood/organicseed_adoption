@@ -17,6 +17,7 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          barrier_insuffQuantity,
          barrier_lackdesiredTraits,
          barrier_availability, 
+         barrier_seedTreatlack,
          OG_value,
          CertifierRequestn,
          maincrop, survey_year, Region, 

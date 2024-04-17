@@ -12,6 +12,7 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          barrier_insuffQuantity_s,
          barrier_lackdesiredTraits_s,
          barrier_availability_s,
+         barrier_seedTreatlack_s, 
          maincrop,
          Region,
          survey_year) %>% 
@@ -49,6 +50,7 @@ df <- df %>%
          barrier_availability_s = c(scale(barrier_availability, scale = T)),
          barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         barrier_seedTreatlack_s = c(scale(barrier_seedTreatlack, scale = T)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                               scale = T))
   ) %>% 
@@ -60,6 +62,7 @@ m <- multinom(IncreasedOGSeedf ~
             barrier_availability_s +
             barrier_lackdesiredTraits_s +
             barrier_insuffQuantity_s +
+            barrier_seedTreatlack_s +
             survey_year +
             OG_value_s + 
             acreage_log_s + 
@@ -75,6 +78,7 @@ table(df$IncreasedOGSeedf)
 #            barrier_availability_s +
 #            barrier_lackdesiredTraits_s +
 #            barrier_insuffQuantity_s +
+#            barrier_seedTreatlack_s +
 #            survey_year +
 #            OG_value_s + 
 #            acreage_log_s + 

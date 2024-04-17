@@ -13,6 +13,7 @@ df.full <- df %>%
          barrier_availability,
          barrier_insuffQuantity,
          barrier_lackdesiredTraits,
+         barrier_seedTreatlack,
          barrier_buyerReq,
          barrier_price,
          OG_value,
@@ -34,6 +35,7 @@ df.full <- df %>%
          barrier_availability_s = c(scale(barrier_availability, scale = T)),
          barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
          barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
+         barrier_seedTreatlack_s = c(scale(barrier_seedTreatlack, scale = T)),
          noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                               scale = T)),
          #barrier_distrustQuality_s = c(scale(barrier_distrustQuality, scale = T)),
@@ -52,6 +54,7 @@ m <- betareg(OGseed_percent_maincrop_prop ~
                barrier_availability_s +
                barrier_lackdesiredTraits_s +
                barrier_insuffQuantity_s +
+               barrier_seedTreatlack_s +
                barrier_price_s +
                barrier_buyerReq_s +
                survey_year +
