@@ -15,8 +15,6 @@ knitr::opts_knit$set(root.dir = '~/Documents/Davis/R-Projects/organicseed_adopti
 
 ## 1. Survey sampling method 
 
-Survey data collection was spearheaded by Organic Seed Alliance (OSA), with a number of collaborators, using a mix of convenience and random sampling across the three time periods.  
-
 * 2010: Data were collected by convenience sample only, shared by 23 organizations, including non-profits and foundations, organic certifiers, and departments of agriculture. Surveys were distributed primarily over email, but paper, phone, and in-person surveys were conducted at the request of the grower. We received a total of 1,027 responses (712 web-based, 315 paper-based), 549 of which included complete enough data for our analysis. 
 
 * 2015: Data were collected by both random and convenience sampling. For the random sample, 800 certified organic producers were randomly selected from the approximately 12,000 organic producers that use seed, recorded in the NOP database. To encourage responsiveness, three follow-up emails were sent following an initial email, paper copies were mailed on request, and individual phone calls were made to follow-up. From these 800, 197 (25%) responded (114 web-based, 83 paper-based) and 127 (16%) were complete enough to use in our analyses. For the convenience sample, surveys were shared by 41 organizations, primarily over email. We received a total of 1,148 responses from the convenience sample, 672 of which included complete enough data for our analysis. In total we had 810 usable responses.
@@ -75,7 +73,7 @@ core_vars2 <- c("Barrier: Organic availability",
 ```{r, echo = F, results = "asis", eval = T}
 m_list <- readRDS('tables/append_sample_models.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "\\shortstack{Proportion of organic land planted with organic seed\\\\}", 
+           dep.var.labels = "\\shortstack{Proportion of organic land planted with organic seed}", 
            covariate.labels = c(core_vars2[1:3], core_vars2[5],
                                 core_vars2[4],
                                 core_vars2[6:15],
@@ -244,9 +242,9 @@ stargazer::stargazer(m_list,  type = "latex",
 \pagebreak
 ## 6. Mediation analyses  
 
-To check for mediating effects between values, barriers, and operational attributes, we run three mediation analyses. A mediating variable is one that transmits the effect one variable to another.  
+To check for mediating effects between values, barriers, and operational attributes, we run three mediation analyses to determine is one variable (a mediator) is transmitting the effect of another variable.  
 
-We first addresses the potential mediation effect of larger farms on valuing organic seed. In other words, are those who value organic seed more likely to have smaller farms, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 2. 
+We first test the potential mediation effect of larger farms on valuing organic seed. In other words, are those who value organic seed more likely to have smaller farms, and might this influence model results? We depict a simplified representation of this mediating effect in Figure 2. 
 
 ```{r med1 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Organic seed value and farm size'}
 # We test for mediation, rather than moderation through interaction effects, because we have no theoretical reason to believe that values, barriers, and operational attributes relate in a multiplicative sense.
@@ -267,7 +265,8 @@ digraph {
 ```
 
 
-We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 5) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table 6, where the Average Causal Mediation Effect (ACME) is significant. This result suggests the effect of organic seed values on organic seed use (Total Effect) is mediated by farm size. 
+We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 4) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table 6, where the Average Causal Mediation Effect (ACME) is significant. This result suggests the effect of organic seed values on organic seed use (Total Effect) is mediated by farm size, but both variable still have a large and significant effect on their own.  
+
 ```{r mediation1, echo = F}
 table <- read.csv('tables/append_mediation1.csv')  
 table$p.value <- ifelse(table$p.value == 0, "< 0.001", table$p.value)
@@ -277,7 +276,7 @@ kbl(table, align = 'c', booktabs = T,
   #column_spec(2:4, width = '4cm')
 ```
 
-Next we addresses the potential mediation effect of experiencing organic seed quantity barriers on larger farms. In other words, might larger farms be more likely to experience the barrier of limited organic seed quantity, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 2. 
+Next we addresses the potential mediation effect of experiencing organic seed quantity barriers on larger farms (Figure 3). In other words, are larger farms be more likely to experience the barrier of limited organic seed quantity, and might this influence model results? 
 ```{r med2 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Farm size and organic seed quantity'}
 DiagrammeR::grViz("
 digraph {
@@ -295,7 +294,10 @@ digraph {
 ")
 ```
 
-We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 5) with results of a model that regresses the same variables on the potential mediator: the quantity barrier. Results are presented in Table 6, where the Average Causal Mediation Effect (ACME) is small (-0.001) and not significant. The value suggests how much the effect of farm size on organic seed use (Total Effect) is mediated by this barrier. In this case, the mediated effect is small and the total and Average Direct Effects (ADE) are larger and significant. In short, the quantity barrier is not influencing the effect of farm size. 
+Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: quantity barrier. Results are presented in Table 7, where the ACME is not significant and the total and Average Direct Effects (ADE) are larger and significant. In short, the quantity barrier is not influencing the effect of farm size. 
+
+\pagebreak 
+
 ```{r mediation2, echo = F}
 table <- read.csv('tables/append_mediation2.csv')  
 table$p.value <- ifelse(table$p.value == 0, "< 0.001", table$p.value)
@@ -305,7 +307,9 @@ kbl(table, align = 'c', booktabs = T,
   #column_spec(2:4, width = '4cm')
 ```
 
-Next we addresses the potential mediation effect of experiencing organic seed availability barriers on more diverse farms. In other words, are farms that use a wider variety of seeds more likely to experience the barrier of limited organic seed availability, and if so, how might that affect the model results? We depict a simplified representation of this mediating effect in Figure 3. 
+
+Last, we addresses the potential mediation effect of experiencing organic seed availability barriers on more diverse farms (Figure 4).
+
 ```{r med3 diagram,echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Crop diversity and organic seed availability'}
 DiagrammeR::grViz("
 digraph {
@@ -323,7 +327,7 @@ digraph {
 ")
 ```
 
-Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: the availability barrier. Results are presented in Table 7, where again the ACME is small (-0.002) and not significant. In short, the availability barrier is not influencing the effect of crop diversity. 
+Much like the analysis concerning farm size and the quantity barrier, we find that the availability barrier is not influencing the effect of crop diversity. 
 
 ```{r mediation3, echo = F}
 table <- read.csv('tables/append_mediation3.csv')  
@@ -349,26 +353,28 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 \pagebreak
 ## 8. Self-reported behavior change
 
+Results to a multinomial regression below are based on the question, _Over the last three years have you increased the percentage of certified organic seed that you use?_
 ```{r seflreport model, results = "asis", echo = F, eval = F}
 # I don't know why this is bugging so I paste the latex table below
 m_list <- readRDS('tables/append_increase_model.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
-           #dep.var.labels = "\\shortstack{Self-reported increase in organic seed usage\\\\compared to baseline: About the same amount or decreased}", 
+           #dep.var.labels = "\\shortstack{Self-reported increase in organic seed usage compared to baseline:\\\\No: stayed about the same amount or decreased}", 
            #column.labels = c("Increased the amount", 
            #                 "Already fully organic"),
            covariate.labels = c(core_vars2, "Constant"), 
            model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
-           title = "Self-reported increase model", 
+           title = "Multinomial regression model results", 
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
 ```
 \begin{table}[!h] \centering 
-  \caption{Self-reported increase model (versus No increase)} 
+  \caption{Multinomial regression model results} 
   \label{} 
 \begin{tabular}{@{\extracolsep{5pt}}lcc} 
 \\[-1.8ex]\hline 
 \hline \\[-1.8ex] 
-\\[-1.8ex] & Yes: Increased the \% & Already at 100\% \\ 
+\\[-1.8ex] & \multicolumn{2}{c}{\shortstack{Self-reported increase in organic seed usage compared to baseline:\\\\No: stayed about the same amount or decreased}} \\ 
+ & Yes: Increased the \%  & Already at 100\%  \\ 
 \hline \\[-1.8ex] 
  Barrier: Organic availability & 0.097 & $-$0.556$^{***}$ \\ 
   & (0.072) & (0.089) \\ 
@@ -409,35 +415,12 @@ stargazer::stargazer(m_list,  type = "latex",
 \end{tabular} 
 \end{table} 
 
-\pagebreak 
-
-
-## 9. Certifiers' role
-
-An additional consideration in our analysis is the effect of certifier. We expect certifiers to enforce the regulation differently **(cite)**, but  we do not have data that allows us to specifically identify each producers' certifier in our data for use in our main analysis. However, we do have some suggestion of growers' certifier based on our data collection process in certain survey periods. When data are available, we assume that respondents who completed the survey distributed by a certain certifier are certified by them. In Table 9, Model 1 we model the effect of five distinct certifiers and one 'other' category, compared against compared to a baseline of the most popular certifier in our limited dataset. We see a small and insignificant effect for different certifiers compared to a baseline certifier group, and negligible changes in the results between the models run with and without the sampling consideration (Table 9, Model 2). 
-
-```{r cert model, echo = F, results = "asis"}
-m_list <- readRDS('tables/append_certifier_model.RDS')
-stargazer::stargazer(m_list,  type = "latex", 
-           dep.var.labels = "\\shortstack{Proportion of production acreage\\\\planted with organic seed}", 
-           covariate.labels = c(core_vars2[-9],"Certifier Other",
-                                "Certifier 24", "Certifier 2", "Certifier 27",
-                                "Certifier 42", "Certifier 7", "Constant"), 
-           model.numbers = T, nobs = TRUE, dep.var.caption = "", 
-           no.space = TRUE, header = FALSE, intercept.bottom = T,
-           title = "Model checks for certifier effects", 
-           table.placement = "H", keep.stat = c("n", "ll", 'rsq'),
-           label=knitr::opts_current$get("label"))
-```
 
 ```{r, echo = F}
 wordcount <- rmdwc::rmdcount('~/Documents/Davis/R-Projects/organicseed_adoption/code/appendices/00_compiled_appendix.Rmd')
 ```
 
 
-
-\pagebreak 
-
-Word count: `r `wordcount[[3]]-8`
+Word count: `r wordcount[[3]]-8`
 
 
