@@ -1,4 +1,5 @@
 # Increased OG Seed ----
+library(tidyverse)
 source('code/functions.R')
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
   select(RespondentID,
