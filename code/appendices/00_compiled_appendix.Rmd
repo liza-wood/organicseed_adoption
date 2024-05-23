@@ -3,7 +3,11 @@ title: "Appendix"
 subtitle: "Compliance within regulatory gray areas: The case of the organic seed standard"
 output: pdf_document
 urlcolor: blue
+header-includes: 
+  \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
 ---
+
+\beginsupplement
 
 ```{r, echo = F, warning = F, message = F}
 library(kableExtra)
@@ -22,7 +26,7 @@ knitr::opts_knit$set(root.dir = '~/Documents/Davis/R-Projects/organicseed_adopti
 
 * 2020: Data were collected by both random and convenience sampling using methods similar to 2015. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database and given the option to complete the survey over email or paper. After an initial email and postcard invitation, growers received follow-up contacts by email, postcard, and phone, and hard copies of the survey were sent. Survey distribution was managed by Washington State University’s Social and Economic Sciences Research Center (SESRC) and distributed alongside the Organic Farming Research Foundation's (OFRF) National Organic Research Agenda. From these 2,000 surveys, 448 (22%) responded (206 web-based and 242 paper-based) and 191 (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed by SESRC to all remaining certified organic operations over email, with postcard reminders. The survey was also advertised by Organic Seed Alliance (OSA) and OFRF. We received a total of 611 responses from the convenience sample, 217 of which included complete enough data for our analysis. In total we had 408 usable responses.
 
-The breakdown between random and convenience sampling used in our analysis is summarized in Table 1. We consider the effect of sampling method, as well as survey distributor, through models in Section 2. 
+The breakdown between random and convenience sampling used in our analysis is summarized in Table S1. We consider the effect of sampling method, as well as survey distributor, through models in Section 2. 
 
 
 ```{r, echo = F}
@@ -98,9 +102,9 @@ stargazer::stargazer(m_list,  type = "latex",
 
 ## 3. Sample representativeness 
 
-While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution of operations and farm size distribution between our sample and USDA Census data. 
+While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution of operations (Table S3) and farm size distribution (Figure S1) between our sample and USDA Census data. 
 
-We first use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table 3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2010 do we see significant variation in representation across regions, with the North Central and Southern regions over-represented and the Northeast under-represented. 
+We first use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table S3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2010 do we see significant variation in representation across regions, with the North Central and Southern regions over-represented and the Northeast under-represented. 
 
 
 ```{r, echo = F, message = F, warning = F}
@@ -175,7 +179,7 @@ kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
 
 Next, to understand farm size representativeness, we look at USDA Census organic tabulations, reported only for the [2012](https://agcensus.library.cornell.edu/wp-content/uploads/2012-organictab-1.pdf) and [2017](https://www.nass.usda.gov/Publications/AgCensus/2017/Online_Resources/Organics_Tabulation/organictab.pdf) censuses. 
 
-In Figure 1 we compare these USDA Census data against our survey sample. These comparisons show a consistent over-representation of the smallest farms (1-9 acres), especially in the North Central and South, and under-representation of the largest farms. Still, our sample captures a distribution of organic farm sizes that includes medium and large farms, allowing us to understand the effect of farm size in our analysis. Additionally, an important consideration is that we calculate farm size as reported acreage planted to three major crop categories, but this approach likely underestimates acreage generally compared to USDA Census data, which reports all certified land. Furthermore these data are not crop specific and so USDA data also includes non-seed crop operations (i.e. orchards). 
+In Figure S1 we compare these USDA Census data against our survey sample. These comparisons show a consistent over-representation of the smallest farms (1-9 acres), especially in the North Central and South, and under-representation of the largest farms. Still, our sample captures a distribution of organic farm sizes that includes medium and large farms, allowing us to understand the effect of farm size in our analysis. Additionally, an important consideration is that we calculate farm size as reported acreage planted to three major crop categories, but this approach likely underestimates acreage generally compared to USDA Census data, which reports all certified land. Furthermore these data are not crop specific and so USDA data also includes non-seed crop operations (i.e. orchards). 
 
 ```{r fig1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Sample farm size distribution compared to USDA Census data'}
 knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_repf1_usda.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
@@ -185,7 +189,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 \pagebreak 
 # Model checks 
 
-## 4. Full model results  
+## 4. Full model results (Table S4) 
 
 ```{r full model, echo = F, results = "asis"}
 #tablea6 <- read.csv('tables/tablea7.csv') ; 
@@ -225,7 +229,7 @@ stargazer::stargazer(m_list,  type = "latex",
  
 \pagebreak
 
-## 5. Considering non-allowable barriers
+## 5. Considering non-allowable barriers (Table S5)
 
 ```{r barrier model, echo = F, results = "asis"}
 m_list <- readRDS('tables/append_models_barriers.rds')
@@ -246,28 +250,16 @@ stargazer::stargazer(m_list,  type = "latex",
 
 To check for mediating effects between values, barriers, and operational attributes, we run three mediation analyses to determine if one variable (a mediator) is transmitting the effect of another variable.  
 
-We first test the potential mediation effect of larger farms on valuing organic seed. In other words, are those who value organic seed more likely to have smaller farms, and might this influence model results? We depict a simplified representation of this mediating effect in Figure 2. 
+We first test the potential mediation effect of larger farms on valuing organic seed. In other words, are those who value organic seed more likely to have smaller farms, and might this influence model results? We depict a simplified representation of this mediating effect in Figure S2. 
 
 ```{r med1 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Organic seed value and farm size'}
 # We test for mediation, rather than moderation through interaction effects, because we have no theoretical reason to believe that values, barriers, and operational attributes relate in a multiplicative sense.
-DiagrammeR::grViz("
-digraph {
-  graph []
-  node [shape = plaintext]
-    X [label ='Values organic seed', shape = box, color = black]
-    Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
-    M [label ='Farm size', shape = box]
-  edge [minlen = 2]
-    X->M  
-    M->Y 
-    X->Y [color = black]
-  { rank = same; X; Y; M }
-}
-")
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_med1.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+
 ```
 
 
-We run a mediation analysis by comparing results of our full regression model (e.g. results in Table 4) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table 6. The Total Effect of organic seed value without considering farm size is 0.052, while the average direct effect (ADE), which considers the effect of the mediatior, lowers this effect size to 0.046. This is reflected in the Average Causal Mediation Effect (ACME), is small but significant.
+We run a mediation analysis by comparing results of our full regression model (e.g. results in Table S4) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table S6. The Total Effect of organic seed value without considering farm size is 0.052, while the average direct effect (ADE), which considers the effect of the mediatior, lowers this effect size to 0.046. This is reflected in the Average Causal Mediation Effect (ACME), is small but significant.
 
 ```{r mediation1, echo = F}
 table <- read.csv('tables/append_mediation1.csv')  
@@ -278,27 +270,15 @@ kbl(table, align = 'c', booktabs = T,
   #column_spec(2:4, width = '4cm')
 ```
 
-Next we address the potential mediation effect of experiencing organic seed quantity barriers on larger farms (Figure 3). In other words, are larger farms be more likely to experience the barrier of limited organic seed quantity, and might this influence model results? 
+\pagebreak 
+
+Next we address the potential mediation effect of experiencing organic seed quantity barriers on larger farms (Figure S3). In other words, are larger farms be more likely to experience the barrier of limited organic seed quantity, and might this influence model results? 
 ```{r med2 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Farm size and organic seed quantity'}
-DiagrammeR::grViz("
-digraph {
-  graph []
-  node [shape = plaintext]
-    X [label ='Farm size', shape = box, color = black]
-    Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
-    M [label ='Barrier: Insufficient quantity', shape = box]
-  edge [minlen = 2]
-    X->M  
-    M->Y 
-    X->Y [color = black]
-  { rank = same; X; Y; M }
-}
-")
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_med2.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+
 ```
 
-Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: quantity barrier. Results are presented in Table 7, where the ACME is not significant, signalling that the quantity barrier is not mediating the effect of farm size. 
-
-\pagebreak 
+Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: quantity barrier. Results are presented in Table S7, where the ACME is not significant, signalling that the quantity barrier is not mediating the effect of farm size. 
 
 ```{r mediation2, echo = F}
 table <- read.csv('tables/append_mediation2.csv')  
@@ -309,27 +289,15 @@ kbl(table, align = 'c', booktabs = T,
   #column_spec(2:4, width = '4cm')
 ```
 
+\pagebreak 
 
-Last, we addresses the potential mediation effect of experiencing organic seed availability barriers on more diverse farms (Figure 4).
+Last, we addresses the potential mediation effect of experiencing organic seed availability barriers on more diverse farms (Figure S4).
 
-```{r med3 diagram,echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Crop diversity and organic seed availability'}
-DiagrammeR::grViz("
-digraph {
-  graph []
-  node [shape = plaintext]
-    X [label ='Crop diversity', shape = box, color = black]
-    Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
-    M [label ='Barrier: Availability', shape = box]
-  edge [minlen = 2]
-    X->M  
-    M->Y 
-    X->Y [color = black]
-  { rank = same; X; Y; M }
-}
-")
+```{r med3 diagram, echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Crop diversity and organic seed availability'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_med3.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
 
-Much like the analysis concerning farm size and the quantity barrier, we find that the availability barrier is not influencing the effect of crop diversity. 
+Much like the analysis concerning farm size and the quantity barrier, we find that the availability barrier is not influencing the effect of crop diversity (Table S8). 
 
 ```{r mediation3, echo = F}
 table <- read.csv('tables/append_mediation3.csv')  
@@ -342,7 +310,7 @@ kbl(table, align = 'c', booktabs = T,
 
 
 \pagebreak
-## 7. Predicted organic seed use figures
+## 7. Predicted organic seed use (Figures S5 and S6)  
 
 ```{r pp f1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted organic seed use for field crop growers of two farmer profiles.'}
 knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_field_pp.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
@@ -355,7 +323,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 \pagebreak
 ## 8. Self-reported behavior change
 
-Results from a multinomial regression below are based on the question, _Over the last three years have you increased the percentage of certified organic seed that you use?_ The baseline response is "No." 
+Results from a multinomial regression below (Table S9) are based on the question, _Over the last three years have you increased the percentage of certified organic seed that you use?_ The baseline response is "No." 
 ```{r seflreport model, results = "asis", echo = F, eval = F}
 # I don't know why this is bugging so I paste the latex table below
 m_list <- readRDS('tables/append_increase_model.RDS')

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  13 MAY 2024 18:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  23 MAY 2024 10:56
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -461,7 +461,7 @@ File: bkm-pdftex.def 2019/12/03 v1.28 bookmark driver for pdfTeX (HO)
 )) (/usr/local/texlive/2020/texmf-dist/tex/latex/xurl/xurl.sty
 Package: xurl 2020/01/24 v 0.09 modify URL breaks
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 85.
+Package hyperref Info: Option `colorlinks' set `true' on input line 86.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/l3backend/l3backend-pdfmode.def
 File: l3backend-pdfmode.def 2020-03-12 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count291
@@ -479,37 +479,37 @@ LaTeX Warning: Label `' multiply defined.
 )
 \openout1 = `00_compiled_appendix.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 99.
-LaTeX Font Info:    ... okay on input line 99.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 99
-.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 100.
+LaTeX Font Info:    ... okay on input line 100.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 10
+0.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Info: Redefining \microtypecontext on input line 99.
+LaTeX Info: Redefining \microtypecontext on input line 100.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `basictext'.
-LaTeX Info: Redefining \showhyphens on input line 99.
+LaTeX Info: Redefining \showhyphens on input line 100.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -572,7 +572,7 @@ e
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 \AtBeginShipoutBox=\box67
-Package hyperref Info: Link coloring ON on input line 99.
+Package hyperref Info: Link coloring ON on input line 100.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 (/usr/local/texlive/2020/texmf-dist/tex/latex/refcount/refcount.sty
@@ -584,43 +584,43 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count298
 )
-LaTeX Info: Redefining \ref on input line 99.
-LaTeX Info: Redefining \pageref on input line 99.
-LaTeX Info: Redefining \nameref on input line 99.
+LaTeX Info: Redefining \ref on input line 100.
+LaTeX Info: Redefining \pageref on input line 100.
+LaTeX Info: Redefining \nameref on input line 100.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-01.
+02.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-01.
+02.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-101.
+102.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-101.
+102.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 101.
+(Font)              <12> on input line 102.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 101.
+(Font)              <8> on input line 102.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 101.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 101
+(Font)              <6> on input line 102.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 102
 .
 (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2020/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 101
+LaTeX Font Info:    Trying to load font information for U+msb on input line 102
 .
 (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -628,20 +628,20 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 1
-10.
+13.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 168.
+(Font)              <10> on input line 171.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 168.
+(Font)              <7> on input line 171.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 168.
+(Font)              <5> on input line 171.
 [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (2.77399pt too wide) in paragraph at lines 201--254
+Overfull \hbox (2.77399pt too wide) in paragraph at lines 204--257
  [][] 
  []
 
@@ -663,78 +663,84 @@ ppend_repf1_usda.png Graphic file (type png)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_repf1_usda.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/append_repf1_usda.png  used on input line 332.
+_adoption/figures/append_repf1_usda.png  used on input line 335.
 (pdftex.def)             Requested size: 469.75385pt x 587.1923pt.
 [4] [5 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures
 /append_repf1_usda.png>] [6] [7]
-<00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf, id=69, 951.555pt x
- 106.3975pt>
-File: 00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf Graphic file (
-type pdf)
-<use 00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf>
-Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med1 diagram-1
-.pdf  used on input line 479.
-(pdftex.def)             Requested size: 352.31667pt x 39.39404pt.
-<00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf, id=70, 953.5625pt 
-x 107.40125pt>
-File: 00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf Graphic file (
-type pdf)
-<use 00_compiled_appendix_files/figure-latex/med2 diagram-1.pdf>
-Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med2 diagram-1
-.pdf  used on input line 519.
-(pdftex.def)             Requested size: 352.3179pt x 39.68211pt.
-[8 <./00_compiled_appendix_files/figure-latex/med1 diagram-1.pdf> <./00_compile
-d_appendix_files/figure-latex/med2 diagram-1.pdf>]
-<00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf, id=102, 953.5625pt
- x 106.3975pt>
-File: 00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf Graphic file (
-type pdf)
-<use 00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf>
-Package pdftex.def Info: 00_compiled_appendix_files/figure-latex/med3 diagram-1
-.pdf  used on input line 556.
-(pdftex.def)             Requested size: 352.3179pt x 39.31125pt.
-[9 <./00_compiled_appendix_files/figure-latex/med3 diagram-1.pdf>]
 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
-_field_pp.png, id=121, 505.89pt x 289.08pt>
+_med1.png, id=69, 1003.75pt x 582.175pt>
+File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
+ppend_med1.png Graphic file (type png)
+<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_med1.png>
+Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
+_adoption/figures/append_med1.png  used on input line 484.
+(pdftex.def)             Requested size: 352.31331pt x 204.3417pt.
+[8 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/app
+end_med1.png>]
+</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
+_med2.png, id=79, 1003.75pt x 582.175pt>
+File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
+ppend_med2.png Graphic file (type png)
+<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_med2.png>
+Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
+_adoption/figures/append_med2.png  used on input line 526.
+(pdftex.def)             Requested size: 352.31331pt x 204.3417pt.
+[9 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/app
+end_med2.png>]
+</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
+_med3.png, id=87, 1003.75pt x 582.175pt>
+File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
+ppend_med3.png Graphic file (type png)
+<use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_med3.png>
+Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
+_adoption/figures/append_med3.png  used on input line 563.
+(pdftex.def)             Requested size: 352.31331pt x 204.3417pt.
+[10 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+pend_med3.png>]
+</Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
+_field_pp.png, id=95, 505.89pt x 289.08pt>
 File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
 ppend_field_pp.png Graphic file (type png)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_field_pp.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/append_field_pp.png  used on input line 592.
+_adoption/figures/append_field_pp.png  used on input line 599.
 (pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/append
-_forage_pp.png, id=122, 505.89pt x 289.08pt>
+_forage_pp.png, id=96, 505.89pt x 289.08pt>
 File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/a
 ppend_forage_pp.png Graphic file (type png)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_forage_pp.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/append_forage_pp.png  used on input line 601.
+_adoption/figures/append_forage_pp.png  used on input line 608.
 (pdftex.def)             Requested size: 469.76265pt x 268.43579pt.
-[10 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
+[11 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_field_pp.png> </Users/lizawood/Documents/Davis/R-Projects/organicseed_adop
 tion/figures/append_forage_pp.png>]
-Overfull \hbox (17.7456pt too wide) in paragraph at lines 621--667
+Overfull \hbox (17.7456pt too wide) in paragraph at lines 629--675
  [][] 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 669.
-[11]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 669.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 677.
+[12]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 677.
 (./00_compiled_appendix.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 669.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 669.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 677.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 677.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 15034 strings out of 480608
- 223206 string characters out of 5903631
- 554046 words of memory out of 5000000
- 30510 multiletter control sequences out of 15000+600000
- 583689 words of font info for 106 fonts, out of 8000000 for 9000
+ 15040 strings out of 480608
+ 223958 string characters out of 5903631
+ 554153 words of memory out of 5000000
+ 30514 multiletter control sequences out of 15000+600000
+ 583772 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,13n,42p,819b,333s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/lo
@@ -750,10 +756,10 @@ st/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2020/texmf-dist/fonts/typ
 e1/public/lm/lmri10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/
 lm/lmsy10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy7.p
 fb>
-Output written on 00_compiled_appendix.pdf (11 pages, 823496 bytes).
+Output written on 00_compiled_appendix.pdf (12 pages, 851207 bytes).
 PDF statistics:
- 220 PDF objects out of 1000 (max. 8388607)
- 178 compressed objects within 2 object streams
- 47 named destinations out of 1000 (max. 500000)
+ 194 PDF objects out of 1000 (max. 8388607)
+ 157 compressed objects within 2 object streams
+ 48 named destinations out of 1000 (max. 500000)
  12399 words of extra memory for PDF output out of 14400 (max. 10000000)
 
