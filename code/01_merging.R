@@ -14,6 +14,8 @@ df11f <- readRDS("data2011_cleaned.rds") %>%
   select(codebook$qcode_11_16, IncreasedOGSeed)
 df11f$data_coll_method <- "Convenience"
 table(df11f$SurveyID)
+# So you can have zero years certified, which would mean that this is your first year
+df11f$YearsCertified <- floor(df11f$YearsCertified)
 
 df16f <- readRDS("data2016_cleaned.rds") %>% select(codebook$qcode_11_16, IncreasedOGVegSeed,
                                                     IncreasedOGFieldSeed, IncreasedOGForageSeed,
@@ -24,6 +26,8 @@ sort(unique((df16f$SurveyID)))
 df16f$data_coll_method <- ifelse(df16f$SurveyID %in% c("Email Invitation 1",
                                                        "Sample Group Manual Entry"),
                                 "Random", "Convenience")
+# So you can have zero years certified, which would mean that this is your first year
+df16f$YearsCertified <- floor(df16f$YearsCertified)
 
 df21f <- readRDS("data2021_cleaned.rds")
 zipcode <- data.table::fread("zipcode.csv")

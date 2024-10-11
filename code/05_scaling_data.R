@@ -1,48 +1,114 @@
 library(dplyr)
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds")
 
+scale_data <- function(dat, dv, yr = c('2011', '2016', '2021')){
+  dat2 <- dat %>% 
+    filter(Region != "International", maincrop != "Unknown", survey_year %in% yr) %>% 
+    select(RespondentID, 
+           {{dv}}, 
+           barrier_availability,
+           barrier_insuffQuantity,
+           barrier_lackdesiredTraits,
+           barrier_seedTreatlack,
+           barrier_price,
+           barrier_buyerReq,
+           OG_value,
+           CertifierRequestn, 
+           maincrop, survey_year, Region, 
+           TotalAcreage, cropcat_n,
+           noncommercial_seedsource,
+           YearsCertified
+    ) %>% 
+    mutate(barrier_allowable = purrr::pmap_dbl(list(barrier_availability,
+                                                    barrier_insuffQuantity,
+                                                    barrier_lackdesiredTraits,
+                                                    barrier_seedTreatlack), max)) %>% 
+    mutate(barrier_nonallowable = purrr::pmap_dbl(list(barrier_price,
+                                                       barrier_buyerReq), max)) %>% 
+    mutate(Region = factor(Region, levels = c("North Central", "West", 
+                                              "Northeast", "South")),
+           survey_year = factor(survey_year, c(2016, 2011, 2021))) %>% 
+    na.omit() # do this now so that it scales around the sample we are using
+  
+  if('IncreasedOGSeed' %in% colnames(dat2)){
+    dat3 <- dat2 %>% 
+      mutate(IncreasedOGSeed_f = factor(IncreasedOGSeed,
+                                        levels = c("No: About the same % or decreased", 
+                                                   "Yes: Increased the %", 
+                                                   "Already at 100%")))
+  } else {
+    dat3 <- dat2 %>% 
+      mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
+             CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop)
+  }
+  dat3 %>% 
+    mutate(acreage_log = log(TotalAcreage),
+           acreage_log_s = c(scale(acreage_log, scale = F)),
+           #acreage_s = c(scale(TotalAcreage, scale = T)), 
+           #cropcat_n_s = c(scale(cropcat_n, scale = F)),
+           cropcat_n_s = cropcat_n - 1,
+           #CertifierRequestn_s = c(scale(CertifierRequestn, scale = T)),
+           #OG_value_s = c(scale(OG_value, scale = F)),
+           OG_value_s = OG_value - 3,
+           #barrier_availability_s = c(scale(barrier_availability, scale = F)),
+           #barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = F)),
+           #barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = F)),
+           noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
+                                                scale = F)),
+           #barrier_seedTreatlack_s = c(scale(barrier_seedTreatlack, scale = F)),
+           #barrier_allowable_s = c(scale(barrier_allowable, scale = F)),
+           barrier_allowable_s = barrier_allowable-1,
+           #barrier_nonallowable_s = c(scale(barrier_nonallowable, scale = F))
+           barrier_nonallowable_s = barrier_nonallowable-1,
+           #barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = F)),
+           #barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = T)),
+           #barrier_price_s = c(scale(barrier_price, scale = F))
+           years_certified_s = c(scale(YearsCertified, scale = F)),
+           years_certified_log = log((YearsCertified+1))
+    )
+}
+
+
 # Scale data ----
 # Considering acreage as the dependent variable 
 ## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
 
-df <- df %>% 
-  filter(Region != "International", maincrop != "Other") %>% 
-  select(RespondentID, 
-         OGseed_percent_maincrop, 
-         barrier_availability,
-         barrier_insuffQuantity,
-         barrier_lackdesiredTraits,
-         barrier_seedTreatlack,
-         OG_value,
-         CertifierRequestn, 
-         maincrop, survey_year, Region, 
-         TotalAcreage, cropcat_n,
-         noncommercial_seedsource
-  ) %>% 
-  na.omit() %>%  # do this now so that it scales around the sample we are using
-  mutate(Region = factor(Region, levels = c("North Central", "West", 
-                                            "Northeast", "South")),
-         survey_year = factor(survey_year, c(2016, 2011, 2021))) %>% 
-  mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100,
-         CVseed_percent_maincrop_prop = 1-OGseed_percent_maincrop_prop,
-         acreage_log = log(TotalAcreage),
-         acreage_log_s = c(scale(acreage_log, scale = F)),
-         #acreage_s = c(scale(TotalAcreage, scale = T)), 
-         cropcat_n_s = c(scale(cropcat_n, scale = T)),
-         #CertifierRequestn_s = c(scale(CertifierRequestn, scale = T)),
-         OG_value_s = c(scale(OG_value, scale = T)),
-         survey_year = factor(survey_year),
-         barrier_availability_s = c(scale(barrier_availability, scale = T)),
-         barrier_lackdesiredTraits_s = c(scale(barrier_lackdesiredTraits, scale = T)),
-         barrier_insuffQuantity_s = c(scale(barrier_insuffQuantity, scale = T)),
-         noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
-                                              scale = T)),
-         barrier_seedTreatlack_s = c(scale(barrier_seedTreatlack, scale = T)),
-         #barrier_buyerReq_s = c(scale(barrier_buyerReq, scale = T)),
-         #barrier_saveOwn_s  = c(scale(barrier_saveOwn, scale = T)),
-         #barrier_price_s = c(scale(barrier_price, scale = T)),
-         #years_certified_s = c(scale(YearsCertified, scale = T))
-         )
+dfs <- scale_data(df, OGseed_percent_maincrop)
+saveRDS(dfs, "~/Box/organicseed_adoption/df_scaled.rds")
+saveRDS(dfs, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds")
 
-saveRDS(df, "~/Box/organicseed_adoption/df_scaled.rds")
-saveRDS(df, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds")
+dfs10 <- scale_data(df, OGseed_percent_maincrop, 2011)
+
+saveRDS(dfs10, "~/Box/organicseed_adoption/df_scaled10.rds")
+saveRDS(dfs10, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled10.rds")
+
+dfs15 <- scale_data(df, OGseed_percent_maincrop, 2016)
+
+saveRDS(dfs15, "~/Box/organicseed_adoption/df_scaled15.rds")
+saveRDS(dfs15, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled15.rds")
+
+dfs20 <- scale_data(df, OGseed_percent_maincrop, 2021)
+
+saveRDS(dfs20, "~/Box/organicseed_adoption/df_scaled20.rds")
+saveRDS(dfs20, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled20.rds")
+
+dfs <- scale_data(df, IncreasedOGSeed)
+
+saveRDS(dfs, "~/Box/organicseed_adoption/df_scaled_increase.rds")
+saveRDS(dfs, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled_increase.rds")
+
+dfs10 <- scale_data(df, IncreasedOGSeed, 2011)
+
+saveRDS(dfs10, "~/Box/organicseed_adoption/df_scaled_increase10.rds")
+saveRDS(dfs10, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled_increase10.rds")
+
+dfs15 <- scale_data(df, IncreasedOGSeed, 2016)
+
+saveRDS(dfs15, "~/Box/organicseed_adoption/df_scaled_increase15.rds")
+saveRDS(dfs15, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled_increase15.rds")
+
+dfs20 <- scale_data(df, IncreasedOGSeed, 2021)
+
+saveRDS(dfs20, "~/Box/organicseed_adoption/df_scaled_increase20.rds")
+saveRDS(dfs20, "~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled_increase20.rds")
+

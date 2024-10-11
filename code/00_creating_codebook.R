@@ -28,7 +28,7 @@ codebook16 <- codebook16 %>%
 
 df21 <- read.csv("NORA19_merged.csv")
 # There is already a codebook for this
-codebook21 <- read.csv("question_labels.csv") %>% select(Name, Label)
+codebook21 <- read.csv("question_labels.csv") %>% dplyr::select(Name, Label)
 
 # These were pre-cleaned
 df11f <- readRDS("data2011_cleaned.rds")
@@ -53,7 +53,7 @@ df21_combined <- data.frame(cleaned_colnames = colnames(df21f)) %>%
 
 df <- full_join(df11_combined, df16_combined, by = "cleaned_colnames") %>% 
    full_join(df21_combined) %>% 
-  select(cleaned_colnames, Q.x, Q.y, Label, df11, df16, df21)
+  dplyr::select(cleaned_colnames, Q.x, Q.y, Label, df11, df16, df21)
 
 df.full <- df %>% 
   filter(df11 == T & df16 == T & df21 == T)

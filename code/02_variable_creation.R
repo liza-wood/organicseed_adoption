@@ -1,9 +1,9 @@
 # Variable creation for funding and seed producers
 ## Start with the merged producer data
 library(tidyverse)
-df <- read.csv("~/OneDrive - University of Exeter/data/organicseed_adoption/merged_df_3panel_certifiers.csv")
+df <- read.csv("~/OneDrive - University of Exeter/data/organicseed_adoption/merged_df_3panel.csv")
 
-df$VegiAcreage <- ifelse(df$VegiAcreage < 0, NA, df$VegiAcreage)
+# First, make this increased question a factor number
 df$IncreasedOGVegSeedf <- as.numeric(factor(df$IncreasedOGVegSeed, 
                                             levels = c("Decreased the %",
                                                        "About the same %",
@@ -22,6 +22,17 @@ df$IncreasedOGForageSeedf <- as.numeric(factor(df$IncreasedOGForageSeed,
 df$IncreasedOGSeed_avg <- round(rowMeans(df[, (ncol(df)-2):ncol(df)], na.rm = T), 0)
 df$IncreasedOGSeed_avg <- ifelse(df$IncreasedOGSeed_avg == "NaN", NA, df$IncreasedOGSeed_avg)
 
+#Last year  did you have any organic acres in annual vegetables
+table(df$GrowField)
+table(df$GrowForage)
+table(df$GrowVegis)
+
+df$cropcat_n <- (df$GrowVegis + df$GrowField + df$GrowForage)/100
+table(df$cropcat_n)
+table(is.na(df$cropcat_n))
+
+# Are these crops really unknown?
+test <- filter(df, GrowField == 0 & GrowForage == 0 & GrowVegis == 0)
 
 # One way to think about main crop is to assign each producer to a single crop, or mix
 # Last year how many organic acres did you have in annual vegetables. Please fill in number
@@ -29,26 +40,25 @@ df$VegiAcreage <- ifelse(is.na(df$VegiAcreage), 0 , df$VegiAcreage)
 df$FieldAcreage <- ifelse(is.na(df$FieldAcreage), 0 , df$FieldAcreage)
 df$ForageAcreage <- ifelse(is.na(df$ForageAcreage), 0 , df$ForageAcreage)
 
-df$GrowVegis <- ifelse(df$VegiAcreage == 0 & is.na(df$GrowVegis), 0, df$GrowVegis)
-df$GrowField <- ifelse(df$FieldAcreage == 0 & is.na(df$GrowField), 0, df$GrowField)
-df$GrowForage <- ifelse(df$ForageAcreage == 0 & is.na(df$GrowForage), 0, df$GrowForage)
+df$GrowVegis <- ifelse(df$VegiAcreage == 0 & 
+                         (is.na(df$GrowVegis) | df$GrowVegis == 0), 0, 
+                       ifelse(df$VegiAcreage != 0 &
+                                (is.na(df$GrowVegis) | df$GrowVegis == 0), 100,
+                              df$GrowVegis))
+df$GrowField <- ifelse(df$FieldAcreage == 0 & 
+                         (is.na(df$GrowField) | df$GrowField == 0), 0, 
+                       ifelse(df$FieldAcreage != 0 &
+                                (is.na(df$GrowField) | df$GrowField == 0), 100,
+                              df$GrowField))
+df$GrowForage <- ifelse(df$ForageAcreage == 0 & 
+                         (is.na(df$GrowForage) | df$GrowForage == 0), 0, 
+                       ifelse(df$ForageAcreage != 0 &
+                                (is.na(df$GrowForage) | df$GrowForage == 0), 100,
+                              df$GrowForage))
 
 df$cropcat_n <- (df$GrowVegis + df$GrowField + df$GrowForage)/100
 table(df$cropcat_n)
-
-# Are these crops really unknown?
-test <- filter(df, VegiAcreage == 0 & FieldAcreage == 0 & ForageAcreage == 0)
-table(test$GrowField)
-table(test$GrowForage)
-table(test$GrowVegis)
-
-table(is.na(df$GrowField))
-table(is.na(df$GrowForage))
-table(is.na(df$GrowVegis))
-
-df$GrowVegis <- ifelse(df$VegiAcreage != 0 & is.na(df$GrowVegis), 100, df$GrowVegis)
-df$GrowField <- ifelse(df$FieldAcreage != 0 & is.na(df$GrowField), 100, df$GrowField)
-df$GrowForage <- ifelse(df$ForageAcreage != 0 & is.na(df$GrowForage), 100, df$GrowForage)
+table(is.na(df$cropcat_n))
 
 df <- df %>% 
   mutate(maincrop = case_when(
@@ -90,7 +100,7 @@ df <- df %>%
     T ~ IncreasedOGSeed
   ))
 table(df$IncreasedOGSeed)
-
+table(df$maincrop)
 
 df$IncreasedOGSeed <- ifelse(df$OGseed_percent_maincrop == 100 & 
                                is.na(df$IncreasedOGSeed), "Already at 100%", 
