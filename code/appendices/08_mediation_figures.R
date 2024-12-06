@@ -2,7 +2,7 @@ d1 <- DiagrammeR::grViz("
 digraph {
   graph []
   node [shape = plaintext]
-    X [label ='Values organic seed', shape = box, color = black]
+    X [label ='Duty', shape = box, color = black]
     Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
     M [label ='Farm size', shape = box]
   edge [minlen = 2]
@@ -21,7 +21,7 @@ digraph {
   node [shape = plaintext]
     X [label ='Farm size', shape = box, color = black]
     Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
-    M [label ='Barrier: Insufficient quantity', shape = box]
+    M [label ='Ability', shape = box]
   edge [minlen = 2]
     X->M  
     M->Y 
@@ -33,20 +33,4 @@ digraph {
 htmlwidgets::saveWidget(d2, "figures/append_med2.html")
 webshot::webshot("figures/append_med2.html", "figures/append_med2.png", vheight = 300)
 
-d3 <- DiagrammeR::grViz("
-digraph {
-  graph []
-  node [shape = plaintext]
-    X [label ='Crop diversity', shape = box, color = black]
-    Y [label ='Proportion acreage planted to organic seed', shape = box, color = black]
-    M [label ='Barrier: Availability', shape = box]
-  edge [minlen = 2]
-    X->M  
-    M->Y 
-    X->Y [color = black]
-  { rank = same; X; Y; M }
-}
-")
 
-htmlwidgets::saveWidget(d3, "figures/append_med3.html")
-webshot::webshot("figures/append_med3.html", "figures/append_med3.png", vheight = 300)

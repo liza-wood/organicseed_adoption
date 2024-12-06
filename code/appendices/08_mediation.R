@@ -5,96 +5,82 @@ library(dplyr)
 library(betareg)
 source('code/functions.R')
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
-  select(RespondentID,
-         OGseed_percent_maincrop_prop,
+  select(OGseed_percent_maincrop_prop,
          OG_value_s,
+         #barrier_allowable_rev_s,
+         barrier_all_rev_s,
          CertifierRequestn,
          noncommercial_seedsource_s,
          acreage_log_s,
          cropcat_n_s,
-         barrier_insuffQuantity_s,
-         barrier_lackdesiredTraits_s,
-         barrier_availability_s,
-         barrier_seedTreatlack_s,
+         years_certified_s,
          maincrop,
          Region,
-         survey_year,
-         OG_value,
-         CertifierRequestn,
-         noncommercial_seedsource,
-         TotalAcreage,
-         cropcat_n,
-         barrier_insuffQuantity,
-         barrier_lackdesiredTraits,
-         barrier_availability,
-         barrier_seedTreatlack) %>% 
+         survey_year) %>% 
   na.omit()
+# to play with power BI write.csv(df.full, '~/OneDrive - University of Exeter/data/organicseed_adoption/df.csv', row.names = F)
+table(df.full$survey_year)
 
 df.full_rounded <- df.full
 df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
 
 # Farm size and values----
 s1 <- betareg(OGseed_percent_maincrop_prop ~ 
-                barrier_availability_s  +
-                barrier_lackdesiredTraits_s  +
-                barrier_insuffQuantity_s  +
-                barrier_seedTreatlack_s +
-                survey_year +
-                OG_value_s  + 
-                #acreage_log_s  + 
-                cropcat_n_s  +
-                CertifierRequestn +
-                noncommercial_seedsource_s  +
-                maincrop +
-                Region, 
-              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+                   #barrier_allowable_rev_s +
+                   barrier_all_rev_s +
+                   OG_value_s + 
+                   CertifierRequestn + 
+                   #acreage_log_s + 
+                   cropcat_n_s +
+                   noncommercial_seedsource_s +
+                   years_certified_s + 
+                   maincrop +
+                   Region +
+                   survey_year,
+               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(s1)
 # first part indirect
 s2 <- lm(acreage_log_s  ~ 
-           barrier_availability_s  +
-           barrier_lackdesiredTraits_s  +
-           barrier_insuffQuantity_s +
-           barrier_seedTreatlack_s +
-           survey_year +
-           OG_value_s  + 
-           #acreage_log_s  + 
-           cropcat_n_s  +
-           CertifierRequestn +
-           noncommercial_seedsource_s  +
+           barrier_all_rev_s +
+           OG_value_s + 
+           CertifierRequestn + 
+           #acreage_log_s + 
+           cropcat_n_s +
+           noncommercial_seedsource_s +
+           years_certified_s + 
            maincrop +
-           Region, 
+           Region +
+           survey_year,
          data = df.full_rounded)
 summary(s2)
 
 s3 <- betareg(OGseed_percent_maincrop_prop ~ 
-                barrier_availability_s  +
-                barrier_lackdesiredTraits_s  +
-                barrier_insuffQuantity_s  +
-                barrier_seedTreatlack_s +
-                survey_year +
-                #OG_value_s  + 
-                acreage_log_s  + 
-                cropcat_n_s  +
-                CertifierRequestn +
-                noncommercial_seedsource_s  +
+                #barrier_allowable_rev_s +
+                barrier_all_rev_s +
+                #OG_value_s + 
+                CertifierRequestn + 
+                acreage_log_s + 
+                cropcat_n_s +
+                noncommercial_seedsource_s +
+                years_certified_s + 
                 maincrop +
-                Region, 
+                Region +
+                survey_year,
               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(s3)
 
 s4 <- betareg(OGseed_percent_maincrop_prop ~ 
-                barrier_availability_s  +
-                barrier_lackdesiredTraits_s  +
-                barrier_insuffQuantity_s  +
-                barrier_seedTreatlack_s +
-                survey_year +
-                OG_value_s  + 
-                acreage_log_s  + 
-                cropcat_n_s  +
-                CertifierRequestn +
-                noncommercial_seedsource_s  +
+                #barrier_allowable_rev_s +
+                barrier_all_rev_s +
+                OG_value_s + 
+                CertifierRequestn + 
+                acreage_log_s + 
+                cropcat_n_s +
+                noncommercial_seedsource_s +
+                years_certified_s + 
                 maincrop +
-                Region, 
+                Region +
+                survey_year,
               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 
 summary(s4)
@@ -117,39 +103,36 @@ sum1 <- data.frame("Names" = c("ACME (avg)",
 write.csv(sum1, 'tables/append_mediation1.csv', row.names = F)
 
 
-# Farm size and quantity ----
+# Farm size and barriers ----
 
 set.seed(19)
 # total effect
 s1 <- betareg(OGseed_percent_maincrop_prop ~ 
-               barrier_availability_s  +
-                barrier_lackdesiredTraits_s  +
-               # barrier_insuffQuantity_s  +
-                barrier_seedTreatlack_s +
-                survey_year +
-                OG_value_s  + 
-                acreage_log_s  + 
-                cropcat_n_s  +
-                CertifierRequestn +
-                noncommercial_seedsource_s  +
+                #barrier_allowable_rev_s +
+                #barrier_all_rev_s +
+                OG_value_s + 
+                CertifierRequestn + 
+                acreage_log_s + 
+                cropcat_n_s +
+                noncommercial_seedsource_s +
+                years_certified_s + 
                 maincrop +
-                Region, 
+                Region +
+                survey_year,
              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(s1)
 # first part indirect
-s2 <- lm(barrier_insuffQuantity_s  ~ 
-           barrier_availability_s  +
-           barrier_lackdesiredTraits_s  +
-           #barrier_insuffQuantity_s +
-           barrier_seedTreatlack_s +
-           survey_year +
-           OG_value_s  + 
-           acreage_log_s  + 
-           cropcat_n_s  +
-           CertifierRequestn +
-           noncommercial_seedsource_s  +
+s2 <- lm(barrier_all_rev_s  ~ 
+           #barrier_all_rev_s +
+           OG_value_s + 
+           CertifierRequestn + 
+           acreage_log_s + 
+           cropcat_n_s +
+           noncommercial_seedsource_s +
+           years_certified_s + 
            maincrop +
-           Region, 
+           Region +
+           survey_year, 
               data = df.full_rounded)
 summary(s2)
 
@@ -157,49 +140,24 @@ summary(s2)
 # In the Step 4 model, some form of mediation is supported if the effect of M (path b) remains significant after controlling for X. If X is no longer significant when M is controlled, the finding supports full mediation. If X is still significant (i.e., both X and M both significantly predict Y), the finding supports partial mediation.
 # # second part indirect
 s4 <- betareg(OGseed_percent_maincrop_prop ~ 
-                barrier_availability_s  +
-                barrier_lackdesiredTraits_s  +
-                barrier_insuffQuantity_s  +
-                barrier_seedTreatlack_s +
-                survey_year +
-                OG_value_s  + 
-                acreage_log_s  + 
-                cropcat_n_s  +
-                CertifierRequestn +
-                noncommercial_seedsource_s  +
+                #barrier_allowable_rev_s +
+                barrier_all_rev_s +
+                OG_value_s + 
+                CertifierRequestn + 
+                acreage_log_s + 
+                cropcat_n_s +
+                noncommercial_seedsource_s +
+                years_certified_s + 
                 maincrop +
-                Region, 
+                Region +
+                survey_year,
               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(s4)
 
-# Indirect effect: take coefficient from full model and subtract it from coefficient from model without mediator (barrier)
-s4$coefficients$mean[8] - s1$coefficients$mean[7]
-# Or: ^ these should be the same but they aren;t?
-s4$coefficients$mean[4]*s2$coefficients[7]
-
-b1 = s1$coefficients$mean[[7]]
-b2 = s2$coefficients[[7]]
-b3 = s4$coefficients$mean[[4]]
-b4 = s4$coefficients$mean[[8]] # If B4 is not significant or smaller than before in B1, suggests some mediation -- slightly smaller, still significant; partial mediation
-
-diff1 = b1 - b4 # total minus direct effect
-# The relative size of the mediated effect can be assessed using the proportion mediated, which represents the size of the indirect effect estimated relative to the total effect estimated.
-
-indirect_effect = b2*b3
-total_effect = b1
-
-100*(indirect_effect/total_effect)
-
-# To check if the mediation effect is statistically significant and not only relevant as is showcased in the proportion test, the Sobel Test is often conducted. To conduct a Sobel test in R, we will use the bda package. The follwowing syntax is used to conduct a sobel test:
-
-bda::mediation.test(df.full_rounded$barrier_insuffQuantity_s,
-                    df.full_rounded$OGseed_percent_maincrop_prop,
-                    df.full_rounded$acreage_log_s)
-# Recent research has used Bootstrapping over the Sobel Test when assessing the statistical significance of a mediation effect. Bootstrapping has several advantages over the Sobel Test when assessing mediation effects
 
 acre_sum <- summary(df.full$acreage_log_s)
 results2 <- mediation::mediate(s2, s4, treat= 'acreage_log_s', 
-                   mediator= 'barrier_insuffQuantity_s' ,boot=TRUE, sims=1000,
+                   mediator= 'barrier_all_rev_s' ,boot=TRUE, sims=1000,
                    control.value = acre_sum[[2]],
                    treat.value = acre_sum[[5]])
 summary(results2)
@@ -214,6 +172,31 @@ sum2 <- data.frame("Names" = c("ACME (avg)",
                          results2$n.avg.p, results2$tau.p))
 
 write.csv(sum2, 'tables/append_mediation2.csv', row.names = F)
+
+## Indirect effect: take coefficient from full model and subtract it from coefficient #from model without mediator (barrier)
+#s4$coefficients$mean[8] - s1$coefficients$mean[7]
+## Or: ^ these should be the same but they aren;t?
+#s4$coefficients$mean[4]*s2$coefficients[7]
+#
+#b1 = s1$coefficients$mean[[7]]
+#b2 = s2$coefficients[[7]]
+#b3 = s4$coefficients$mean[[4]]
+#b4 = s4$coefficients$mean[[8]] # If B4 is not significant or smaller than before in B1#, suggests some mediation -- slightly smaller, still significant; partial mediation
+#
+#diff1 = b1 - b4 # total minus direct effect
+## The relative size of the mediated effect can be assessed using the proportion #mediated, which represents the size of the indirect effect estimated relative to the #total effect estimated.
+#
+#indirect_effect = b2*b3
+#total_effect = b1
+#
+#100*(indirect_effect/total_effect)
+#
+## To check if the mediation effect is statistically significant and not only relevant #as is showcased in the proportion test, the Sobel Test is often conducted. To conduct #a Sobel test in R, we will use the bda package. The follwowing syntax is used to #conduct a sobel test:
+#
+#bda::mediation.test(df.full_rounded$barrier_insuffQuantity_s,
+#                    df.full_rounded$OGseed_percent_maincrop_prop,
+#                    df.full_rounded$acreage_log_s)
+## Recent research has used Bootstrapping over the Sobel Test when assessing the #statistical significance of a mediation effect. Bootstrapping has several advantages #over the Sobel Test when assessing mediation effects
 
 # Crop diversity and availabilty ----
 

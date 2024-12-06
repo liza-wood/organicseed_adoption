@@ -6,7 +6,7 @@ df <- read.csv("~/OneDrive - University of Exeter/data/organicseed_adoption/merg
 # First, make this increased question a factor number
 df$IncreasedOGVegSeedf <- as.numeric(factor(df$IncreasedOGVegSeed, 
                                             levels = c("Decreased the %",
-                                                       "About the same %",
+                                                       "About the same %", 
                                                        "Increased the %",
                                                        "Already at 100%")))
 df$IncreasedOGFieldSeedf <- as.numeric(factor(df$IncreasedOGFieldSeed, 
@@ -33,6 +33,9 @@ table(is.na(df$cropcat_n))
 
 # Are these crops really unknown?
 test <- filter(df, GrowField == 0 & GrowForage == 0 & GrowVegis == 0)
+table(test$VegiAcreage)
+table(test$FieldAcreage)
+table(test$ForageAcreage)
 
 # One way to think about main crop is to assign each producer to a single crop, or mix
 # Last year how many organic acres did you have in annual vegetables. Please fill in number
@@ -149,6 +152,12 @@ ltm::cronbach.alpha(df[,c('OGVarietiesSuccessn', 'OGSeedOGIntegrityn')],
 df$OG_value <- rowMeans(df[,c('OGVarietiesSuccessn', 'OGSeedOGIntegrityn')], na.rm = T)
 df$CertifierRequestn <- ifelse(df$CertifierRequest == "No", 0,
                                ifelse(df$CertifierRequest == "Yes", 1, NA))
+# There are loads who didn't answer this question but have 100%, so I will say already 100
+length(df$OGseed_percent_maincrop[is.na(df$CertifierRequest) & 
+                                    !is.na(df$OGseed_percent_maincrop) &
+                                    df$OGseed_percent_maincrop >= 98])
+df$CertifierRequestf <- ifelse(df$OGseed_percent_maincrop >= 98, "Fully compliant",
+                               df$CertifierRequest)
 
 # Seed sources
 df$noncommercial_seedsource <- df$SeedSourceFarm + df$SeedSourceOwn
@@ -228,7 +237,7 @@ table(df$NoOGSeedTreat)
 table(df$barrier_seedTreatlack)
 table(df$barrier_seedTreatlackf)
 df <- select(df, -contains("NoOG"))
-
+df$barrier_text[!(df$barrier_text %in% c("","-1", "-2", "-3", "Skipped due to branching"))]
 # Factor analysis of barriers ----
 ## So far this is not convincing
 mat <- df %>% 

@@ -12,19 +12,24 @@ header-includes:
 ```{r, echo = F, warning = F, message = F}
 library(kableExtra)
 library(dplyr)
+library(stringr)
 source('code/functions.R')
 knitr::opts_knit$set(root.dir = '~/Documents/Davis/R-Projects/organicseed_adoption')
 ```
 
 # Survey sample 
 
+```{r, echo = F}
+tablea1 <- read.csv('tables/append_samplet1.csv') 
+```
+
 ## 1. Data collection method 
 
-* 2010: Data were collected by convenience sample only, shared by 23 organizations, including non-profits and foundations, organic certifiers, and departments of agriculture. Surveys were distributed primarily over email, but paper, phone, and in-person surveys were conducted at the request of the grower. We received a total of 1,027 responses (712 web-based, 315 paper-based), 546 of which included complete enough data for our analysis. 
+* 2010: Data were collected by convenience sample only, shared by 23 organizations, including non-profits and foundations, organic certifiers, and departments of agriculture. Surveys were distributed primarily over email, but paper, phone, and in-person surveys were conducted at the request of the grower. We received a total of 1,027 responses (712 web-based, 315 paper-based), `r tablea1$total[1]` of which included complete enough data for our analysis. 
 
-* 2015: Data were collected by both random and convenience sampling. For the random sample, 800 certified organic producers were randomly selected from the approximately 12,000 organic producers that use seed, recorded in the NOP database. To encourage responsiveness, three follow-up emails were sent following an initial email, paper copies were mailed on request, and individual phone calls were made to follow-up. From these 800, 197 (25%) responded (114 web-based, 83 paper-based) and 129 (16%) were complete enough to use in our analyses. For the convenience sample, surveys were shared by 41 organizations, primarily over email. We received a total of 1,148 responses from the convenience sample, 662 of which included complete enough data for our analysis. In total we had 791 usable responses.
+* 2015: Data were collected by both random and convenience sampling. For the random sample, 800 certified organic producers were randomly selected from the approximately 12,000 organic producers that use seed, recorded in the NOP database. To encourage responsiveness, three follow-up emails were sent following an initial email, paper copies were mailed on request, and individual phone calls were made to follow-up. From these 800, 197 (25%) responded (114 web-based, 83 paper-based) and `r str_extract(tablea1$Random[2], '\\d{3}')` (16%) were complete enough to use in our analyses. For the convenience sample, surveys were shared by 41 organizations, primarily over email. We received a total of 1,148 responses from the convenience sample, `r str_extract(tablea1$Convenience[2], '\\d{3}')` of which included complete enough data for our analysis. In total we had `r tablea1$total[2]` usable responses.
 
-* 2020: Data were collected by both random and convenience sampling using methods similar to 2015. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database and given the option to complete the survey over email or paper. After an initial email and postcard invitation, growers received follow-up contacts by email, postcard, and phone, and hard copies of the survey were sent. Survey distribution was managed by Washington State University’s Social and Economic Sciences Research Center (SESRC) and distributed alongside the Organic Farming Research Foundation's (OFRF) National Organic Research Agenda. From these 2,000 surveys, 448 (22%) responded (206 web-based and 242 paper-based) and 191 (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed by SESRC to all remaining certified organic operations over email, with postcard reminders. The survey was also advertised by Organic Seed Alliance (OSA) and OFRF. We received a total of 611 responses from the convenience sample, 217 of which included complete enough data for our analysis. In total we had 408 usable responses.
+* 2020: Data were collected by both random and convenience sampling using methods similar to 2015. For the random sample, 2,000 certified organic producers were randomly selected from the the NOP database and given the option to complete the survey over email or paper. After an initial email and postcard invitation, growers received follow-up contacts by email, postcard, and phone, and hard copies of the survey were sent. Survey distribution was managed by Washington State University’s Social and Economic Sciences Research Center (SESRC) and distributed alongside the Organic Farming Research Foundation's (OFRF) National Organic Research Agenda. From these 2,000 surveys, 448 (22%) responded (206 web-based and 242 paper-based) and `r str_extract(tablea1$Random[3], '\\d{3}')` (10%) were complete enough to use in our analyses. For the convenience sample, surveys were distributed by SESRC to all remaining certified organic operations over email, with postcard reminders. The survey was also advertised by Organic Seed Alliance (OSA) and OFRF. We received a total of 611 responses from the convenience sample, `r str_extract(tablea1$Convenience[3], '\\d{3}')` of which included complete enough data for our analysis. In total we had `r tablea1$total[3]` usable responses.
 
 The breakdown between random and convenience sampling used in our analysis is summarized in Table S1. We consider the effect of sampling method, as well as survey distributor, through models in Section 2. 
 
@@ -56,23 +61,25 @@ In order to test how our data collection methods may bias the sample, we conside
 Regarding concerns of survey distributor (i.e. that the distribution by OSA elicited responses from a select type of organic farmer), we model this effect with our 2010 and 2015 survey data (the only survey periods that identified specific distributors) by including a term for responses that were gathered through OSA channels compared to all others (Table 2, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the distributor consideration (Table 2, Model 4), suggesting no significant effect on results based on survey distributor. 
 
 ```{r, echo = F}
-core_vars2 <- c("Barrier: Availability",
-                #"Barrier: Buyer requirements",
-                "Barrier: Quality",
-                "Barrier: Quantity",
-                "Barrier: Form",
-                "Year: 2010 (vs. 2015)",
-                "Year: 2020 (vs. 2015)",
-                "Values organic seed",
-                "Farm size (log acres)",
-                "Crop diversity",
-                "Certifiers request organic seed use",
-                "Seed saved or traded (\\%)",
-                "Forage crops (vs. Field)",
-                "Vegetable crops (vs. Field)",
-                "Western region (vs. North Central)",
-                "Northeastern region (vs. North Central)",
-                "Southern region (vs. North Central)")
+core_vars2 <- c(#"Barrier: Availability",
+                     #"Barrier: Buyer requirements",
+                     #"Barrier: Quality",
+                     #"Barrier: Quantity",
+                     #"Barrier: Form",
+                     "Capability",
+                     "Norms",
+                     "Certifier request",
+                     "Farm size (log acres)",
+                     "Crop diversity", 
+                     "Seed saved or traded (\\%)",
+                     "Years certified organic",
+                     "Forage crops (vs. Field)",
+                     "Vegetable crops (vs. Field)",
+                     "Western region (vs. North Central)",
+                     "Northeastern region (vs. North Central)",
+                     "Southern region (vs. North Central)",
+                     "Year: 2010 (vs. 2015)",
+                     "Year: 2020 (vs. 2015)")
 ```
 
 
@@ -80,11 +87,10 @@ core_vars2 <- c("Barrier: Availability",
 m_list <- readRDS('tables/append_sample_models.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
            dep.var.labels = "\\shortstack{Proportion of organic land planted with organic seed}", 
-           covariate.labels = c(core_vars2[1:4], core_vars2[6],
-                                core_vars2[5],
-                                core_vars2[7:16],
-                                "Random data collection (vs. convenience)",
+           covariate.labels = c(core_vars2[1:12], core_vars2[14],
+                                "Random data collection (vs. convenience)", core_vars2[13],
               "Distributor: OSA (vs. Other)",
+              #"Capability x Norms",
                 "Constant"), 
           column.labels = c("\\shortstack{Including\\\\sampling\\\\method\\\\(2015, 2020)}", 
                             "\\shortstack{Without\\\\sampling\\\\method\\\\(2015, 2020)}", 
@@ -98,13 +104,15 @@ stargazer::stargazer(m_list,  type = "latex",
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq'))
 ```
 
+
 \pagebreak 
+
 
 ## 3. Sample representativeness 
 
 While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution of operations (Table S3) and farm size distribution (Figure S1) between our sample and USDA Census data. 
 
-We first use USDA Census data from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table S3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by green text, while under-represented year-region combinations are signaled by red text. Only in 2010 do we see significant variation in representation across regions, with the North Central and Southern regions over-represented and the Northeast under-represented. 
+We first use USDA Census data of organic farmers from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table S3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by italic text formatting, while under-represented year-region combinations are signaled by bold text formatting. Only in 2010 do we see significant variation in representation across regions, with the North Central and Southern regions over-represented and the Northeast under-represented. 
 
 
 ```{r, echo = F, message = F, warning = F}
@@ -118,8 +126,8 @@ tablea3 <- tablea3 %>%
 ## Should I be using mean_rep or mean(tablea3$representativeness_ops)??
 mean_reps <- unique(tablea3$mean_rep)
 tablea3$representativeness_ops = cell_spec(tablea3$representativeness_ops, 
-                                         color = ifelse(tablea3$representativeness_ops > tablea3$meansd_ul, "green", 
-                                                 ifelse(tablea3$representativeness_ops < tablea3$meansd_ll, "red", "black")))
+                                         italic = ifelse(tablea3$representativeness_ops > tablea3$meansd_ul, T, F),
+                                         bold = ifelse(tablea3$representativeness_ops < tablea3$meansd_ll, T, F))
 tablea3 <- select(tablea3, -c(mean_rep, meansd_ul, meansd_ll, sample_avg_farm_size,
                               usda_census_avg_farm_size,representation_acres))
 colnames(tablea3) <- c("Year", "Region", "Operations in sample (n)",
@@ -139,7 +147,8 @@ kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 2), rep('c', 3)),
   column_spec(1:5, 
               width = c('1cm','2.2cm','1.8cm','2cm', '2.8cm'#, 
                         #'2cm', '2.2cm', '2cm'
-                        ))
+                        )) %>%
+  footnote(general = "Italic formatting sigals over-representation and bold formatting signals under-representation")
 ```
 
 
@@ -155,8 +164,8 @@ tablea3 <- tablea3 %>%
 ## Should I be using mean_rep or mean(tablea3$representativeness_ops)??
 tablea3$mean_rep
 tablea3$representativeness_ops = cell_spec(tablea3$representativeness_ops, 
-                                         color = ifelse(tablea3$representativeness_ops > tablea3$meansd_ul, "green", 
-                                                 ifelse(tablea3$representativeness_ops < tablea3$meansd_ll, "red", "black")))
+                                         italic = ifelse(tablea3$representativeness_ops > tablea3$meansd_ul, T, F),
+                                         bold = ifelse(tablea3$representativeness_ops < tablea3$meansd_ll, T, F))
 tablea3 <- select(tablea3, -c(mean_rep, meansd_ul, meansd_ll))
 colnames(tablea3) <- c("Year", "Crop category",  "Region", 
                        "Operations in\nsample (n)",
@@ -177,7 +186,7 @@ kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
 ```
 
 
-Next, to understand farm size representativeness, we look at USDA Census organic tabulations, reported only for the [2012](https://agcensus.library.cornell.edu/wp-content/uploads/2012-organictab-1.pdf) and [2017](https://www.nass.usda.gov/Publications/AgCensus/2017/Online_Resources/Organics_Tabulation/organictab.pdf) censuses. 
+Next, to understand farm size representativeness, we look at USDA Census organic tabulations, reported for as the [2012](https://agcensus.library.cornell.edu/wp-content/uploads/2012-organictab-1.pdf), [2017](https://www.nass.usda.gov/Publications/AgCensus/2017/Online_Resources/Organics_Tabulation/organictab.pdf), and [2022](https://www.nass.usda.gov/Publications/AgCensus/2022/index.php) census tabulations. 
 
 In Figure S1 we compare these USDA Census data against our survey sample. These comparisons show a consistent over-representation of the smallest farms (1-9 acres), especially in the North Central and South, and under-representation of the largest farms. Still, our sample captures a distribution of organic farm sizes that includes medium and large farms, allowing us to understand the effect of farm size in our analysis. Additionally, an important consideration is that we calculate farm size as reported acreage planted to three major crop categories, but this approach likely underestimates acreage generally compared to USDA Census data, which reports all certified land. Furthermore these data are not crop specific and so USDA data also includes non-seed crop operations (i.e. orchards). 
 
@@ -189,6 +198,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 \pagebreak 
 # Model checks 
 
+<!---
 ## 4. Full model results (Table S4) 
 
 ```{r full model, echo = F, results = "asis"}
@@ -226,25 +236,35 @@ stargazer::stargazer(m_list,  type = "latex",
 
 ```
 ---->
- 
-\pagebreak
 
-## 5. Considering non-allowable barriers (Table S5)
+
+## 4. Dissagregating allowable and non-allowable barriers (Table S4)
 
 ```{r barrier model, echo = F, results = "asis"}
 m_list <- readRDS('tables/append_models_barriers.rds')
 stargazer::stargazer(m_list,  type = "latex", 
            dep.var.labels = "\\shortstack{Proportion of production acreage\\\\planted with organic seed}", 
-           covariate.labels = c(core_vars2[1:4], "Barrier: Price",
-                                "Barrier: Buyer requirement", 
-                                core_vars2[5:16], "Constant"), 
+           covariate.labels = c("Ability: Allowable",
+                                "Ability: Non-allowable",
+                                 core_vars2[2:length(core_vars2)],
+                                "Ability: Allowable x Duty",
+                                "Ability: Non-allowable x Duty"), 
            model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
-           title = "Beta regression model results including non-allowable barriers", 
+           title = "Beta regression model results disaggregating allowable and non-allowable barriers", 
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
 
 ```
 
+## 5. Correlations of all barriers (Table S5)
+
+```{r, echo = F}
+tablea5 <- read.csv('tables/cor_table.csv') ; 
+kbl(tablea5, align = 'c', booktabs = T, caption = 'Correlations among organic seed sourcing barriers') #%>% kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
+  #column_spec(2:4, width = '4cm')
+```
+
+<!---
 \pagebreak
 ## 6. Mediation analyses  
 
@@ -259,7 +279,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 ```
 
 
-We run a mediation analysis by comparing results of our full regression model (e.g. results in Table S4) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table S6. The Total Effect of organic seed value without considering farm size is 0.052, while the average direct effect (ADE), which considers the effect of the mediatior, lowers this effect size to 0.046. This is reflected in the Average Causal Mediation Effect (ACME), is small but significant.
+We run a mediation analysis by comparing results of our full regression model (e.g. results in Table S4) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table S6. The Total Effect of organic seed value without considering farm size is 0.057, while the average direct effect (ADE), which considers the effect of the mediatior, lowers this effect size to 0.049. This is reflected in the Average Causal Mediation Effect (ACME), which is small (0.008) but significant.
 
 ```{r mediation1, echo = F}
 table <- read.csv('tables/append_mediation1.csv')  
@@ -278,7 +298,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 
 ```
 
-Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: quantity barrier. Results are presented in Table S7, where the ACME is not significant, signalling that the quantity barrier is not mediating the effect of farm size. 
+Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: ability. Results are presented in Table S7, where the ACME is significant, signalling that the quantity barrier is not mediating the effect of farm size. 
 
 ```{r mediation2, echo = F}
 table <- read.csv('tables/append_mediation2.csv')  
@@ -291,22 +311,6 @@ kbl(table, align = 'c', booktabs = T,
 
 \pagebreak 
 
-Last, we addresses the potential mediation effect of experiencing organic seed availability barriers on more diverse farms (Figure S4).
-
-```{r med3 diagram, echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Crop diversity and organic seed availability'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_med3.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
-```
-
-Much like the analysis concerning farm size and the quantity barrier, we find that the availability barrier is not influencing the effect of crop diversity (Table S8). 
-
-```{r mediation3, echo = F}
-table <- read.csv('tables/append_mediation3.csv')  
-table$p.value <- ifelse(table$p.value == 0, "< 0.001", table$p.value)
-colnames(table) <- c("Effects", "Estimate", "p-value")
-kbl(table, align = 'c', booktabs = T, 
-    caption = 'Mediation analysis of crop diversity on availability barrier') %>% kable_styling(latex_options = c("scale_down", "hold_position"))
-  #column_spec(2:4, width = '4cm')
-```
 
 
 \pagebreak

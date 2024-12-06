@@ -1,18 +1,19 @@
-"term","mean","se"
-"Barrier: Availability",-0.193,0.036
-"Barrier: Quality",-0.121,0.036
-"Barrier: Quantity",-0.022,0.034
-"Barrier: Form",0.036,0.032
-"Year: 2010 (vs. 2015)",-0.213,0.076
-"Year: 2020 (vs. 2015)",0.136,0.08
-"Values organic seed",0.18,0.032
-"Farm size (log acres)",-0.112,0.021
-"Crop diversity",0.078,0.034
-"Certifiers request organic seed use",-0.092,0.064
-"Seed saved or traded (%)",0.098,0.031
-"Forage crops (vs. Field)",-0.89,0.093
-"Vegetable crops (vs. Field)",-0.515,0.103
-"Western region (vs. North Central)",-0.368,0.086
-"Northeastern region (vs. North Central)",-0.287,0.093
-"Southern region (vs. North Central)",-0.15,0.113
-"(Intercept)",1.063,0.078
+"term","Estimate1","Estimate2","Estimate3","Estimate4","Variables"
+"Ability","0.25***",NA,"0.24***","0.26***","Main effects and interaction"
+"Duty",NA,"0.2***","0.19***","0.19***","Main effects and interaction"
+"Ability x Duty",NA,NA,NA,"-0.09***","Main effects and interaction"
+"Certifier request","-0.07","-0.18***","-0.08","-0.08","Controls"
+"Farm size (log acres)","-0.15***","-0.14***","-0.13***","-0.12***","Controls"
+"Crop diversity","0.2***","0.14**","0.17***","0.17***","Controls"
+"Seed saved or traded (\%)","0.1***","0.09***","0.1***","0.1***","Controls"
+"Years certified organic","0.04","0.04","0.03","0.03","Controls"
+"Forage crops (vs. Field)","-0.87***","-0.88***","-0.89***","-0.89***","Controls"
+"Vegetable crops (vs. Field)","-0.52***","-0.6***","-0.52***","-0.51***","Controls"
+"Western region (vs. North Central)","-0.42***","-0.43***","-0.39***","-0.39***","Controls"
+"Northeastern region (vs. North Central)","-0.29***","-0.38***","-0.29***","-0.28***","Controls"
+"Southern region (vs. North Central)","-0.22*","-0.22*","-0.18","-0.17","Controls"
+"Year: 2010 (vs. 2015)","-0.3***","-0.35***","-0.25***","-0.24***","Controls"
+"Year: 2020 (vs. 2015)","0.08","0.05","0.07","0.07","Controls"
+"(Intercept)","0.99***","1.15***","0.99***","0.99***","Controls"
+"Observations:","1725","1725","1725","1725","Controls"
+"R2","0.209","0.186","0.23","0.234","Controls"

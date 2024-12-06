@@ -2,36 +2,38 @@ library(dplyr)
 library(ggplot2)
 # OG Farm size distribution
 # Data from the USDA census tabulations, sent from Mallory NASS
-usda <- read.csv('~/Documents/Davis/R-Projects/big-organic-bifurcation/data/usda_og_tabs.csv')
+#devtools::install_github("liza-wood/usdaoRganic")
+library(usdaoRganic)
+data(organic_census)
+usda <- organic_census
 
-df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>%
-  filter(Region != "International", maincrop != "Unknown") %>% 
+df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
+  select(OGseed_percent_maincrop_prop,
+         OG_value_s,
+         barrier_allowable_s,
+         CertifierRequestn,
+         noncommercial_seedsource_s,
+         TotalAcreage,
+         cropcat_n_s,
+         years_certified_s,
+         maincrop,
+         Region,
+         survey_year) %>% 
+  na.omit() %>% 
+  mutate(survey_year = as.numeric(as.character(survey_year))) %>% 
   mutate(survey_year = case_when(
     survey_year == 2011 ~ 2010,
     survey_year == 2016 ~ 2015,
     survey_year == 2021 ~ 2020,
     T ~ survey_year
-  )) 
+  ))
 
-df.full <- select(df, OGseed_percent_maincrop,
-                  OGseed_percent_maincrop, 
-                  OGSeedOGIntegrityn,
-                  CertifierRequestn,
-                  maincrop, survey_year, Region, 
-                  TotalAcreage, cropcat_n, 
-                  noncommercial_seedsource,
-                  #YearsCertified
-                  #barrier_buyerReq,
-                  barrier_insuffQuantity,
-                  barrier_lackdesiredTraits,
-                  barrier_availability, barrier_seedTreatlack) %>% 
-  na.omit() 
 
 acres_cat7 <- c("1 to 9", "10 to 49", "50 to 179", "180 to 499",
                 "500 to 999", "1,000 to 1,999", "2,000 +")
 
 df.full <- df.full %>% 
-  mutate(size = case_when(
+  mutate(acreage_range = case_when(
     TotalAcreage <10 ~ acres_cat7[1],
     TotalAcreage >= 10 & TotalAcreage < 50 ~ acres_cat7[2],
     TotalAcreage >= 50 & TotalAcreage < 180 ~ acres_cat7[3],
@@ -45,7 +47,7 @@ df.full <- df.full %>%
 # FIGURE 1. Put them together ----
 ## Year only
 df_summ4 <- df.full %>% 
-  group_by(survey_year, size) %>%  # region
+  group_by(survey_year, acreage_range) %>%  # region
   count() %>% 
   ungroup() %>% 
   group_by(survey_year) %>% 
@@ -53,14 +55,10 @@ df_summ4 <- df.full %>%
   mutate(source = "Survey sample")
 
 usda_summ4 <- usda %>% 
-  mutate(survey_year = case_when(
-    year == 2012 ~ 2010,
-    year == 2017 ~ 2015,
-    T ~ NA
-  )) %>% 
+  rename(survey_year = year) %>% 
   filter(!is.na(survey_year)) %>% 
-  group_by(survey_year, size) %>%  # region
-  summarize(n = sum(organic_ops)) %>% 
+  group_by(survey_year, acreage_range) %>%  # region
+  summarize(n = sum(organic_ops_count)) %>% 
   ungroup() %>% 
   group_by(survey_year) %>% 
   mutate(prop= round((n/sum(n)), 2)) %>% 
@@ -72,14 +70,14 @@ summ4 %>%
   mutate(year = case_when(
     survey_year == 2010 ~ "Survey: 2010 | Census: 2012",
     survey_year == 2015 ~ "Survey: 2015 | Census: 2017",
-    survey_year == 2020 ~ "Survey: 2020 | Census: forthcoming"
+    survey_year == 2020 ~ "Survey: 2020 | Census: 2022"
   )) %>% 
-  ggplot(aes(x = factor(size, acres_cat7), 
+  ggplot(aes(x = factor(acreage_range, acres_cat7), 
              y = prop, fill = source)) +
   geom_col(position = position_dodge(preserve = "single")) +
   labs(fill = "", x = "Farm size", y = "Proportion of operations") +
   facet_grid(~year) +
-  scale_fill_viridis_d(begin = 0.2, end = 0.8) +
+  scale_fill_grey(start = 0.4, end = 0.8) +
   theme_minimal() +
   theme(legend.position = "bottom",
         axis.text.x = element_text(angle = 45,vjust = 1, hjust=1))
@@ -104,10 +102,10 @@ northeast <- c("West Virginia", "Maryland", "Delaware",
 
 usda <- usda %>% 
   mutate(Region = case_when(
-    location %in% western ~ "West",
-    location %in% northcentral ~ 'North Central',
-    location %in% southern ~ "South",
-    location %in% northeast ~ "Northeast",
+    state %in% western ~ "West",
+    state %in% northcentral ~ 'North Central',
+    state %in% southern ~ "South",
+    state %in% northeast ~ "Northeast",
     T ~ NA
   ))
 
@@ -115,7 +113,7 @@ usda <- usda %>%
 # FIGURE 1. Put them together ----
 ## Year only
 df_summ5 <- df.full %>% 
-  group_by(survey_year, Region, size) %>%  # region
+  group_by(survey_year, Region, acreage_range) %>%  # region
   count() %>% 
   ungroup() %>% 
   group_by(survey_year, Region) %>% 
@@ -123,14 +121,10 @@ df_summ5 <- df.full %>%
   mutate(source = "Survey sample")
 
 usda_summ5 <- usda %>% 
-  mutate(survey_year = case_when(
-    year == 2012 ~ 2010,
-    year == 2017 ~ 2015,
-    T ~ NA
-  )) %>% 
+  mutate(survey_year = year) %>% 
   filter(!is.na(survey_year)) %>% 
-  group_by(survey_year, Region, size) %>%  # region
-  summarize(n = sum(organic_ops)) %>% 
+  group_by(survey_year, Region, acreage_range) %>%  # region
+  summarize(n = sum(organic_ops_count)) %>% 
   ungroup() %>% 
   group_by(survey_year, Region) %>% 
   mutate(prop= round((n/sum(n)), 2)) %>% 
@@ -142,14 +136,14 @@ summ5 %>%
   mutate(year = case_when(
     survey_year == 2010 ~ "Survey: 2010 | Census: 2012",
     survey_year == 2015 ~ "Survey: 2015 | Census: 2017",
-    survey_year == 2020 ~ "Survey: 2020 | Census: forthcoming"
+    survey_year == 2020 ~ "Survey: 2020 | Census: 2022"
   )) %>% 
-  ggplot(aes(x = factor(size, acres_cat7), 
+  ggplot(aes(x = factor(acreage_range, acres_cat7), 
              y = prop, fill = source)) +
   geom_col(position = position_dodge(preserve = "single")) +
   labs(fill = "", x = "Farm size", y = "Proportion of operations") +
   facet_grid(Region~year) +
-  scale_fill_viridis_d(begin = 0.2, end = 0.8) +
+  scale_fill_grey(start = 0.4, end = 0.8) +
   theme_minimal() +
   theme(legend.position = "bottom",
         text = element_text(family = "Times", size = 14),

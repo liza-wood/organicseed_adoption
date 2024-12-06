@@ -5,7 +5,7 @@ library(ggplot2)
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
   dplyr::select(OGseed_percent_maincrop_prop,
          OG_value,
-         CertifierRequestn,
+         CertifierRequestf,
          noncommercial_seedsource,
          TotalAcreage,
          acreage_log,
@@ -48,12 +48,14 @@ ggplot(df, aes(x = barrier_availability, y = acreage_log)) +
 dfs <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
   dplyr::select(OGseed_percent_maincrop_prop,
          OG_value_s,
+         #CertifierRequestf,
          CertifierRequestn,
          noncommercial_seedsource_s,
          acreage_log_s,
          cropcat_n_s,
          barrier_allowable_s,
-         barrier_nonallowable_s,
+         barrier_allowable_rev_s,
+         #barrier_nonallowable_s,
          #barrier_insuffQuantity_s,
          #barrier_lackdesiredTraits_s,
          #barrier_availability_s,
@@ -66,12 +68,62 @@ dfs <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_s
 dfs_rounded <- dfs
 dfs_rounded$OGseed_percent_maincrop_prop <- ifelse(dfs_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(dfs_rounded$OGseed_percent_maincrop_prop == 0, 0.001, dfs_rounded$OGseed_percent_maincrop_prop))
 
-dfs_rounded$NoEnforcement <- ifelse(dfs_rounded$CertifierRequestn == 1, 0, 1)
+#dfs_rounded$NoEnforcement <- ifelse(dfs_rounded$CertifierRequestn == 1, 0, 1)
+#dfs_rounded$barrier_allowable_sum_s <- dfs_rounded$barrier_allowable_sum_s/4
 set.seed(19)
 library(betareg)
-cor(dfs$barrier_allowable_s, dfs$barrier_nonallowable_s)
+#cor(dfs$barrier_allowable_s, dfs$barrier_nonallowable_s)
+cor(dfs$barrier_allowable_s, dfs$OG_value_s)
+summary(lm(barrier_allowable_s ~ OG_value_s, dfs))
+m_null <- betareg(OGseed_percent_maincrop_prop ~ 
+                     barrier_allowable_rev_s +
+                     OG_value_s,
+                   data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+summary(m_null)
+m_noix1 <- betareg(OGseed_percent_maincrop_prop ~ 
+                    barrier_allowable_rev_s +
+                    #barrier_nonallowable_s +
+                    #OG_value_s + 
+                    #barrier_allowable_s*OG_value_s +
+                    #CertifierRequestn*OG_value_s +
+                    #barrier_allowable_s*CertifierRequestn +
+                    #barrier_nonallowable_s*OG_value_s +
+                    #barrier_nonallowable_s*CertifierRequestn +
+                    #barrier_allowable_s*acreage_log_s +
+                    #CertifierRequestf + 
+                    CertifierRequestn + 
+                    acreage_log_s + 
+                    cropcat_n_s +
+                    YearsCertified + 
+                    noncommercial_seedsource_s +
+                    maincrop +
+                    Region +
+                    survey_year, 
+                  data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+summary(m_noix1)
+m_noix2 <- betareg(OGseed_percent_maincrop_prop ~ 
+                     #barrier_allowable_s +
+                     #barrier_nonallowable_s +
+                     OG_value_s + 
+                     #barrier_allowable_s*OG_value_s +
+                     #CertifierRequestn*OG_value_s +
+                     #barrier_allowable_s*CertifierRequestn +
+                     #barrier_nonallowable_s*OG_value_s +
+                     #barrier_nonallowable_s*CertifierRequestn +
+                     #barrier_allowable_s*acreage_log_s +
+                     #CertifierRequestf + 
+                     CertifierRequestn + 
+                     acreage_log_s + 
+                     cropcat_n_s +
+                     YearsCertified + 
+                     noncommercial_seedsource_s +
+                     maincrop +
+                     Region +
+                     survey_year, 
+                   data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+summary(m_noix2)
 m_noix <- betareg(OGseed_percent_maincrop_prop ~ 
-                       barrier_allowable_s +
+                       barrier_allowable_rev_s +
                        #barrier_nonallowable_s +
                        OG_value_s + 
                        #barrier_allowable_s*OG_value_s +
@@ -80,7 +132,8 @@ m_noix <- betareg(OGseed_percent_maincrop_prop ~
                        #barrier_nonallowable_s*OG_value_s +
                        #barrier_nonallowable_s*CertifierRequestn +
                        #barrier_allowable_s*acreage_log_s +
-                       NoEnforcement + 
+                       #CertifierRequestf + 
+                       CertifierRequestn + 
                        acreage_log_s + 
                        cropcat_n_s +
                        YearsCertified + 
@@ -89,7 +142,156 @@ m_noix <- betareg(OGseed_percent_maincrop_prop ~
                        Region +
                        survey_year, 
              data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+summary(m_noix)
 m_ix <- betareg(OGseed_percent_maincrop_prop ~ 
+                  barrier_allowable_rev_s +
+                  #barrier_nonallowable_s +
+                  OG_value_s + 
+                  OG_value_s*barrier_allowable_rev_s +
+                  #CertifierRequestn*OG_value_s +
+                  #barrier_allowable_s*CertifierRequestn +
+                  #barrier_nonallowable_s*OG_value_s +
+                  #barrier_nonallowable_s*CertifierRequestn +
+                  #CertifierRequestf + 
+                  CertifierRequestn + 
+                  acreage_log_s + 
+                  cropcat_n_s +
+                  YearsCertified + 
+                  noncommercial_seedsource_s +
+                  maincrop +
+                  Region +
+                  survey_year,  
+                  data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+summary(m_ix)
+stargazer::stargazer(m_noix1, m_noix2, m_noix, m_ix, type = 'html', out = 'tables/test_gazer_betrareg.html')
+# When together, allowable is -.18 and non-allowable is -.16
+# Just allowable, no interaction -0.22
+# Just non-allowable, no interaction -0.15
+
+bara <- quantile(dfs_rounded$barrier_allowable_s)[[4]]
+bar <- quantile(dfs_rounded$barrier_allowable_s)[[3]]
+barb <- quantile(dfs_rounded$barrier_allowable_s)[[2]]
+summary(dfs_rounded$barrier_allowable_s)
+vala <- quantile(dfs_rounded$OG_value_s)[[4]]
+val <- quantile(dfs_rounded$OG_value_s)[[3]]
+valb <- quantile(dfs_rounded$OG_value_s)[[2]]
+summary(dfs_rounded$OG_value_s)
+mylist <- list(barrier_allowable_s=c(1,3),
+               OG_value_s=c(-2,-1,0,1,2))
+emmeans::emmip(m_ix, barrier_allowable_s ~ OG_value_s,at=mylist, CIs=TRUE)
+
+# Playing with certifier request
+df_noncomp <- dfs_rounded[dfs_rounded$CertifierRequestf != "Fully compliant",]
+m_noix <- betareg(OGseed_percent_maincrop_prop ~ 
+                    barrier_allowable_sum_s +
+                    #barrier_nonallowable_s +
+                    OG_value_s + 
+                    #barrier_allowable_s*OG_value_s +
+                    #CertifierRequestn*OG_value_s +
+                    #barrier_allowable_s*CertifierRequestn +
+                    #barrier_nonallowable_s*OG_value_s +
+                    #barrier_nonallowable_s*CertifierRequestn +
+                    #barrier_allowable_s*acreage_log_s +
+                    CertifierRequestf + 
+                    acreage_log_s + 
+                    cropcat_n_s +
+                    YearsCertified + 
+                    noncommercial_seedsource_s +
+                    maincrop +
+                    Region +
+                    survey_year, 
+                  data = df_noncomp, link = "logit", link.phi = "log", type = "ML")
+summary(m_noix)
+m_ix <- betareg(OGseed_percent_maincrop_prop ~ 
+                  barrier_allowable_s +
+                  #barrier_nonallowable_s +
+                  OG_value_s + 
+                  OG_value_s*barrier_allowable_s +
+                  #CertifierRequestn*OG_value_s +
+                  #barrier_allowable_s*CertifierRequestn +
+                  #barrier_nonallowable_s*OG_value_s +
+                  #barrier_nonallowable_s*CertifierRequestn +
+                  CertifierRequestf + 
+                  acreage_log_s + 
+                  cropcat_n_s +
+                  YearsCertified + 
+                  noncommercial_seedsource_s +
+                  maincrop +
+                  Region +
+                  survey_year,  
+                data = df_noncomp, link = "logit", link.phi = "log", type = "ML")
+summary(m_ix)
+m_2ix <- betareg(OGseed_percent_maincrop_prop ~ 
+                  barrier_allowable_s +
+                  #barrier_nonallowable_s +
+                  OG_value_s + 
+                  OG_value_s*barrier_allowable_s +
+                  #CertifierRequestn*OG_value_s +
+                  barrier_allowable_s*CertifierRequestf +
+                  #barrier_nonallowable_s*OG_value_s +
+                  #barrier_nonallowable_s*CertifierRequestn +
+                  CertifierRequestf + 
+                  acreage_log_s + 
+                  cropcat_n_s +
+                  YearsCertified + 
+                  noncommercial_seedsource_s +
+                  maincrop +
+                  Region +
+                  survey_year,  
+                data = df_noncomp, link = "logit", link.phi = "log", type = "ML")
+summary(m_2ix)
+stargazer::stargazer(m_noix, m_ix, type = 'html', out = 'tables/test_gazer_betrareg.html')
+
+
+# Playing with allorable and non
+m_a_controlonly <- betareg(OGseed_percent_maincrop_prop ~ 
+                      NoEnforcement + 
+                      acreage_log_s + 
+                      cropcat_n_s +
+                      YearsCertified + 
+                      noncommercial_seedsource_s +
+                      maincrop +
+                      Region +
+                      survey_year, 
+                    data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+
+m_a_nocontrol <- betareg(OGseed_percent_maincrop_prop ~ 
+                           barrier_allowable_s +
+                           #barrier_nonallowable_s +
+                           OG_value_s + 
+                           maincrop +
+                           Region +
+                           survey_year, 
+                         data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+
+m_a_nocontrolorfe <- betareg(OGseed_percent_maincrop_prop ~ 
+                           barrier_allowable_s +
+                           #barrier_nonallowable_s +
+                           OG_value_s, 
+                         data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+
+
+
+m_a_noix <- betareg(OGseed_percent_maincrop_prop ~ 
+                    barrier_allowable_s +
+                    #barrier_nonallowable_s +
+                    OG_value_s + 
+                    #barrier_allowable_s*OG_value_s +
+                    #CertifierRequestn*OG_value_s +
+                    #barrier_allowable_s*CertifierRequestn +
+                    #barrier_nonallowable_s*OG_value_s +
+                    #barrier_nonallowable_s*CertifierRequestn +
+                    #barrier_allowable_s*acreage_log_s +
+                    NoEnforcement + 
+                    acreage_log_s + 
+                    cropcat_n_s +
+                    YearsCertified + 
+                    noncommercial_seedsource_s +
+                    maincrop +
+                    Region +
+                    survey_year, 
+                  data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+m_a_ix <- betareg(OGseed_percent_maincrop_prop ~ 
                   barrier_allowable_s +
                   #barrier_nonallowable_s +
                   OG_value_s + 
@@ -107,45 +309,119 @@ m_ix <- betareg(OGseed_percent_maincrop_prop ~
                   maincrop +
                   Region +
                   survey_year,  
-                  data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
-m_3ix <- betareg(OGseed_percent_maincrop_prop ~ 
-                  barrier_allowable_s +
-                  #barrier_nonallowable_s +
-                  OG_value_s + 
-                  barrier_allowable_s*OG_value_s +
-                   barrier_allowable_s*NoEnforcement +
-                   OG_value_s*NoEnforcement +
-                  #CertifierRequestn*OG_value_s +
-                  #barrier_allowable_s*CertifierRequestn +
-                  #barrier_nonallowable_s*OG_value_s +
-                  #barrier_nonallowable_s*CertifierRequestn +
-                  #barrier_allowable_s*acreage_log_s +
-                  NoEnforcement + 
-                  acreage_log_s + 
-                  cropcat_n_s +
-                  YearsCertified + 
-                  noncommercial_seedsource_s +
-                  maincrop +
-                  Region +
-                  survey_year,  
                 data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
-summary(m_3ix)
-stargazer::stargazer(m_noix, m_ix, type = 'html', out = 'tables/test_gazer_betrareg.html')
-# When together, allowable is -.18 and non-allowable is -.16
-# Just allowable, no interaction -0.22
-# Just non-allowable, no interaction -0.15
+m_na_noix <- betareg(OGseed_percent_maincrop_prop ~ 
+                      #barrier_allowable_s +
+                      barrier_nonallowable_s +
+                      OG_value_s + 
+                      #barrier_allowable_s*OG_value_s +
+                      #CertifierRequestn*OG_value_s +
+                      #barrier_allowable_s*CertifierRequestn +
+                      #barrier_nonallowable_s*OG_value_s +
+                      #barrier_nonallowable_s*CertifierRequestn +
+                      #barrier_allowable_s*acreage_log_s +
+                      NoEnforcement + 
+                      acreage_log_s + 
+                      cropcat_n_s +
+                      YearsCertified + 
+                      noncommercial_seedsource_s +
+                      maincrop +
+                      Region +
+                      survey_year, 
+                    data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+m_na_ix <- betareg(OGseed_percent_maincrop_prop ~ 
+                    #barrier_allowable_s +
+                    barrier_nonallowable_s +
+                    OG_value_s + 
+                    #OG_value_s*barrier_allowable_s +
+                    #CertifierRequestn*OG_value_s +
+                    #barrier_allowable_s*CertifierRequestn +
+                    barrier_nonallowable_s*OG_value_s +
+                    #barrier_nonallowable_s*CertifierRequestn +
+                    #barrier_allowable_s*acreage_log_s +
+                    NoEnforcement + 
+                    acreage_log_s + 
+                    cropcat_n_s +
+                    YearsCertified + 
+                    noncommercial_seedsource_s +
+                    maincrop +
+                    Region +
+                    survey_year,  
+                  data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+m_both_noix <- betareg(OGseed_percent_maincrop_prop ~ 
+                      barrier_allowable_s +
+                      barrier_nonallowable_s +
+                      OG_value_s + 
+                      #barrier_allowable_s*OG_value_s +
+                      #CertifierRequestn*OG_value_s +
+                      #barrier_allowable_s*CertifierRequestn +
+                      #barrier_nonallowable_s*OG_value_s +
+                      #barrier_nonallowable_s*CertifierRequestn +
+                      #barrier_allowable_s*acreage_log_s +
+                      NoEnforcement + 
+                      acreage_log_s + 
+                      cropcat_n_s +
+                      YearsCertified + 
+                      noncommercial_seedsource_s +
+                      maincrop +
+                      Region +
+                      survey_year, 
+                    data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
+m_both_ix <- betareg(OGseed_percent_maincrop_prop ~ 
+                     barrier_allowable_s +
+                     barrier_nonallowable_s +
+                     OG_value_s + 
+                     #OG_value_s*barrier_allowable_s +
+                     #CertifierRequestn*OG_value_s +
+                     #barrier_allowable_s*CertifierRequestn +
+                     #barrier_nonallowable_s*OG_value_s +
+                     #barrier_nonallowable_s*CertifierRequestn +
+                     #barrier_allowable_s*acreage_log_s +
+                     barrier_allowable_s*barrier_nonallowable_s*OG_value_s+
+                     NoEnforcement + 
+                     acreage_log_s + 
+                     cropcat_n_s +
+                     YearsCertified + 
+                     noncommercial_seedsource_s +
+                     maincrop +
+                     Region +
+                     survey_year,  
+                   data = dfs_rounded, link = "logit", link.phi = "log", type = "ML")
 
-bara <- quantile(dfs_rounded$barrier_allowable_s)[[4]]
-bar <- quantile(dfs_rounded$barrier_allowable_s)[[3]]
-barb <- quantile(dfs_rounded$barrier_allowable_s)[[2]]
+stargazer::stargazer(#m_a_controlonly, 
+                     #m_a_nocontrol, 
+                     #m_a_nocontrolorfe,
+                     m_a_noix, m_a_ix,
+                     m_na_noix, m_na_ix,
+                     m_both_noix, #m_both_ix,
+                     type = 'html', out = 'tables/test_gazer_betrareg.html')
+
 summary(dfs_rounded$barrier_allowable_s)
-vala <- quantile(dfs_rounded$OG_value_s)[[4]]
-val <- quantile(dfs_rounded$OG_value_s)[[3]]
-valb <- quantile(dfs_rounded$OG_value_s)[[2]]
+bar_a1 <- quantile(dfs_rounded$barrier_allowable_s)[[4]]
+bar_a2 <- quantile(dfs_rounded$barrier_allowable_s)[[2]]
 summary(dfs_rounded$OG_value_s)
-mylist <- list(barrier_allowable_s=c(1,2,3),
-               OG_value_s=c(-1,0,1))
-em_df <- emmeans::emmip(m_ix, OG_value_s~barrier_allowable_s,at=mylist, CIs=TRUE)
+val_1 <- quantile(dfs_rounded$OG_value_s)[[4]]
+val_2 <- quantile(dfs_rounded$OG_value_s)[[2]]
+
+mylist <- list(barrier_allowable_s=c(1, 3),
+               OG_value_s=c(-1,0,1,2))
+emmeans::emmip(m_a_ix, OG_value_s~barrier_allowable_s,at=mylist, CIs=TRUE)
+emmeans::emmip(m_a_ix, barrier_allowable_s~ OG_value_s,at=mylist, CIs=TRUE)
+
+mylist <- list(barrier_allowable_s=c(1, 3),
+               barrier_nonallowable_s=c(1, 3))
+emmeans::emmip(m_both_ix, barrier_nonallowable_s~barrier_allowable_s,at=mylist, CIs=TRUE)
+
+summary(dfs_rounded$barrier_nonallowable_s)
+bar_na1 <- 3
+bar_na2 <- 1
+
+mylist <- list(barrier_allowable_s=c(1, 3),
+               barrier_nonallowable_s=c(1, 3),
+               OG_value_s=c(-1,0,1, 2))
+
+emmip(m_both_ix, barrier_nonallowable_s ~ barrier_allowable_s | OG_value_s,
+      at = mylist, CI = T)
 
 df10 <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled10.rds") 
 df15 <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled15.rds") 
@@ -165,7 +441,7 @@ m10_noix <- betareg(OGseed_percent_maincrop_prop ~
                  #barrier_nonallowable_s*OG_value_s +
                  #barrier_nonallowable_s*CertifierRequestn +
                  #barrier_allowable_s*acreage_log_s +
-                 NoEnforcement + 
+                 #NoEnforcement + 
                  acreage_log_s + 
                  cropcat_n_s +
                  YearsCertified + 
@@ -183,7 +459,7 @@ m10_ix <- betareg(OGseed_percent_maincrop_prop ~
                       #barrier_nonallowable_s*OG_value_s +
                       #barrier_nonallowable_s*CertifierRequestn +
                       #barrier_allowable_s*acreage_log_s +
-                      NoEnforcement + 
+                      #NoEnforcement + 
                       acreage_log_s + 
                       cropcat_n_s +
                       YearsCertified + 
@@ -202,7 +478,7 @@ m15_noix <- betareg(OGseed_percent_maincrop_prop ~
                  #barrier_nonallowable_s*OG_value_s +
                  #barrier_nonallowable_s*CertifierRequestn +
                  #barrier_allowable_s*acreage_log_s +
-                 NoEnforcement + 
+                 #NoEnforcement + 
                  acreage_log_s + 
                  cropcat_n_s +
                  YearsCertified + 
@@ -220,7 +496,7 @@ m15_ix <- betareg(OGseed_percent_maincrop_prop ~
                       #barrier_nonallowable_s*OG_value_s +
                       #barrier_nonallowable_s*CertifierRequestn +
                       #barrier_allowable_s*acreage_log_s +
-                      NoEnforcement + 
+                      #NoEnforcement + 
                       acreage_log_s + 
                       cropcat_n_s +
                       YearsCertified + 
@@ -239,7 +515,7 @@ m20_noix <- betareg(OGseed_percent_maincrop_prop ~
                  #barrier_nonallowable_s*OG_value_s +
                  #barrier_nonallowable_s*CertifierRequestn +
                  #barrier_allowable_s*acreage_log_s +
-                 NoEnforcement + 
+                 #NoEnforcement + 
                  acreage_log_s + 
                  cropcat_n_s +
                  YearsCertified + 
@@ -257,7 +533,7 @@ m20_ix <- betareg(OGseed_percent_maincrop_prop ~
                  #barrier_nonallowable_s*OG_value_s +
                  #barrier_nonallowable_s*CertifierRequestn +
                  #barrier_allowable_s*acreage_log_s +
-                 NoEnforcement + 
+                 #NoEnforcement + 
                  acreage_log_s + 
                  cropcat_n_s +
                  YearsCertified + 
@@ -268,6 +544,7 @@ m20_ix <- betareg(OGseed_percent_maincrop_prop ~
 stargazer::stargazer(m10_noix, m10_ix,
                      m15_noix, m15_ix, 
                      m20_noix, m20_ix, type = 'html', out = 'tables/test_gazer_betrareg_yrly.html')
+
 
 # Run increase models ----
 dfs2 <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled_increase.rds") %>% 

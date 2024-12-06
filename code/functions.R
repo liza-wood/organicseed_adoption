@@ -56,9 +56,14 @@ make_map <- function(df, mapdf){
   
   # To plot points on the map
   loc <- data.frame(lon = df$long, lat = df$lat, year = df$year)
-  transformed <- usmap_transform(loc) %>% 
-    rename(x = lon.1, y = lat.1) %>% 
-    filter(lat < 51 & lat > 21)
+  transformed <- usmap_transform(loc)
+  coords <- unlist(sf::st_geometry(transformed$geometry)) %>% 
+    matrix(ncol=2,byrow=TRUE) %>% 
+    as_tibble() %>% 
+    setNames(c("lon","lat"))
+  transformed <- cbind(transformed, coords) %>% 
+    #filter(lat < 51 & lat > 21) %>% 
+    rename(x = lon, y = lat) 
   transformed <- transformed %>% 
     mutate(year = case_when(year == 2011 ~ 2010, year == 2016 ~ 2015,
                             year == 2021 ~ 2020, T ~ NA)) 
@@ -106,43 +111,47 @@ make_map <- function(df, mapdf){
   
 }
 
-coef_order_core <- c("Barrier: Availability",
+coef_order_core <- c(#"Barrier: Availability",
                      #"Barrier: Buyer requirements",
-                     "Barrier: Quality",
-                     "Barrier: Quantity",
-                     "Barrier: Form",
-                     "Year: 2010 (vs. 2015)",
-                     "Year: 2020 (vs. 2015)",
-                     "Values organic seed",
+                     #"Barrier: Quality",
+                     #"Barrier: Quantity",
+                     #"Barrier: Form",
+                     "Ability",
+                     "Duty",
+                     "Ability x Duty",
+                     "Certifier request",
                      "Farm size (log acres)",
                      "Crop diversity", 
-                     "Years certified organic",
-                     "Certifiers request organic seed use",
                      "Seed saved or traded (\\%)",
+                     "Years certified organic",
                      "Forage crops (vs. Field)",
                      "Vegetable crops (vs. Field)",
                      "Western region (vs. North Central)",
                      "Northeastern region (vs. North Central)",
-                     "Southern region (vs. North Central)")
+                     "Southern region (vs. North Central)",
+                     "Year: 2010 (vs. 2015)",
+                     "Year: 2020 (vs. 2015)")
 
-coef_order_stargazer <- c("Barrier\\: Availability",
+coef_order_stargazer <- c(#"Barrier\\: Availability",
                 #"Barrier\\: Buyer requirements",
-                "Barrier\\: Quality",
-                "Barrier\\: Quantity",
-                "Barrier\\: Form",
-                "Year\\: 2010 \\(vs\\. 2015\\)",
-                "Year\\: 2020 \\(vs\\. 2015\\)",
-                "Values organic seed",
+                #"Barrier\\: Quality",
+                #"Barrier\\: Quantity",
+                #"Barrier\\: Form",
+                "Ability",
+                "Duty",
+                "Ability x Duty",
+                "Certifier request",
                 "Farm size \\(log acres\\)",
                 "Crop diversity", 
-                "Years certified organic",
-                "Certifiers request organic seed use",
                 "Seed saved or traded \\(\\%\\)",
+                "Years certified organic",
                 "Forage crops \\(vs\\. Field\\)",
                 "Vegetable crops \\(vs\\. Field\\)",
                 "Western region \\(vs\\. North Central\\)",
                 "Northeastern region \\(vs\\. North Central\\)",
                 "Southern region \\(vs\\. North Central\\)",
+                "Year\\: 2010 \\(vs\\. 2015\\)",
+                "Year\\: 2020 \\(vs\\. 2015\\)",
                 "Certifier 7",
                 "Certifier 42",
                 "Certifier 34",
@@ -153,24 +162,21 @@ coef_order_stargazer <- c("Barrier\\: Availability",
                 "Distributor: OSA (vs. Other)",
                 "Constant")
 
-coef_order <- c("Barrier: Availability",
-               # "Barrier: Buyer requirements",
-                "Barrier: Quality",
-                "Barrier: Quantity",
-               "Barrier: Form",
-               "Year: 2010 (vs. 2015)",
-               "Year: 2020 (vs. 2015)",
-                "Values organic seed",
+coef_order <- c( "Ability",
+                 "Duty",
+                 "Ability x Duty",
+                "Certifier request",
                 "Farm size (log acres)",
                 "Crop diversity", 
+                "Seed saved or traded (\\%)",
                 "Years certified organic",
-               "Certifiers request organic seed use",
-                "Seed saved or traded (%)",
                 "Forage crops (vs. Field)",
                 "Vegetable crops (vs. Field)",
                 "Western region (vs. North Central)",
                 "Northeastern region (vs. North Central)",
                 "Southern region (vs. North Central)",
+                "Year: 2010 (vs. 2015)",
+                "Year: 2020 (vs. 2015)",
                 "(Intercept)",
                 "Certifier Other",
                 "Certifier 24",
@@ -192,13 +198,16 @@ prep_betreg_data <- function(m){
   colnames(mdf)[c(1,2,6,7)] <- c('mean', 'se', 'LCI', 'UCI')
   mdf <- mdf %>% 
     mutate(term = case_when(
-      term == "OG_value_s" ~ "Values organic seed",
+      term == "OG_value_s" ~ "Duty",
       #term == "CertifierRequestn_s" ~ "Certifiers request organic seed use",
-      term == "CertifierRequestn" ~ "Certifiers request organic seed use",
-      term == "noncommercial_seedsource_s" ~ "Seed saved or traded (%)", 
+      term == "CertifierRequestn" ~ "Certifier request",
+      term == "noncommercial_seedsource_s" ~ "Seed saved or traded (\\%)", 
       term == "acreage_log_s" ~ "Farm size (log acres)", 
       term == "cropcat_n_s" ~ "Crop diversity", 
       term == "years_certified_s" ~ "Years certified organic", 
+      term == "barrier_allowable_s" ~ "Inability: Seed sourcing challenges",
+      term == "barrier_allowable_rev_s" ~ "Ability: Allowable",
+      term == "barrier_all_rev_s" ~ "Ability",
       term == "barrier_buyerReq_s" ~ "Barrier: Buyer requirements",
       term == "barrier_seedTreatlack_s" ~ "Barrier: Form",
       term == "barrier_insuffQuantity_s" ~ "Barrier: Quantity", 
@@ -212,6 +221,9 @@ prep_betreg_data <- function(m){
       #term == "survey_year2016" ~ "Year: 2015 (vs. 2010)",
       term == "survey_year2011" ~ "Year: 2010 (vs. 2015)",
       term == "survey_year2021" ~ "Year: 2020 (vs. 2015)",
+      term == "barrier_allowable_s:OG_value_s" ~ "Inability x Duty",
+      term == "barrier_allowable_rev_s:OG_value_s" ~ "Capability x Duty",
+      term == "barrier_all_rev_s:OG_value_s" ~ "Ability x Duty",
       # For extra tests in the appendix
       term == "certifier_codenameother_certifier" ~ "Certifier Other",
       term == "certifier_codenamecertifier7" ~ "Certifier 7",

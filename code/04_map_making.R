@@ -1,10 +1,20 @@
+
+#install.packages('usmap') USING THE NEWEST
 library(usmap)
 library(tidyverse)
 source("code/functions.R")
+
+# Older version of usmap doesn;t seperate out the lat/long on us_map() function, 
+# but then usmap_transform() doesn't work at all
+# Newer version does let usmap_transform but then doesn't separate lat/long here
+# So use the old version to save the us_map, then use new version for replicability
+
 #packageurl <- "https://cran.r-project.org/src/contrib/Archive/usmap/usmap_0.5.2.tar.gz"
 #install.packages(packageurl, repos=NULL, type="source")
-# Need to keep older version because updates have changed it
-us_states_og <- usmap::us_map()
+#library(usmap)
+#us_states_og <- usmap::us_map()
+#saveRDS(us_states_og, 'data/us_states_og.rds')
+us_states_og <- readRDS('data/us_states_og.rds')
 us_states_og$full <- tools::toTitleCase(us_states_og$full)
 
 mako <- viridis::mako(n=9)
@@ -102,13 +112,15 @@ df <- df %>%
     State %in% northeast ~ "Northeast",
     T ~ NA_character_
   )) %>% 
-  filter(!is.na(Region))
+  filter(!is.na(Region)) %>% 
+  filter(State != "PR") # Unfortunately usmap does not have PR, so excluding
 
 mapdf <- region_text(df)
 map <- make_map(df, mapdf)
+# This one is better than previous because it has AK, but HI is all of place?
 map
 
-ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png", height = 4.5, width = 5, dpi = 800)
+#ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png", height = 4.5, width = 5, dpi = 800)
 
 
 

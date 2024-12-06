@@ -4,29 +4,20 @@ library(tidyUSDA)
 source('code/keys.R')
 
 # 0. Read in data just like for data summary ----
-df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
-  filter(Region != "International", maincrop != "Unknown") %>% 
-  mutate(maincrop_acrage = case_when(
-    maincrop == "Field" ~ FieldAcreage,
-    maincrop == "Forage" ~ ForageAcreage,
-    maincrop == "Vegetables" ~ VegiAcreage,
-    T ~ NA
-  )) %>% 
-  select(OGseed_percent_maincrop,
-         #barrier_buyerReq,
-         barrier_insuffQuantity,
-         barrier_lackdesiredTraits,
-         barrier_availability, 
-         barrier_seedTreatlack,
-         OG_value,
+df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
+  select(OGseed_percent_maincrop_prop,
+         OG_value_s,
+         barrier_allowable_s,
          CertifierRequestn,
-         maincrop, survey_year, Region, 
-         maincrop_acrage,
-         TotalAcreage, cropcat_n, 
-         VegiAcreage, FieldAcreage, ForageAcreage,
-         noncommercial_seedsource, data_coll_method) %>% 
+         noncommercial_seedsource_s,
+         acreage_log_s,
+         cropcat_n_s,
+         years_certified_s,
+         maincrop,
+         Region,
+         survey_year) %>% 
   na.omit() %>% 
-  mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100) %>% 
+  mutate(survey_year = as.numeric(as.character(survey_year))) %>% 
   mutate(survey_year = case_when(
     survey_year == 2011 ~ 2010,
     survey_year == 2016 ~ 2015,
