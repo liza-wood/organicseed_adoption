@@ -101,7 +101,7 @@ ltm::cronbach.alpha(df.full[,c('barrier_availability', 'barrier_insuffQuantity',
                     na.rm = T)
 
 
-formulas <- c("", "", "", "\\max_i(a_i)", "", "", "",
+formulas <- c("", "", "", "\\min_i(a_i)", "", "", "",
  "", "\\frac{1}{2}(d_1 + d_2)", "")
 
 tbl <- data.frame("Variables" = c("", "", "", "Ability", "", "","", "", "Duty", ""),
@@ -161,7 +161,7 @@ ft <- flextable::compose(
 #)
 ft
 ft %>% 
-  flextable::footnote(i = 1, j = 2, value = as_paragraph("Scales were reversed to represent ability, so that lower scores suggest lower ability (e.g. 1 = significant barriers and 4 = not a barrier)"), ref_symbols = ("a")) %>% 
+  flextable::footnote(i = 1, j = 2, value = as_paragraph("This scale was reversed to represent ability, so that lower scores suggest lower ability (e.g. 1 = significant factor (low ability) and 4 = not a factor (high ability))"), ref_symbols = ("a")) %>% 
   font(fontname = fontname, part = "body") %>% 
   save_as_docx(path = "tables/table1_variable_construction.docx")
 

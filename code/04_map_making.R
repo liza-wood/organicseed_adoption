@@ -120,7 +120,7 @@ map <- make_map(df, mapdf)
 # This one is better than previous because it has AK, but HI is all of place?
 map
 
-#ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png", height = 4.5, width = 5, dpi = 800)
+ggsave("~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure1.png", height = 5.5, width = 6.5, dpi = 800)
 
 
 

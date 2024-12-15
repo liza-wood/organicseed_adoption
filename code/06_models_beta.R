@@ -14,6 +14,7 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          #barrier_allowable_rev_s,
          barrier_all_rev_s,
          barrier_all_rev_s2,
+         #barrier_sum_rev_s,
          CertifierRequestn,
          noncommercial_seedsource_s,
          acreage_log_s,
@@ -27,13 +28,22 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
 table(df.full$survey_year)
 
 df.full_rounded <- df.full
-df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
+#df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
+# https://stats.stackexchange.com/questions/31300/dealing-with-0-1-values-in-a-beta-regression
+s = 0.5
+n = nrow(df.full)
+x = df.full_rounded$OGseed_percent_maincrop_prop
+rounded = (x*(n-1)+s)/n
+summary(rounded)
+
+df.full_rounded$OGseed_percent_maincrop_prop <- (df.full_rounded$OGseed_percent_maincrop_prop * (n-1) + s)/n
 
 # MODEL ----
 set.seed(19)
 m1 <- betareg(OGseed_percent_maincrop_prop ~ 
                #barrier_allowable_rev_s +
                barrier_all_rev_s +
+               #barrier_sum_rev_s +
                #OG_value_s + 
                CertifierRequestn + 
                acreage_log_s + 
@@ -64,6 +74,7 @@ summary(m2)
 m3 <- betareg(OGseed_percent_maincrop_prop ~ 
                 #barrier_allowable_rev_s +
                 barrier_all_rev_s +
+                #barrier_sum_rev_s +
                 OG_value_s + 
                 CertifierRequestn + 
                 acreage_log_s + 
@@ -79,8 +90,10 @@ summary(m3)
 m_ix <- betareg(OGseed_percent_maincrop_prop ~ 
                  #barrier_allowable_rev_s +
                  barrier_all_rev_s +
+                 #barrier_sum_rev_s +
                  OG_value_s + 
                  #barrier_allowable_rev_s*OG_value_s +
+                 #barrier_sum_rev_s*OG_value_s +
                  barrier_all_rev_s*OG_value_s +
                  CertifierRequestn + 
                  acreage_log_s + 
@@ -203,7 +216,7 @@ mylist <- list(barrier_all_rev_s2=c(0:3),
 em_df <- emmeans::emmip(m_ix, OG_value_s2 ~ barrier_all_rev_s2 ,at=mylist, CIs=TRUE)
 em_df <- em_df$data
 
-# When barrier is low/ability is high, organic seed value makes a different of 2%
+# When barrier is low/ability is high, organic seed value makes a different of 3%
 round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 2],2)
 round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 4],2)
 # When duty is low, barrier levels account for 19% difference
@@ -216,7 +229,7 @@ round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 2],2)
 # When barrier is high, organic seed value makes a different of 13% -- the difference between the two more than doubles, suggesting that there is an element
 round(em_df$yvar[em_df$barrier_all_rev_s2 == 0 & em_df$OG_value_s2 == 2],2)
 round(em_df$yvar[em_df$barrier_all_rev_s2 == 0 & em_df$OG_value_s2 == 4],2)
-# When duty is high, barrier levels account for only 8% diference, suggesting the effort to overcome barriers. This may mean switching varieties, trying something new, or looking harder.
+# When duty is high, barrier levels account for only 9% diference, suggesting the effort to overcome barriers. This may mean switching varieties, trying something new, or looking harder.
 round(em_df$yvar[em_df$barrier_all_rev_s2 == 0 & em_df$OG_value_s2 == 4],2)
 round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 4],2)
 

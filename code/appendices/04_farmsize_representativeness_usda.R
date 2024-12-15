@@ -6,6 +6,9 @@ library(ggplot2)
 library(usdaoRganic)
 data(organic_census)
 usda <- organic_census
+usda$year[usda$year == 2012] <- 2010
+usda$year[usda$year == 2017] <- 2015
+usda$year[usda$year == 2022] <- 2020
 
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
   select(OGseed_percent_maincrop_prop,

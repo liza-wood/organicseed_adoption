@@ -87,12 +87,13 @@ make_map <- function(df, mapdf){
                  aes(x = x, y = y, 
                      #color = factor(Regionn), 
                      group = group)) + 
-    geom_point(data = transformed, aes(x = x, y = y, colour = factor(year)) , 
-               alpha = .4,shape=20, size = 2,
+    geom_point(data = transformed, aes(x = x, y = y, shape = factor(year)) , 
+               alpha = .5, size = 1.2,
                position=position_jitter(width=10000, height=10000)) +
-    scale_color_manual(values = mako[c(2,5,8)]) + 
+    #scale_color_manual(values = mako[c(2,5,8)]) + 
     labs(title = "",
          color = "",
+         shape = "",
          x = "", y = "") + 
     theme_light(base_size = 10)  +
     theme(
@@ -106,7 +107,8 @@ make_map <- function(df, mapdf){
       text = element_text(family = "Times", size = 14)
       #axis.title = element_text(family = FONTTYPE, size = TITLESIZE)
     ) +
-    guides(color = guide_legend(override.aes = list(size = 10)))
+    guides(shape = guide_legend(override.aes = list(size = 2))) +
+    scale_shape_manual(values = c(1,3,5))
   return(p)
   
 }

@@ -238,7 +238,7 @@ stargazer::stargazer(m_list,  type = "latex",
 ---->
 
 
-## 4. Dissagregating allowable and non-allowable barriers (Table S4)
+## 4. Dissagregating allowable and non-allowable factors (Table S4)
 
 ```{r barrier model, echo = F, results = "asis"}
 m_list <- readRDS('tables/append_models_barriers.rds')
@@ -251,16 +251,16 @@ stargazer::stargazer(m_list,  type = "latex",
                                 "Ability: Non-allowable x Duty"), 
            model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
-           title = "Beta regression model results disaggregating allowable and non-allowable barriers", 
+           title = "Beta regression model results disaggregating allowable and non-allowable ability factors", 
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
 
 ```
 
-## 5. Correlations of all barriers (Table S5)
+## 5. Correlations of all ability factors (Table S5)
 
 ```{r, echo = F}
 tablea5 <- read.csv('tables/cor_table.csv') ; 
-kbl(tablea5, align = 'c', booktabs = T, caption = 'Correlations among organic seed sourcing barriers') #%>% kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
+kbl(tablea5, align = 'c', booktabs = T, caption = 'Correlations among organic seed sourcing ability factors') #%>% kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
   #column_spec(2:4, width = '4cm')
 ```
 
