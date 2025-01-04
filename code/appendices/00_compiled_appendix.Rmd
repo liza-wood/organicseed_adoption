@@ -1,10 +1,11 @@
 ---
 title: "Appendix"
-subtitle: "Compliance within regulatory gray areas: The case of the organic seed standard"
-output: pdf_document
+subtitle: 'Compliance in regulatory gray areas: The case of the organic seed standard'
+output:
+  pdf_document: default
 urlcolor: blue
-header-includes: 
-  \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
+header-includes: \newcommand{\beginsupplement}{\setcounter{table}{0}  \renewcommand{\thetable}{S\arabic{table}}
+  \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}}
 ---
 
 \beginsupplement
