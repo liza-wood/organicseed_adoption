@@ -241,7 +241,7 @@ ggplot(em_df, aes(x = factor(barrier_all_rev_s2), y = yvar,
   theme_minimal() +
   scale_x_discrete(labels=c("0" = "None", "1" = "Somewhat",
                               "2" = "Moderate", "3" = "High")) +
-  scale_color_grey(start = 0, end = 0.7, labels = c("Low",
+  scale_color_grey(start = 0, end = 0.7, labels = c("Neutral",
                                                     "High")) +
   labs(x = "Ability", 
        color = "Duty", y = "Linear prediction") +

@@ -2,6 +2,8 @@
 ## Have we seen the bifurcation of conventional and organic?
 library(stringr)
 
+# I DON'T USE THIS!!
+
 ## NOP data ----
 nop <- read.csv("~/Documents/Davis/R-Projects/big-organic-bifurcation/data/df.csv")
 nop$cert_year <- lubridate::year(lubridate::mdy(nop$Effective.Date.of.CROPS.Status))

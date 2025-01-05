@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  3 JAN 2025 19:05
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  5 JAN 2025 12:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -635,7 +635,7 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Overfull \hbox (2.77399pt too wide) in paragraph at lines 201--252
+Overfull \hbox (2.77399pt too wide) in paragraph at lines 203--254
  [][] 
  []
 
@@ -653,26 +653,26 @@ ppend_repf1_usda.png Graphic file (type png)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ap
 pend_repf1_usda.png>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/append_repf1_usda.png  used on input line 332.
+_adoption/figures/append_repf1_usda.png  used on input line 336.
 (pdftex.def)             Requested size: 469.75385pt x 587.1923pt.
 [4] [5 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures
-/append_repf1_usda.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 420.
-[6] [7]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 420.
+/append_repf1_usda.png>] [6]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 427.
+[7]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 427.
 (./00_compiled_appendix.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 420.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 420.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 427.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 427.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14949 strings out of 480608
- 219989 string characters out of 5903631
- 553477 words of memory out of 5000000
+ 14939 strings out of 480608
+ 219885 string characters out of 5903631
+ 552477 words of memory out of 5000000
  30468 multiletter control sequences out of 15000+600000
- 586139 words of font info for 101 fonts, out of 8000000 for 9000
+ 585724 words of font info for 96 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,13n,42p,830b,333s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
@@ -688,7 +688,7 @@ ist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2020/texmf-dist/fonts/t
 ype1/public/lm/lmr7.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/
 lm/lmri10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.
 pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on 00_compiled_appendix.pdf (7 pages, 471915 bytes).
+Output written on 00_compiled_appendix.pdf (7 pages, 474028 bytes).
 PDF statistics:
  132 PDF objects out of 1000 (max. 8388607)
  109 compressed objects within 2 object streams

@@ -13,7 +13,7 @@ usda$year[usda$year == 2022] <- 2020
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
   select(OGseed_percent_maincrop_prop,
          OG_value_s,
-         barrier_allowable_s,
+         barrier_all_rev_s,
          CertifierRequestn,
          noncommercial_seedsource_s,
          TotalAcreage,
@@ -78,7 +78,7 @@ summ4 %>%
   ggplot(aes(x = factor(acreage_range, acres_cat7), 
              y = prop, fill = source)) +
   geom_col(position = position_dodge(preserve = "single")) +
-  labs(fill = "", x = "Farm size", y = "Proportion of operations") +
+  labs(fill = "", x = "Farm size (acres)", y = "Proportion of operations") +
   facet_grid(~year) +
   scale_fill_grey(start = 0.4, end = 0.8) +
   theme_minimal() +
@@ -144,7 +144,7 @@ summ5 %>%
   ggplot(aes(x = factor(acreage_range, acres_cat7), 
              y = prop, fill = source)) +
   geom_col(position = position_dodge(preserve = "single")) +
-  labs(fill = "", x = "Farm size", y = "Proportion of operations") +
+  labs(fill = "", x = "Farm size (acres)", y = "Proportion of operations") +
   facet_grid(Region~year) +
   scale_fill_grey(start = 0.4, end = 0.8) +
   theme_minimal() +
@@ -153,6 +153,8 @@ summ5 %>%
         axis.text.x = element_text(angle = 45,vjust = 1, hjust=1))
 
 ggsave('figures/append_repf1_usda.png', width = 8, height = 10)
+
+## Stopped ----
 
 summ5$prop[summ5$survey_year == 2010 & summ5$Region == "North Central" &
              summ5$size == "1 to 9"]

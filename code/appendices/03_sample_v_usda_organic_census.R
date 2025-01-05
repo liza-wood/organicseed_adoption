@@ -7,7 +7,7 @@ source('code/keys.R')
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
   select(OGseed_percent_maincrop_prop,
          OG_value_s,
-         barrier_allowable_s,
+         barrier_all_rev_s,
          CertifierRequestn,
          noncommercial_seedsource_s,
          acreage_log_s,

@@ -57,9 +57,9 @@ kbl(tablea2, align = c('l','l', rep('c', 4)),
 
 ## 2. Checking for biases induced by data collection methods  
 
-In order to test how our data collection methods may bias the sample, we consider the effect of the sampling approach and survey distributor in our model. First we model the effect of sampling method with our 2015 and 2020 survey data (the only survey periods where we had both sampling approaches) by including a term for responses that were gathered by random sampling compared to convenience sampling (Table 2, Model 1). We see a small and insignificant effect for sampling method, and negligible changes in the results between the models run with and without the sampling consideration (Table 2, Model 2), suggesting no significant effect on results based on sampling approach. 
+In order to test how our data collection methods may bias the sample, we consider the effect of the sampling approach and survey distributor in our model. First we model the effect of sampling method with our 2015 and 2020 survey data (the only survey periods where we had both sampling approaches) by including a term ("Random data collection (vs. convenience)") for responses that were gathered by random sampling compared to convenience sampling (Table 2, Model 1). We see a small and insignificant effect for sampling method, and negligible changes in the results between the models run with and without the sampling consideration (Table 2, Model 2), suggesting no significant effect on results based on sampling approach. 
 
-Regarding concerns of survey distributor (i.e. that the distribution by OSA elicited responses from a select type of organic farmer), we model this effect with our 2010 and 2015 survey data (the only survey periods that identified specific distributors) by including a term for responses that were gathered through OSA channels compared to all others (Table 2, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the distributor consideration (Table 2, Model 4), suggesting no significant effect on results based on survey distributor. 
+Regarding concerns of survey distributor (i.e. that the distribution by Organic Seed Alliance (OSA) elicited responses from a select type of organic farmer), we model this effect with our 2010 and 2015 survey data (the only survey periods that identified specific distributors) by including a term ("Distributor: OSA (vs. Other)") for responses that were gathered through OSA channels compared to all others (Table 2, Model 3). We see a small and insignificant effect for distributor, and negligible changes in the results between the models run with and without the distributor consideration (Table 2, Model 4), suggesting no significant effect on results based on survey distributor. 
 
 ```{r, echo = F}
 core_vars2 <- c(#"Barrier: Availability",
@@ -67,8 +67,8 @@ core_vars2 <- c(#"Barrier: Availability",
                      #"Barrier: Quality",
                      #"Barrier: Quantity",
                      #"Barrier: Form",
-                     "Capability",
-                     "Norms",
+                     "Ability",
+                     "Duty",
                      "Certifier request",
                      "Farm size (log acres)",
                      "Crop diversity", 
@@ -88,10 +88,11 @@ core_vars2 <- c(#"Barrier: Availability",
 m_list <- readRDS('tables/append_sample_models.RDS')
 stargazer::stargazer(m_list,  type = "latex", 
            dep.var.labels = "\\shortstack{Proportion of organic land planted with organic seed}", 
-           covariate.labels = c(core_vars2[1:12], core_vars2[14],
-                                "Random data collection (vs. convenience)", core_vars2[13],
+           covariate.labels = c(core_vars2[c(1:12, 14)], 
+                                "Random data collection (vs. convenience)", 
+                                core_vars2[13],
               "Distributor: OSA (vs. Other)",
-              #"Capability x Norms",
+                                   "Ability x Duty",
                 "Constant"), 
           column.labels = c("\\shortstack{Including\\\\sampling\\\\method\\\\(2015, 2020)}", 
                             "\\shortstack{Without\\\\sampling\\\\method\\\\(2015, 2020)}", 
@@ -106,14 +107,15 @@ stargazer::stargazer(m_list,  type = "latex",
 ```
 
 
-\pagebreak 
+
+\pagebreak  
 
 
 ## 3. Sample representativeness 
 
 While the mix of sampling methods creates a challenge for determining the sample's representativeness of the population, we aim to demonstrate that our sample is representative by comparing the geographic distribution of operations (Table S3) and farm size distribution (Figure S1) between our sample and USDA Census data. 
 
-We first use USDA Census data of organic farmers from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table S3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by italic text formatting, while under-represented year-region combinations are signaled by bold text formatting. Only in 2010 do we see significant variation in representation across regions, with the North Central and Southern regions over-represented and the Northeast under-represented. 
+We first use USDA Census data of organic farmers from 2011, 2016, and 2021 to align with our 2010, 2015, and 2020 survey periods. These data are made available by the National Agricultural Statistics Service Quick Stats API. Across the three survey periods, the number of respondents represented approximately 6.3%, 5.9%, and 2.5% of the total number of organic farmers identified in the USDA Census in the related years. In Table S3 we compare the number of operations in our sample (n) to the population (N) by year and region. For each census period we calculated the standard deviation of the percentage of operations represented, which we used to identify regions that are over or under-represented. Over-represented year-region combinations are signaled by italic text formatting, while under-represented year-region combinations are signaled by bold text formatting. Only in 2010 do we see significant variation in representation across regions, with the North Central and Southern regions over-represented and the Northeast under-represented. 
 
 
 ```{r, echo = F, message = F, warning = F}
@@ -189,7 +191,7 @@ kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
 
 Next, to understand farm size representativeness, we look at USDA Census organic tabulations, reported for as the [2012](https://agcensus.library.cornell.edu/wp-content/uploads/2012-organictab-1.pdf), [2017](https://www.nass.usda.gov/Publications/AgCensus/2017/Online_Resources/Organics_Tabulation/organictab.pdf), and [2022](https://www.nass.usda.gov/Publications/AgCensus/2022/index.php) census tabulations. 
 
-In Figure S1 we compare these USDA Census data against our survey sample. These comparisons show a consistent over-representation of the smallest farms (1-9 acres), especially in the North Central and South, and under-representation of the largest farms. Still, our sample captures a distribution of organic farm sizes that includes medium and large farms, allowing us to understand the effect of farm size in our analysis. Additionally, an important consideration is that we calculate farm size as reported acreage planted to three major crop categories, but this approach likely underestimates acreage generally compared to USDA Census data, which reports all certified land. Furthermore these data are not crop specific and so USDA data also includes non-seed crop operations (i.e. orchards). 
+In Figure S1 we compare these USDA Census data against our survey sample. These comparisons show a consistent over-representation of the smallest farms (1-9 acres), especially in the North Central and South, and under-representation of the largest farms. Still, our sample captures a distribution of organic farm sizes that includes medium and large farms, allowing us to understand the effect of farm size in our analysis. Additionally, an important consideration is that we calculate farm size as reported acreage planted to a grower's main crop, focusing on three major crop categories (field, forage, and vegetable). However, this approach likely underestimates acreage compared to USDA Census data, which reports all certified land. Furthermore these data are not crop specific and so USDA data also includes non-seed crop operations (i.e. orchards). 
 
 ```{r fig1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Sample farm size distribution compared to USDA Census data'}
 knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_repf1_usda.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
@@ -197,6 +199,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 
 
 \pagebreak 
+
 # Model checks 
 
 <!---
@@ -237,9 +240,21 @@ stargazer::stargazer(m_list,  type = "latex",
 
 ```
 ---->
+## 4. Correlations of all ability factors (Table S4)
 
+```{r, echo = F}
+tablea5 <- read.csv('tables/cor_table.csv')  
+tablea5[1,3:6] <- ""
+tablea5[2,4:6] <- ""
+tablea5[3,5:6] <- ""
+tablea5[4,6] <- ""
+kbl(tablea5, align = 'c', booktabs = T, caption = 'Correlations among organic seed sourcing ability factors') %>% kable_styling(latex_options = c("scale_down", "hold_position")) #%>% 
+  #column_spec(2:4, width = '4cm')
+```
 
-## 4. Dissagregating allowable and non-allowable factors (Table S4)
+\pagebreak 
+
+## 5. Dissagregating allowable and non-allowable factors (Table S5)
 
 ```{r barrier model, echo = F, results = "asis"}
 m_list <- readRDS('tables/append_models_barriers.rds')
@@ -257,13 +272,7 @@ stargazer::stargazer(m_list,  type = "latex",
 
 ```
 
-## 5. Correlations of all ability factors (Table S5)
 
-```{r, echo = F}
-tablea5 <- read.csv('tables/cor_table.csv') ; 
-kbl(tablea5, align = 'c', booktabs = T, caption = 'Correlations among organic seed sourcing ability factors') #%>% kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
-  #column_spec(2:4, width = '4cm')
-```
 
 <!---
 \pagebreak
