@@ -4,20 +4,19 @@ library(stringr)
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
   filter(Region != "International", maincrop != "Unknown") %>% 
   select(OGseed_percent_maincrop, 
+         barrier_availability,
          barrier_insuffQuantity,
          barrier_lackdesiredTraits,
-         barrier_availability, 
          barrier_seedTreatlack,
+         barrier_price,
+         barrier_buyerReq,
          OG_value,
-         OGVarietiesSuccessn,
-         OGSeedOGIntegrityn,
-         CertifierRequestn,
+         CertifierRequestn, 
+         # CertifierRequestf, 
          maincrop, survey_year, Region, 
-         TotalAcreage, cropcat_n, 
-         YearsCertified,
-         VegiAcreage, FieldAcreage, ForageAcreage,
+         TotalAcreage, cropcat_n,
          noncommercial_seedsource,
-         data_coll_method) %>% 
+         YearsCertified, data_coll_method) %>% 
   na.omit() %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100) %>% 
   mutate(survey_year = case_when(

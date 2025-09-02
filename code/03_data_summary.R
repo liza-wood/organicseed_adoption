@@ -28,9 +28,13 @@ df <- df %>%
          YearsCertified,
          contains("barrier"), 
          noncommercial_seedsource,
-         contains("AddSteps")) 
+         contains("AddSteps"),
+         RespondentID) 
 
-df.full <- select(df, OGseed_percent_maincrop,
+model_ids <- readRDS('data/model_ids.RDS')
+df.full <- df %>% 
+  filter(RespondentID %in% model_ids) %>% 
+  select(OGseed_percent_maincrop,
                   barrier_buyerReq,
                   barrier_price,
                   barrier_insuffQuantity,
@@ -46,7 +50,7 @@ df.full <- select(df, OGseed_percent_maincrop,
                   YearsCertified,
                   VegiAcreage, FieldAcreage, ForageAcreage,
                   noncommercial_seedsource) %>% 
-  na.omit() %>% 
+  #na.omit() %>% 
   mutate(barrier_all = purrr::pmap_dbl(list(barrier_availability,
                                             barrier_insuffQuantity,
                                             barrier_lackdesiredTraits,
@@ -166,6 +170,10 @@ ft %>%
   save_as_docx(path = "tables/table1_variable_construction.docx")
 
 # Appendix correlation table ----
+
+cor(df.full[,c('OGVarietiesSuccessn')], df.full[,c('OGSeedOGIntegrityn')])
+
+
 av_quant <- ltm::cronbach.alpha(df.full[,c('barrier_availability', 'barrier_insuffQuantity')],
                                 na.rm = T)
 av_quant <- round(av_quant$alpha, 2)
@@ -231,6 +239,21 @@ cor_tbl[3,6] <- ""
 
 write.csv(cor_tbl, 'tables/cor_table.csv', row.names = F)
 
+# --- Full descriptives appendix ----
+
+summary(df.full$OGSeedOGIntegrityn)
+sd(df.full$OGSeedOGIntegrityn)
+summary(df.full$OGVarietiesSuccessn)
+sd(df.full$OGVarietiesSuccessn, na.rm = T)
+df.full$barrier_availability_rev
+
+rbind(round(c(summary(df.full$OG_value)[1:6], sd(df.full$OG_value)), 2),
+      round(c(summary(df.full$OGSeedOGIntegrityn)[1:6], sd(df.full$OGSeedOGIntegrityn)), 2),
+      round(c(summary(df.full$OGVarietiesSuccessn)[1:6], sd(df.full$OGVarietiesSuccessn, na.rm = T)), 2),
+      round(c(summary(df.full$barrier_all_rev)[1:6], sd(df.full$barrier_all_rev)), 2),
+      round(c(summary(df.full$barrier_availability_rev)[1:6], sd(df.full$barrier_availability_rev, na.rm = T)), 2))
+
+
 # ---- Text summaries ----
 summary(df.full$OGseed_percent_maincrop)
 table(df.full$CertifierRequestn[df.full$IncreasedOGSeed != "Already at 100%" | df.full$OGseed_percent_maincrop != 100])
@@ -280,6 +303,8 @@ variable_df <- data.frame(
                 "      Price",
                 "      Buyer requirement",
                 "Duty: Values organic seed",
+                "      Integrity",
+                "      Success",
                 "Farm size (acres)",
                 "      Vegetable Crop Acreage",
                 "      Field Crop Acreage",
@@ -305,6 +330,8 @@ variable_df <- data.frame(
     round(mean(df11$barrier_price_rev, na.rm = T), 2),
     round(mean(df11$barrier_buyerReq_rev, na.rm = T), 2),
     round(mean(df11$OG_value, na.rm = T), 2),
+    round(mean(df11$OGSeedOGIntegrityn, na.rm = T), 2),
+    round(mean(df11$OGVarietiesSuccessn, na.rm = T), 2),
     round(mean(df11$TotalAcreage[df11$TotalAcreage != 0], na.rm = T), 0),
     round(mean(df11$VegiAcreage[df11$VegiAcreage != 0], na.rm = T), 0),
     round(mean(df11$FieldAcreage[df11$FieldAcreage != 0], na.rm = T), 0),
@@ -330,6 +357,8 @@ variable_df <- data.frame(
     round(mean(df16$barrier_price_rev, na.rm = T), 2),
     round(mean(df16$barrier_buyerReq_rev, na.rm = T), 2),
     round(mean(df16$OG_value, na.rm = T), 2),
+    round(mean(df16$OGSeedOGIntegrityn, na.rm = T), 2),
+    round(mean(df16$OGVarietiesSuccessn, na.rm = T), 2),
     round(mean(df16$TotalAcreage[df16$TotalAcreage != 0], na.rm = T), 0),
     round(mean(df16$VegiAcreage[df16$VegiAcreage != 0], na.rm = T), 0),
     round(mean(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 0),
@@ -355,6 +384,8 @@ variable_df <- data.frame(
     round(mean(df21$barrier_price_rev, na.rm = T), 2),
     round(mean(df21$barrier_buyerReq_rev, na.rm = T), 2),
     round(mean(df21$OG_value, na.rm = T), 2),
+    round(mean(df21$OGSeedOGIntegrityn, na.rm = T), 2),
+    round(mean(df21$OGVarietiesSuccessn, na.rm = T), 2),
     round(mean(df21$TotalAcreage[df21$TotalAcreage != 0], na.rm = T), 0),
     round(mean(df21$VegiAcreage[df21$VegiAcreage != 0], na.rm = T), 0),
     round(mean(df21$FieldAcreage[df21$FieldAcreage != 0], na.rm = T), 0),
@@ -380,6 +411,8 @@ variable_df <- data.frame(
       round(sd(df11$barrier_price_rev, na.rm = T), 2),
       round(sd(df11$barrier_buyerReq_rev, na.rm = T), 2),
       round(sd(df11$OG_value, na.rm = T), 2),
+      round(sd(df11$OGSeedOGIntegrityn, na.rm = T), 2),
+      round(sd(df11$OGVarietiesSuccessn, na.rm = T), 2),
       round(sd(df11$TotalAcreage[df11$TotalAcreage != 0], na.rm = T), 0),
       round(sd(df11$VegiAcreage[df11$VegiAcreage != 0], na.rm = T), 0),
       round(sd(df11$FieldAcreage[df11$FieldAcreage != 0], na.rm = T), 0),
@@ -401,6 +434,8 @@ variable_df <- data.frame(
     round(sd(df16$barrier_price_rev, na.rm = T), 2),
     round(sd(df16$barrier_buyerReq_rev, na.rm = T), 2),
     round(sd(df16$OG_value, na.rm = T), 2),
+    round(sd(df16$OGSeedOGIntegrityn, na.rm = T), 2),
+    round(sd(df16$OGVarietiesSuccessn, na.rm = T), 2),
     round(sd(df16$TotalAcreage[df16$TotalAcreage != 0], na.rm = T), 0),
     round(sd(df16$VegiAcreage[df16$VegiAcreage != 0], na.rm = T), 0),
     round(sd(df16$FieldAcreage[df16$FieldAcreage != 0], na.rm = T), 0),
@@ -422,6 +457,8 @@ variable_df <- data.frame(
     round(sd(df21$barrier_price_rev, na.rm = T), 2),
     round(sd(df21$barrier_buyerReq_rev, na.rm = T), 2),
     round(sd(df21$OG_value, na.rm = T), 2),
+    round(sd(df21$OGSeedOGIntegrityn, na.rm = T), 2),
+    round(sd(df21$OGVarietiesSuccessn, na.rm = T), 2),
     round(sd(df21$TotalAcreage[df21$TotalAcreage != 0], na.rm = T), 0),
     round(sd(df21$VegiAcreage[df21$VegiAcreage != 0], na.rm = T), 0),
     round(sd(df21$FieldAcreage[df21$FieldAcreage != 0], na.rm = T), 0),

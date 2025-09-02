@@ -49,20 +49,34 @@ df.full <- df %>%
            cropcat_n_s = cropcat_n - 1,
            noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                                 scale = T)),
-           barrier_allowable_rev_s = barrier_allowable_rev-1,
-           barrier_allowable_rev_s2 = c(scale(barrier_allowable_rev, 
+           barrier_allowable_rev_s2 = barrier_allowable_rev-1,
+           barrier_allowable_rev_s = c(scale(barrier_allowable_rev, 
                                                  scale = T)),
-           barrier_nonallowable_rev_s = barrier_nonallowable_rev-1,
-           barrier_nonallowable_rev_s2 = c(scale(barrier_nonallowable_rev, 
+           barrier_nonallowable_rev_s2 = barrier_nonallowable_rev-1,
+           barrier_nonallowable_rev_s = c(scale(barrier_nonallowable_rev, 
                                                  scale = T)),
            barrier_allowable_s = barrier_allowable-1,
            barrier_nonallowable_s = barrier_nonallowable-1,
+           barrier_availability_s = c(scale((5-barrier_availability), scale = T)),
+           barrier_insuffQuantity_s  = c(scale((5-barrier_insuffQuantity), scale = T)),
+           barrier_lackdesiredTraits_s  = c(scale((5-barrier_lackdesiredTraits), scale = T)),
+           barrier_seedTreatlack_s  = c(scale((5-barrier_seedTreatlack), scale = T)),
+           barrier_price_s  = c(scale((5-barrier_price), scale = T)),
+           barrier_buyerReq_s  = c(scale((5-barrier_buyerReq), scale = T)),
            years_certified_s = c(scale(YearsCertified, scale = T)),
            years_certified_log = log((YearsCertified+1))
     )
 
 df.full_rounded <- df.full
-df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
+
+s = 0.5
+n = nrow(df.full)
+x = df.full_rounded$OGseed_percent_maincrop_prop
+rounded = (x*(n-1)+s)/n
+summary(rounded)
+
+df.full_rounded$OGseed_percent_maincrop_prop <- (df.full_rounded$OGseed_percent_maincrop_prop * (n-1) + s)/n
+
 
 cor(df.full$barrier_allowable_rev,
     df.full$barrier_nonallowable_rev)
@@ -71,7 +85,7 @@ cor(df.full$barrier_allowable_rev,
 library(betareg)
 set.seed(19)
 m1 <- betareg(OGseed_percent_maincrop_prop ~ 
-               barrier_allowable_rev_s2 +
+               barrier_allowable_rev_s +
                #barrier_nonallowable_rev_s +
                OG_value_s + 
                CertifierRequestn + 
@@ -86,7 +100,7 @@ m1 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m1)
 
 m2 <- betareg(OGseed_percent_maincrop_prop ~ 
-                #barrier_allowable_rev_s2 +
+                #barrier_allowable_rev_s +
                 barrier_nonallowable_rev_s +
                 OG_value_s + 
                 CertifierRequestn + 
@@ -101,8 +115,8 @@ m2 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m2)
 
 m3 <- betareg(OGseed_percent_maincrop_prop ~ 
-               barrier_allowable_rev_s2 +
-               barrier_nonallowable_rev_s2 +
+               barrier_allowable_rev_s +
+               barrier_nonallowable_rev_s +
                OG_value_s + 
                CertifierRequestn + 
                acreage_log_s + 
@@ -132,10 +146,10 @@ m4 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m4)
 
 m5 <- betareg(OGseed_percent_maincrop_prop ~ 
-               barrier_allowable_rev_s2 +
-               barrier_nonallowable_rev_s2 +
+               barrier_allowable_rev_s +
+               barrier_nonallowable_rev_s +
                OG_value_s + 
-               barrier_allowable_rev_s2*OG_value_s +
+               barrier_allowable_rev_s*OG_value_s +
                #barrier_nonallowable_rev_s*OG_value_s +
                CertifierRequestn + 
                acreage_log_s + 
@@ -149,11 +163,11 @@ m5 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m5)
 
 m6 <- betareg(OGseed_percent_maincrop_prop ~ 
-                   barrier_allowable_rev_s2 +
-                   barrier_nonallowable_rev_s2 +
+                   barrier_allowable_rev_s +
+                   barrier_nonallowable_rev_s +
                    OG_value_s + 
                    #barrier_allowable_rev_s*OG_value_s +
-                   barrier_nonallowable_rev_s2*OG_value_s +
+                   barrier_nonallowable_rev_s*OG_value_s +
                    CertifierRequestn + 
                    acreage_log_s + 
                    cropcat_n_s +
@@ -166,11 +180,11 @@ m6 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m6)
 
 m7 <- betareg(OGseed_percent_maincrop_prop ~ 
-                   barrier_allowable_rev_s2 +
-                   barrier_nonallowable_rev_s2 +
+                   barrier_allowable_rev_s +
+                   barrier_nonallowable_rev_s +
                    OG_value_s + 
-                   barrier_allowable_rev_s2*OG_value_s +
-                   barrier_nonallowable_rev_s2*OG_value_s +
+                   barrier_allowable_rev_s*OG_value_s +
+                   barrier_nonallowable_rev_s*OG_value_s +
                    CertifierRequestn + 
                    acreage_log_s + 
                    cropcat_n_s +
@@ -182,4 +196,147 @@ m7 <- betareg(OGseed_percent_maincrop_prop ~
                  data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(m7)
 
-saveRDS(list(m, m_ix1, m_ix2, m_ix3), 'tables/append_models_barriers.rds')
+saveRDS(list(m3, m5, m6, m7), 'tables/append_models_barriers.rds')
+
+m8 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s +
+                barrier_lackdesiredTraits_s +
+                barrier_insuffQuantity_s +
+                barrier_seedTreatlack_s +
+                barrier_price_s +
+                barrier_buyerReq_s +
+                OG_value_s + 
+                CertifierRequestn + 
+                acreage_log_s + 
+                cropcat_n_s +
+                noncommercial_seedsource_s +
+                years_certified_s + 
+                maincrop +
+                Region +
+                survey_year, 
+              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m8)
+
+
+saveRDS(m8, 'tables/append_models_barriers_disaggregated.rds')
+
+m9 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s +
+                barrier_lackdesiredTraits_s +
+                barrier_insuffQuantity_s +
+                barrier_seedTreatlack_s +
+                barrier_price_s +
+                barrier_buyerReq_s +
+                OG_value_s + 
+                barrier_availability_s*OG_value_s +
+                CertifierRequestn + 
+                acreage_log_s + 
+                cropcat_n_s +
+                noncommercial_seedsource_s +
+                years_certified_s + 
+                maincrop +
+                Region +
+                survey_year, 
+              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m9)
+
+m10 <- betareg(OGseed_percent_maincrop_prop ~ 
+                barrier_availability_s +
+                barrier_lackdesiredTraits_s +
+                barrier_insuffQuantity_s +
+                barrier_seedTreatlack_s +
+                barrier_price_s +
+                barrier_buyerReq_s +
+                OG_value_s + 
+                 barrier_lackdesiredTraits_s*OG_value_s +
+                CertifierRequestn + 
+                acreage_log_s + 
+                cropcat_n_s +
+                noncommercial_seedsource_s +
+                years_certified_s + 
+                maincrop +
+                Region +
+                survey_year, 
+              data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m10)
+
+m11 <- betareg(OGseed_percent_maincrop_prop ~ 
+                 barrier_availability_s +
+                 barrier_lackdesiredTraits_s +
+                 barrier_insuffQuantity_s +
+                 barrier_seedTreatlack_s +
+                 barrier_price_s +
+                 barrier_buyerReq_s +
+                 OG_value_s + 
+                 barrier_insuffQuantity_s*OG_value_s +
+                 CertifierRequestn + 
+                 acreage_log_s + 
+                 cropcat_n_s +
+                 noncommercial_seedsource_s +
+                 years_certified_s + 
+                 maincrop +
+                 Region +
+                 survey_year, 
+               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m11)
+
+m12 <- betareg(OGseed_percent_maincrop_prop ~ 
+                 barrier_availability_s +
+                 barrier_lackdesiredTraits_s +
+                 barrier_insuffQuantity_s +
+                 barrier_seedTreatlack_s +
+                 barrier_price_s +
+                 barrier_buyerReq_s +
+                 OG_value_s + 
+                 barrier_seedTreatlack_s*OG_value_s +
+                 CertifierRequestn + 
+                 acreage_log_s + 
+                 cropcat_n_s +
+                 noncommercial_seedsource_s +
+                 years_certified_s + 
+                 maincrop +
+                 Region +
+                 survey_year, 
+               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m12)
+
+m13 <- betareg(OGseed_percent_maincrop_prop ~ 
+                 barrier_availability_s +
+                 barrier_lackdesiredTraits_s +
+                 barrier_insuffQuantity_s +
+                 barrier_seedTreatlack_s +
+                 barrier_price_s +
+                 barrier_buyerReq_s +
+                 OG_value_s + 
+                 barrier_price_s*OG_value_s +
+                 CertifierRequestn + 
+                 acreage_log_s + 
+                 cropcat_n_s +
+                 noncommercial_seedsource_s +
+                 years_certified_s + 
+                 maincrop +
+                 Region +
+                 survey_year, 
+               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m13) # Only this one...
+
+m14 <- betareg(OGseed_percent_maincrop_prop ~ 
+                 barrier_availability_s +
+                 barrier_lackdesiredTraits_s +
+                 barrier_insuffQuantity_s +
+                 barrier_seedTreatlack_s +
+                 barrier_price_s +
+                 barrier_buyerReq_s +
+                 OG_value_s + 
+                 barrier_buyerReq_s*OG_value_s +
+                 CertifierRequestn + 
+                 acreage_log_s + 
+                 cropcat_n_s +
+                 noncommercial_seedsource_s +
+                 years_certified_s + 
+                 maincrop +
+                 Region +
+                 survey_year, 
+               data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
+summary(m14)
+

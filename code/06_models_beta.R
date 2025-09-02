@@ -22,9 +22,12 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          years_certified_s,
          maincrop,
          Region,
-         survey_year) %>% 
+         survey_year,
+         RespondentID) %>% 
   na.omit()
-# to play with power BI write.csv(df.full, '~/OneDrive - University of Exeter/data/organicseed_adoption/df.csv', row.names = F)
+ids <- df.full$RespondentID
+saveRDS(ids, 'data/model_ids.RDS')
+
 table(df.full$survey_year)
 
 df.full_rounded <- df.full

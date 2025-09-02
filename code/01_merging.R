@@ -5,6 +5,7 @@ library(stringr)
 setwd("~/Documents/Davis/R-Projects/organicseed_adoption/")
 codebook <- read.csv("data/codebook_3panel.csv")
 setwd("~/Dropbox/SOSInteractiveSurvey/")
+# For whatever reason, the cleaned data did not have these barriers...
 df11f <- readRDS("data2011_cleaned.rds") %>% 
   cbind(select(read.csv("2011SurveyData.csv", skip = 2, header = T), 
                NoOGSeedTreat, NoOGSeedProcessor,     

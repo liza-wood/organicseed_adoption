@@ -6,6 +6,7 @@ source('code/functions.R')
 # Model using only certifier data
 df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds")
 
+# I TAKE THIS FUNCTION FROM THE SCALING SCRIPT AND JUST ADD THE SURVEYID AND DATA_COLL_METHOD
 scale_data_app <- function(dat, dv, yr = c('2011', '2016', '2021')){
   dat2 <- dat %>% 
     filter(Region != "International", maincrop != "Unknown", survey_year %in% yr) %>% 
@@ -79,18 +80,26 @@ scale_data_app <- function(dat, dv, yr = c('2011', '2016', '2021')){
            OG_value_s = OG_value - 1,
            noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                                 scale = T)),
-           barrier_all_rev_s = barrier_all_rev-1,
+           barrier_all_rev_s2 = barrier_all_rev-1,
+           barrier_all_rev_s = c(scale(barrier_all_rev, 
+                                       scale = T)),
            years_certified_s = c(scale(YearsCertified, scale = T))
     )
 }
+
 df.full <- scale_data_app(df, OGseed_percent_maincrop)
 # Compare random versus convenience ----
 df.full16_21 <- df.full %>% 
   filter(survey_year %in% c(2016,2021))
 
 df.full_rounded16_21 <- df.full16_21
-df.full_rounded16_21$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded16_21$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded16_21$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded16_21$OGseed_percent_maincrop_prop))
-
+#df.full_rounded$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded$OGseed_percent_maincrop_prop))
+# https://stats.stackexchange.com/questions/31300/dealing-with-0-1-values-in-a-beta-regression
+s = 0.5
+n = nrow(df.full_rounded16_21)
+x = df.full_rounded16_21$OGseed_percent_maincrop_prop
+rounded = (x*(n-1)+s)/n
+df.full_rounded16_21$OGseed_percent_maincrop_prop <- (df.full_rounded16_21$OGseed_percent_maincrop_prop * (n-1) + s)/n
 set.seed(19)
 df.full_rounded16_21$maincrop <- factor(df.full_rounded16_21$maincrop, 
                                         c("Field", "Forage", "Vegetables"))
@@ -145,8 +154,12 @@ df.full11_16 <- df.full11_16 %>%
 table(df.full11_16$distributor, df.full11_16$survey_year)
 
 df.full_rounded11_16 <- df.full11_16
-df.full_rounded11_16$OGseed_percent_maincrop_prop <- ifelse(df.full_rounded11_16$OGseed_percent_maincrop_prop == 1, 0.999, ifelse(df.full_rounded11_16$OGseed_percent_maincrop_prop == 0, 0.001, df.full_rounded11_16$OGseed_percent_maincrop_prop))
-
+s = 0.5
+n = nrow(df.full_rounded11_16)
+x = df.full_rounded11_16$OGseed_percent_maincrop_prop
+rounded = (x*(n-1)+s)/n
+df.full_rounded11_16$OGseed_percent_maincrop_prop <- (df.full_rounded11_16$OGseed_percent_maincrop_prop * (n-1) + s)/n
+set.seed(19)
 df.full_rounded11_16$maincrop <- factor(df.full_rounded11_16$maincrop, 
                                         c("Field", "Forage", "Vegetables"))
 df.full_rounded11_16$Region <- factor(df.full_rounded11_16$Region, 
