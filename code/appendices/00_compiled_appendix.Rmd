@@ -89,6 +89,20 @@ core_vars2 <- c("Ability",
                 "Southern region (vs. North Central)",
                 "Year: 2010 (vs. 2015)",
                 "Year: 2020 (vs. 2015)")
+core_vars3 <- c("Ability",
+                "Duty",
+                "Certifier request",
+                "Farm size (log acres)",
+                "Crop diversity", 
+                "Seed saved or traded (\\%)",
+                "Years certified organic",
+                "Forage crops (vs. Field)",
+                "Vegetable crops (vs. Field)",
+                "Western (vs. N. Cntrl.)",
+                "Northeastern (vs. N. Cntrl.)",
+                "Southern (vs. N. Cntrl.)",
+                "Year: 2010 (vs. 2015)",
+                "Year: 2020 (vs. 2015)")
 ```
 
 \pagebreak 
@@ -157,11 +171,11 @@ kbl(tablea3, booktabs = T, escape = F,
    column_spec(1:5, 
              width = c('1cm','2.2cm','2.2cm','2.7cm', '3.3cm')) %>%
     kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
-  footnote(general = "Italic formatting sigals over-representation and bold formatting signals under-representation")  %>%
+  kableExtra::footnote(general = "Italic formatting sigals over-representation and bold formatting signals under-representation")  %>%
   row_spec(c(4,8), hline_after = TRUE, extra_css = "border-bottom: 1px solid gray;")
 ```
 
-
+<!---
 ```{r, echo = F, eval = F, message = F, warning = F}
 # Doing this with crops, but not including for now 
 tablea3 <- read.csv('tables/append_rept2.csv') 
@@ -194,7 +208,7 @@ kbl(tablea3, booktabs = T, escape = F, align = c(rep('l', 3), rep('c', 6)),
   column_spec(3:9, width = '2.2cm') %>% 
   column_spec(1:8, extra_css = "vertical-align:middle;")
 ```
-
+--->
 
 Next, to understand farm size representativeness, we look at USDA Census organic tabulations, reported for as the [2012](https://agcensus.library.cornell.edu/wp-content/uploads/2012-organictab-1.pdf), [2017](https://www.nass.usda.gov/Publications/AgCensus/2017/Online_Resources/Organics_Tabulation/organictab.pdf), and [2022](https://www.nass.usda.gov/Publications/AgCensus/2022/index.php) census tabulations. 
 
@@ -213,7 +227,7 @@ knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figur
 
 Across the three time periods that data were collected there were some changes to question wording. Here we report full survey question text for each year and explain any necessary transformations. 
 
-**Acreage planted to organic seed**  
+**Acreage planted to organic seed [vegetable crop example]**  
 
 2010:  
 Q3a. How many organic acres in a given season do you have in [annual vegetables and fruits]? Please fill in number. (Open response)
@@ -231,29 +245,17 @@ Q5. How many certified organic acres did you have in [annual vegetable crops] la
 _The following question is conditional on the previous question:_  
 Q4A. Last year, approximately what percentage of your certified organic [annual vegetable crops] were planted with certified organic seed? (Open response)    
 
-Transformations: Categorical values in 2010 were...  
-
 **Duty**  
 
 2010:  
-Q17. In your opinion, to what degree is using organic seed in organic systems important to the integrity of organic food production? (Select one)    
-__ Very important/high priority
-__ Important/medium priority
-__ Not very important/low priority
-__ Not at all important/not a priority  
+Q17. In your opinion, to what degree is using organic seed in organic systems important to the integrity of organic food production? (Select one: (strongly disagree, disagree, neutral, agree, strongly agree))
 
-Q18. In your opinion, are varieties bred for organic system management important to the overall success of organic agriculture? (Select one)    
-__ Very important/high priority
-__ Important/medium priority
-__ Not very important/low priority
-__ Not at all important/not a priority  
+Q18. In your opinion, are varieties bred for organic system management important to the overall success of organic agriculture? (Select one) / (Select one: (strongly disagree, disagree, neutral, agree, strongly agree)) 
 
 2015 / 2020:  
 Q27. / Q30. Please indicate the extent to which you disagree or agree with the following statements. (strongly disagree, disagree, neutral, agree, strongly agree)  
 - Organic seed is important to the integrity of organic food production  
 - Varieties bred for organic production are important to the overall success of organic agriculture  
-
-Transformations: 4-level categories from 2010 were converted into 5, with no neutral category in 2010...  
 
 **Ability**  
 
@@ -266,8 +268,7 @@ Q23. For each reason listed below, how much of a reason was it for you to _not p
 2020:  
 Q29. Over the last three years (2017-2019), how much were each of the following a factor in your decision NOT to purchase organic seed? (not a factor, slight factor, moderate factor, significant factor)  
 
-Transformations: 5-level categories from 2010 were converted into 4, where those with more than moderate became.. ?
-
+Transformation: 5-level categories from 2010 were converted into 4 categories, where those with 'more than moderate' responses in 2010 we joined with the 'significant' grouping to align with the 2015 and 2020 surveys. 
 
 
 \pagebreak 
@@ -277,17 +278,18 @@ The survey question related to _acreage planted to organic seed_, our key depend
 
 The question was intended (and interpreted in the paper) as it was posed in 2020: _Last year, approximately what percentage of your certified organic [vegetable / field / forage] crops were planted with certified organic seed?_. However, previous years omit the specific pointer to **certified organic** crops, and instead ask _Last year, what approximate percentage of total acreage of [vegetable / field / forage] was planted with certified organic seed?_ (2015) or _What approximate percentage of the total acreage of the above crops is planted with certified organic seed?_ (2010). These questions follow / are conditional on the previous question which is specifically about the organic acreage they have under production in a given crop. We expect that respondents will take the cue from the previous question and therefore respond about their organic seed use based only on their organic acreage.
 
-To understand whether this question was interpreted as we expected, we carry out two explorations of the data: 1) Disaggregating results by year, with a focus on 2020 and 2) Identifying split operations with responses across multiple surveys. 
+To understand whether this question was interpreted as we expected, we carry out two explorations of the data: 1) Disaggregating results by year and 2) Identifying split operations with responses across multiple surveys. 
 
 ### Models disaggregated by year 
 
-The survey question related to acreage planted to organic seed is most precise in 2020, and so  we would expect that the 2020 results should represent our overall expectations from the model. And indeed in Table S4 we observe results in 2020 that are consistent with the overall model results, suggesting that the questions are interpreted as we expect. Further, we can include a dummy variable for split operations in the 2020 data. We see that growers from split operations are less likely to plant their organic acreage to organic seed, we importantly observe that that the effects of our key variables of interest do not change. 
+The survey question related to acreage planted to organic seed is most precise in 2020, and so  we would expect that the 2020 results should represent our overall expectations from the model. And indeed in Table S4 we observe results in 2020 that are consistent with the overall model results, suggesting that the questions are interpreted as we expect. Further, we can include a dummy variable for split operations in the 2020 data. We observe that that the effects of our key variables of interest do not change across years. Furthermore, when question wording is least precise in 2015, we would expect that the effect of farm size would change if the question was misinterpreted by split operations. Specifically, we would expect an increase in the effect size of farm size (i.e. a large, negative effect). This is because if split operations (which are on average, almost twice as large as fully organic operations according to our 2020 data) had been interpreting the question about organic seed use to apply to all of their acreage, their reported percentage planted to organic seed would be much lower. However, the effect of farm size in 2015 is similar to other years. 
 
 ### Split operations with multi-year responses
 
 To further explore the consequence of question imprecision on split operations, we tried to find respondents who we knew had split operations (based a survey question only included in the 2020 survey) and who also responded to previous surveys. However, because the surveys were not intended to be identifiable we had only limited methods for tracking repeated respondents (i.e. email addresses provided for follow-up contact, verified by location and crop matches). We found only one identifiable, repeat respondent who is known to have a split operation. We compared their answers between the 2015 and 2020 survey to determine whether they interpreted the questions differently.
 
 In 2020, when asked, _Last year, approximately what percentage of your certified organic [vegetable / field / forage] crops were planted with certified organic seed?_, the respondent replied 100% for both crop types that they planted: field crops and forage crops. In 2015, when asked, _Last year, what approximate percentage of total acreage of [vegetable / field / forage] crop was planted with certified organic seed?_, the respondent also replied 100% for both crop types that they planted: field crops and forage crops. The consistent response across surveys, despite less precise question wording in 2015, suggests that this respondent took cues from the previous questions and understand the acreage in focus to be organic acreage.
+
 <!---
 In 2020, 12% (n = 49) of the respondents have split operations. They have larger farms (average 625 versus 350 acres) and they plant a lower proportion of their acreage to organic seed  (average 56% versus 72%). --->
 
@@ -381,8 +383,8 @@ stargazer::stargazer(m_list,  type = "latex",
                                 "Duty",
                                 "Ability: Allowable x Duty",
                                 "Ability: Non-allowable x Duty",
-                                 core_vars2[3:length(core_vars2)]), 
-           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
+                                 core_vars3[3:length(core_vars3)]), 
+           model.numbers = T, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
            title = "Beta regression model results disaggregating allowable and non-allowable ability factors", 
            table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
@@ -412,140 +414,19 @@ stargazer::stargazer(m_list,  type = "latex",
 
 ```
 
+\pagebreak 
+
+# Observed data 
+
+## 9. Typeology table (Table S8)
+```{r, echo = F, out.width = '80%', fig.pos='H', fig.align = 'center'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/table_typology.jpeg', rel_path = getOption("knitr.graphics.rel_path", FALSE))
+```
+
 <!---
-\pagebreak
-## 6. Mediation analyses  
+## 9. Observed relationship (Figure S2)
 
-To check for mediating effects between values, barriers, and operational attributes, we run three mediation analyses to determine if one variable (a mediator) is transmitting the effect of another variable.  
-
-We first test the potential mediation effect of larger farms on valuing organic seed. In other words, are those who value organic seed more likely to have smaller farms, and might this influence model results? We depict a simplified representation of this mediating effect in Figure S2. 
-
-```{r med1 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Organic seed value and farm size'}
-# We test for mediation, rather than moderation through interaction effects, because we have no theoretical reason to believe that values, barriers, and operational attributes relate in a multiplicative sense.
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_med1.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
-
+```{r, echo = F, out.width = '80%', fig.pos='H', fig.align = 'center', fig.cap = 'Observed data: Organic acreage planted to organic seed by duty and ability levels'}
+knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/figure_ix_observed.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
 ```
-
-
-We run a mediation analysis by comparing results of our full regression model (e.g. results in Table S4) with results of a model that regresses the same variables on the potential mediator: farm size. Results are presented in Table S6. The Total Effect of organic seed value without considering farm size is 0.057, while the average direct effect (ADE), which considers the effect of the mediatior, lowers this effect size to 0.049. This is reflected in the Average Causal Mediation Effect (ACME), which is small (0.008) but significant.
-
-```{r mediation1, echo = F}
-table <- read.csv('tables/append_mediation1.csv')  
-table$p.value <- ifelse(table$p.value == 0, "< 0.001", table$p.value)
-colnames(table) <- c("Effects", "Estimate", "p-value")
-kbl(table, align = 'c', booktabs = T, 
-    caption = 'Mediation analysis of farm size on quantity barrier') %>% kable_styling(latex_options = c("scale_down", "hold_position"))
-  #column_spec(2:4, width = '4cm')
-```
-
-\pagebreak 
-
-Next we address the potential mediation effect of experiencing organic seed quantity barriers on larger farms (Figure S3). In other words, are larger farms be more likely to experience the barrier of limited organic seed quantity, and might this influence model results? 
-```{r med2 diagram, results = "asis", echo = F, out.width = '75%', fig.pos='H', fig.align = 'center', fig.cap = 'Mediation diagram: Farm size and organic seed quantity'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_med2.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
-
-```
-
-Again, we run a mediation analysis by comparing results of our full regression model with results of a model that regresses the same variables on the potential mediator: ability. Results are presented in Table S7, where the ACME is significant, signalling that the quantity barrier is not mediating the effect of farm size. 
-
-```{r mediation2, echo = F}
-table <- read.csv('tables/append_mediation2.csv')  
-table$p.value <- ifelse(table$p.value == 0, "< 0.001", table$p.value)
-colnames(table) <- c("Effects", "Estimate", "p-value")
-kbl(table, align = 'c', booktabs = T, 
-    caption = 'Mediation analysis of farm size on quantity barrier') %>% kable_styling(latex_options = c("scale_down", "hold_position"))
-  #column_spec(2:4, width = '4cm')
-```
-
-\pagebreak 
-
-
-
-\pagebreak
-## 7. Predicted organic seed use (Figures S5 and S6)  
-
-```{r pp f1, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted organic seed use for field crop growers of two farmer profiles.'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_field_pp.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
-```
-
-```{r pp f2, echo = F, out.width = '100%', fig.pos='H', fig.align = 'center', fig.cap = 'Predicted organic seed use for forage crop growers of two farmer profiles.'}
-knitr::include_graphics('~/Documents/Davis/R-Projects/organicseed_adoption/figures/append_forage_pp.png', rel_path = getOption("knitr.graphics.rel_path", FALSE))
-```
-
-\pagebreak
-## 8. Self-reported behavior change
-
-Results from a multinomial regression below (Table S9) are based on the question, _Over the last three years have you increased the percentage of certified organic seed that you use?_ The baseline response is "No." 
-```{r seflreport model, results = "asis", echo = F, eval = F}
-# I don't know why this is bugging so I paste the latex table below
-m_list <- readRDS('tables/append_increase_model.RDS')
-stargazer::stargazer(m_list,  type = "latex", 
-           #dep.var.labels = "\\shortstack{Self-reported increase in organic seed usage compared to baseline:\\\\No: stayed about the same amount or decreased}", 
-           #column.labels = c("Increased the amount", 
-           #                 "Already fully organic"),
-           covariate.labels = c(core_vars2, "Constant"), 
-           model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
-           no.space = TRUE, header = FALSE, 
-           title = "Multinomial regression model results", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
-```
-\begin{table}[!h] \centering 
-  \caption{Multinomial regression model results} 
-  \label{} 
-\begin{tabular}{@{\extracolsep{5pt}}lcc} 
-\\[-1.8ex]\hline 
-\hline \\[-1.8ex] 
-\\[-1.8ex] & \multicolumn{2}{c}{\shortstack{Self-reported increase in organic seed usage compared to baseline:\\\\No: stayed about the same amount or decreased}} \\ 
- & Yes: Increased the \%  & Already at 100\%  \\ 
-\hline \\[-1.8ex] 
- Barrier: Availability & 0.101 & $-$0.547$^{***}$ \\ 
-  & (0.073) & (0.090) \\ 
-  Barrier: Quality & 0.094 & $-$0.318$^{***}$ \\ 
-  & (0.066) & (0.111) \\ 
-  Barrier: Quantity & 0.086 & 0.216$^{**}$ \\ 
-  & (0.065) & (0.099) \\ 
-  Barrier: Form & $-$0.040 & $-$0.051 \\ 
-  & (0.058) & (0.103) \\ 
-  Year: 2010 (vs. 2015) & 1.185$^{***}$ & $-$4.537$^{***}$ \\ 
-  & (0.143) & (1.014) \\ 
-  Year: 2020 (vs. 2015) & $-$0.404$^{***}$ & $-$0.335$^{*}$ \\ 
-  & (0.150) & (0.190) \\ 
-  Values organic seed & 0.316$^{***}$ & 0.424$^{***}$ \\ 
-  & (0.060) & (0.101) \\ 
-  Farm size (log acres) & 0.035 & $-$0.217$^{***}$ \\ 
-  & (0.039) & (0.058) \\ 
-  Crop diversity & $-$0.011 & $-$0.024 \\ 
-  & (0.063) & (0.093) \\ 
-  Certifiers request organic seed use & 0.654$^{***}$ & 0.153 \\ 
-  & (0.118) & (0.177) \\ 
-  Seed saved or traded (\%) & $-$0.150$^{**}$ & 0.050 \\ 
-  & (0.062) & (0.079) \\ 
-  Forage crops (vs. Field) & 0.231 & $-$0.605$^{**}$ \\ 
-  & (0.175) & (0.245) \\ 
-  Vegetable crops (vs. Field) & 0.815$^{***}$ & $-$1.341$^{***}$ \\ 
-  & (0.198) & (0.296) \\ 
-  Western region (vs. North Central) & $-$0.157 & $-$0.186 \\ 
-  & (0.158) & (0.239) \\ 
-  Northeastern region (vs. North Central) & $-$0.104 & $-$0.370 \\ 
-  & (0.173) & (0.249) \\ 
-  Southern region (vs. North Central) & $-$0.220 & 0.285 \\ 
-  & (0.213) & (0.304) \\ 
-  Constant & $-$0.635$^{***}$ & $-$0.214 \\ 
-  & (0.152) & (0.190) \\ 
- \hline \\[-1.8ex] 
- Observations: Baseline (611) & 841 & 265 \\ 
-\hline 
-\hline \\[-1.8ex] 
-\textit{Note:}  & \multicolumn{2}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
-\end{tabular} 
-\end{table} 
-
-
-```{r, echo = F}
-wordcount <- rmdwc::rmdcount('~/Documents/Davis/R-Projects/organicseed_adoption/code/appendices/00_compiled_appendix.Rmd')
-```
-
-
-<!--- Word count: `r wordcount[[3]]-8` --->
-
-
+--->

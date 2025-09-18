@@ -17,27 +17,29 @@ source("code/functions.R")
 us_states_og <- readRDS('data/us_states_og.rds')
 us_states_og$full <- tools::toTitleCase(us_states_og$full)
 
-mako <- viridis::mako(n=9)
+model_ids <- readRDS('data/model_ids.RDS')
 
-setwd("~/Box/osa_networks/data_combined/")
 df11 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2011SurveyData.csv") %>% 
   slice(-c(1:2)) %>% 
+  filter(RespondentID %in% model_ids) %>% 
   select(`In.which.state.do.you.farm...i..Please.fill.in....i.`)
 colnames(df11) <- "State"
 df16 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2016SurveyData.csv") %>% 
   slice(-c(1:2)) %>% 
-  select(`X.1`, `X.8`) 
+  filter(RespondentID %in% model_ids) %>% 
+  select(`X.1`, `X.8`)  
 colnames(df16) <- c("State", "Zip")
-df21 <- read.csv("~/Dropbox/SOSInteractiveSurvey/data2021_cleaned.csv") %>%
-  select(Q04A)
+df21 <- read.csv("~/Dropbox/SOSInteractiveSurvey/data2021_cleaned.csv") %>% 
+  filter(RespID %in% model_ids) %>%
+  select(Q04A) 
 colnames(df21) <- "Zip"
 
 # I made these lists from online databases
-us.latlong <- read.csv("zipcodes/us-zip.csv") %>% 
+us.latlong <- read.csv("~/Box/osa_networks/data_combined/zipcodes/us-zip.csv") %>% 
   mutate(country = "USA") %>% 
   select(-city) %>% 
   rename("State" = state)
-ca.latlong <- read.csv("zipcodes/ca-zip.csv") %>% 
+ca.latlong <- read.csv("~/Box/osa_networks/data_combined/zipcodes/ca-zip.csv") %>% 
   mutate(country = "Canada") %>% 
   select(-city) %>% 
   rename("State" = state)

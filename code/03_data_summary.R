@@ -50,7 +50,8 @@ df.full <- df %>%
                   YearsCertified,
                   VegiAcreage, FieldAcreage, ForageAcreage,
                   noncommercial_seedsource) %>% 
-  #na.omit() %>% 
+  #na.omit() %>% Don't need to do this because I read in model IDs from
+  # the completely cleaned and transformed data to filter
   mutate(barrier_all = purrr::pmap_dbl(list(barrier_availability,
                                             barrier_insuffQuantity,
                                             barrier_lackdesiredTraits,
@@ -89,7 +90,7 @@ df.full <- df %>%
 
 df11 <- filter(df.full, survey_year == 2011)
 df16 <- filter(df.full, survey_year == 2016)
-df21 <- filter(df.full, survey_year == 2021)
+df21 <- filter(df.full, survey_year == 2021) 
 
 
 # Table 1 Construction ----
@@ -499,3 +500,85 @@ round(table(df16$IncreasedOGSeed)[1]/sum(table(df16$IncreasedOGSeed)[1:3]), 2)
 round(table(df21$IncreasedOGSeed)[1]/sum(table(df21$IncreasedOGSeed)[1:3]), 2)
 
 write.csv(variable_df, "~/Documents/Davis/R-Projects/organicseed_adoption/tables/table2.csv", row.names = F)
+
+# Table Appendix: Allocation ----
+
+table(df.full$OG_value)
+prop.table(table(df.full$OG_value))
+prop.table(table(round(df.full$OG_value)))
+summary(df.full$OG_value)
+table(df.full$barrier_all_rev)
+summary(df.full$barrier_all_rev)
+table(df.full$OGseed_percent_maincrop == 100)
+prop.table(table(df.full$OGseed_percent_maincrop == 100))
+
+type_table = df.full %>% 
+  mutate(type = case_when(
+    OG_value <= 3 & barrier_all_rev >= 2 ~ "Low duty, high ability",
+    OG_value > 3 & barrier_all_rev >= 2 ~ "High duty, high ability",
+    OG_value <= 3 & barrier_all_rev < 2 ~ "Low duty, low ability",
+    OG_value > 3 & barrier_all_rev < 2 ~ "High duty, low ability",
+    T ~ NA)) %>% 
+  group_by(type) %>% 
+  summarize(count = n(),
+            acreage_percent = round(mean(OGseed_percent_maincrop))) %>% 
+  ungroup() %>% 
+  mutate(percent_sample = 100*round((count / sum(count)),2))
+type_table
+# Typology ----
+library(grid)
+grid.newpage()
+# I have to use this method of saving because I am blending ggplot and grob objects
+jpeg("figures/table_typology.jpeg", width=5, height=4.2, 
+     unit = 'in', res = 1000)
+grid.lines(x = c(0.2,.9), y = c(.4))
+grid.lines(x = c(.6), y = c(.1,.8))
+grid.lines(x = c(0.3,.9), y = c(.7))
+grid.lines(x = c(0.3,.9), y = c(.1))
+grid.lines(x = c(.3), y = c(.1,.7))
+grid.lines(x = c(.9), y = c(.1,.7))
+
+grid.text("Ability", x = .15, y =.4, rot = 90,
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+grid.text("Low (None) ", x = .25, y =.25, rot = 90,
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+grid.text("High (> None)", x = .25, y =.55, rot = 90,
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+
+grid.text("Duty", x = .6, y =.85, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+grid.text("Low (<= Neutral)", x = .45, y =.75, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+grid.text("High (> Neutral)", x = .75, y =.75, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+
+grid.text(paste0("Operations:\n", type_table$percent_sample[3],
+                 "% (n = ", type_table$count[3], 
+                 ")\nAvg. organic seed use:\n",
+                 type_table$acreage_percent[3],
+                 "%"), x = .45, y =.55, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+grid.text(paste0("Operations:\n", type_table$percent_sample[1],
+                 "% (n = ", type_table$count[1], 
+                 ")\nAvg. organic seed use:\n",
+                 type_table$acreage_percent[1],
+                 "%"), x = .75, y =.55, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+grid.text(paste0("Operations:\n", type_table$percent_sample[4],
+                 "% (n = ", type_table$count[4], 
+                 ")\nAvg. organic seed use:\n",
+                 type_table$acreage_percent[4],
+                 "%"), x = .45, y =.25, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+grid.text(paste0("Operations:\n", type_table$percent_sample[2],
+                 "% (n = ", type_table$count[2], 
+                 ")\nAvg. organic seed use:\n",
+                 type_table$acreage_percent[2],
+                 "%"), x = .75, y =.25, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+
+grid.text("Table S8: Descriptive summaries of observed duty-ability typologies", 
+          just = "left", x = .15, y =.925, 
+          gp = gpar(fontsize = 10, fontfamily="Times"))
+
+dev.off()

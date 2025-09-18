@@ -1,8 +1,9 @@
 library(dplyr)
 library(stringr)
 # 0. Read in data just like for data summary ----
+model_ids <- readRDS('data/model_ids.RDS')
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds") %>% 
-  filter(Region != "International", maincrop != "Unknown") %>% 
+  filter(RespondentID %in% model_ids) %>% 
   select(OGseed_percent_maincrop, 
          barrier_availability,
          barrier_insuffQuantity,
@@ -17,7 +18,6 @@ df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/
          TotalAcreage, cropcat_n,
          noncommercial_seedsource,
          YearsCertified, data_coll_method) %>% 
-  na.omit() %>% 
   mutate(OGseed_percent_maincrop_prop = OGseed_percent_maincrop/100) %>% 
   mutate(survey_year = case_when(
     survey_year == 2011 ~ 2010,

@@ -5,9 +5,9 @@ df <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df.rd
 # Scale data ----
 # Considering acreage as the dependent variable 
 ## Use c() when scaling numbers because it "strips" the dimension (i.e. scaling converts them into some kind of matrix and Stack Overflow told me that c would strip this)
-
+model_ids <- readRDS('data/model_ids.RDS')
 df.full <- df %>% 
-    filter(Region != "International", maincrop != "Unknown") %>% 
+  filter(RespondentID %in% model_ids) %>% 
     select(RespondentID, 
            OGseed_percent_maincrop, 
            barrier_availability,
@@ -37,6 +37,9 @@ df.full <- df %>%
                                       ifelse(barrier_nonallowable == 2, 3,
                                       ifelse(barrier_nonallowable == 3, 2,
                                       ifelse(barrier_nonallowable == 4, 1, NA))))) %>% 
+  # ADDED: If ability of allowable is low, then don't include their nonallowables?
+  #mutate(barrier_nonallowable_rev = ifelse(barrier_allowable_rev %in% 1:2, 3,
+  #                                         barrier_nonallowable_rev )) %>% 
     mutate(Region = factor(Region, levels = c("North Central", "West", 
                                               "Northeast", "South")),
            survey_year = factor(survey_year, c(2016, 2011, 2021))) %>% 
@@ -49,10 +52,10 @@ df.full <- df %>%
            cropcat_n_s = cropcat_n - 1,
            noncommercial_seedsource_s = c(scale(noncommercial_seedsource, 
                                                 scale = T)),
-           barrier_allowable_rev_s2 = barrier_allowable_rev-1,
+           barrier_allowable_rev_minus1 = barrier_allowable_rev-1,
            barrier_allowable_rev_s = c(scale(barrier_allowable_rev, 
                                                  scale = T)),
-           barrier_nonallowable_rev_s2 = barrier_nonallowable_rev-1,
+           barrier_nonallowable_rev_minus1 = barrier_nonallowable_rev-1,
            barrier_nonallowable_rev_s = c(scale(barrier_nonallowable_rev, 
                                                  scale = T)),
            barrier_allowable_s = barrier_allowable-1,
@@ -85,8 +88,7 @@ cor(df.full$barrier_allowable_rev,
 library(betareg)
 set.seed(19)
 m1 <- betareg(OGseed_percent_maincrop_prop ~ 
-               barrier_allowable_rev_s +
-               #barrier_nonallowable_rev_s +
+               barrier_allowable_rev_s + 
                OG_value_s + 
                CertifierRequestn + 
                acreage_log_s + 
@@ -100,7 +102,6 @@ m1 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m1)
 
 m2 <- betareg(OGseed_percent_maincrop_prop ~ 
-                #barrier_allowable_rev_s +
                 barrier_nonallowable_rev_s +
                 OG_value_s + 
                 CertifierRequestn + 
@@ -196,7 +197,7 @@ m7 <- betareg(OGseed_percent_maincrop_prop ~
                  data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(m7)
 
-saveRDS(list(m3, m5, m6, m7), 'tables/append_models_barriers.rds')
+saveRDS(list(m1, m2, m3, m5, m6, m7), 'tables/append_models_barriers.rds')
 
 m8 <- betareg(OGseed_percent_maincrop_prop ~ 
                 barrier_availability_s +

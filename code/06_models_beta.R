@@ -9,12 +9,11 @@ source('code/functions.R')
 
 df.full <- readRDS("~/OneDrive - University of Exeter/data/organicseed_adoption/df_scaled.rds") %>% 
   select(OGseed_percent_maincrop_prop,
+         OG_value,
          OG_value_s,
-         OG_value_s2,
-         #barrier_allowable_rev_s,
+         OG_value_minus1,
          barrier_all_rev_s,
-         barrier_all_rev_s2,
-         #barrier_sum_rev_s,
+         barrier_all_rev_minus1,
          CertifierRequestn,
          noncommercial_seedsource_s,
          acreage_log_s,
@@ -44,9 +43,7 @@ df.full_rounded$OGseed_percent_maincrop_prop <- (df.full_rounded$OGseed_percent_
 # MODEL ----
 set.seed(19)
 m1 <- betareg(OGseed_percent_maincrop_prop ~ 
-               #barrier_allowable_rev_s +
                barrier_all_rev_s +
-               #barrier_sum_rev_s +
                #OG_value_s + 
                CertifierRequestn + 
                acreage_log_s + 
@@ -60,7 +57,6 @@ m1 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m1)
 
 m2 <- betareg(OGseed_percent_maincrop_prop ~ 
-                #barrier_allowable_rev_s +
                 #barrier_all_rev_s +
                 OG_value_s + 
                 CertifierRequestn + 
@@ -75,9 +71,7 @@ m2 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m2)
 
 m3 <- betareg(OGseed_percent_maincrop_prop ~ 
-                #barrier_allowable_rev_s +
                 barrier_all_rev_s +
-                #barrier_sum_rev_s +
                 OG_value_s + 
                 CertifierRequestn + 
                 acreage_log_s + 
@@ -91,12 +85,8 @@ m3 <- betareg(OGseed_percent_maincrop_prop ~
 summary(m3)
 
 m_ix <- betareg(OGseed_percent_maincrop_prop ~ 
-                 #barrier_allowable_rev_s +
                  barrier_all_rev_s +
-                 #barrier_sum_rev_s +
                  OG_value_s + 
-                 #barrier_allowable_rev_s*OG_value_s +
-                 #barrier_sum_rev_s*OG_value_s +
                  barrier_all_rev_s*OG_value_s +
                  CertifierRequestn + 
                  acreage_log_s + 
@@ -178,7 +168,7 @@ m_summ <- summary(m3)
 exp(m_summ$coefficients$mean)-1
 
 m_summ_ix <- summary(m_ix)
-exp(m_summ_ix$coefficients$mean)-1
+round(exp(m_summ_ix$coefficients$mean)-1, 2)
 
 # So, the idea is to exponentiate the coefficient because it is reported as log odds
 # https://stats.stackexchange.com/questions/297659/interpretation-of-betareg-coef
@@ -188,13 +178,11 @@ exp(m_summ_ix$coefficients$mean)-1
 ## Response: "it represents an increase in the ratio of proportion species observed to proportion of species not observed. The odds is just the ratio between positive and negative classes (p/1-p), so rather than saying "odds" you can just describe the ratio explicitly."
 ## "the interpretation would be: one unit increase in temp leads to 5% increase in the ratio of proportion species observed to proportion of species not observed. or simply, one unit increase in temp leads to 5% increase in the ratio of proportion species observed"
 
-# Re-running without scaled for the image and ease
+# Re-running without scaled (using rev-1 so that range starts from 0 rather than 1) for the image and ease
 m_ix <- betareg(OGseed_percent_maincrop_prop ~ 
-                  #barrier_allowable_rev_s +
-                  barrier_all_rev_s2 +
-                  OG_value_s2 + 
-                  #barrier_allowable_rev_s*OG_value_s +
-                  barrier_all_rev_s2*OG_value_s2 +
+                  barrier_all_rev_minus1 +
+                  OG_value_minus1 + 
+                  barrier_all_rev_minus1*OG_value_minus1 +
                   CertifierRequestn + 
                   acreage_log_s + 
                   cropcat_n_s +
@@ -206,41 +194,42 @@ m_ix <- betareg(OGseed_percent_maincrop_prop ~
                 data = df.full_rounded, link = "logit", link.phi = NULL, type = "ML")
 summary(m_ix)
 
-summary(df.full_rounded$barrier_all_rev_s2)
-mean(df.full_rounded$barrier_all_rev_s2)
-sd(df.full_rounded$barrier_all_rev_s2)
-table(df.full_rounded$barrier_all_rev_s2)
+summary(df.full_rounded$barrier_all_rev_minus1)
+mean(df.full_rounded$barrier_all_rev_minus1)
+sd(df.full_rounded$barrier_all_rev_minus1)
+table(df.full_rounded$barrier_all_rev_minus1)
 
-summary(df.full_rounded$OG_value_s2)
-mean(df.full_rounded$OG_value_s2)
-sd(df.full_rounded$OG_value_s2)
-mylist <- list(barrier_all_rev_s2=c(0:3),
-               OG_value_s2=c(2,4))
-em_df <- emmeans::emmip(m_ix, OG_value_s2 ~ barrier_all_rev_s2 ,at=mylist, CIs=TRUE)
+summary(df.full_rounded$OG_value_minus1)
+mean(df.full_rounded$OG_value_minus1)
+sd(df.full_rounded$OG_value_minus1)
+mylist <- list(barrier_all_rev_minus1=c(0:3),
+               OG_value_minus1=c(2,4))
+em_df <- emmeans::emmip(m_ix, OG_value_minus1 ~ barrier_all_rev_minus1 ,at=mylist, CIs=TRUE)
 em_df <- em_df$data
 
 # When barrier is low/ability is high, organic seed value makes a different of 3%
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 2],2)
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 4],2)
-# When duty is low, barrier levels account for 19% difference
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 0 & em_df$OG_value_s2 == 2],2)
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 2],2)
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 2 & em_df$OG_value_minus1 == 2],2)
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 2 & em_df$OG_value_minus1 == 4],2)
+
+# When duty is low, barrier levels account for 20% difference
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 0 & em_df$OG_value_minus1 == 2],2)
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 2 & em_df$OG_value_minus1 == 2],2)
 
 # Already, main effects suggest that when ability is held constant, duty still matter, suggesting there is an overall element of effort
 # The interaction effects suggest more than that -- more dutiful farmers try harder when barriers are high. 
 
-# When barrier is high, organic seed value makes a different of 13% -- the difference between the two more than doubles, suggesting that there is an element
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 0 & em_df$OG_value_s2 == 2],2)
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 0 & em_df$OG_value_s2 == 4],2)
+# When barrier is high, organic seed value makes a different of 14% -- the difference between the two more than doubles, suggesting that there is an element
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 0 & em_df$OG_value_minus1 == 2],2)
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 0 & em_df$OG_value_minus1 == 4],2)
 # When duty is high, barrier levels account for only 9% diference, suggesting the effort to overcome barriers. This may mean switching varieties, trying something new, or looking harder.
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 0 & em_df$OG_value_s2 == 4],2)
-round(em_df$yvar[em_df$barrier_all_rev_s2 == 2 & em_df$OG_value_s2 == 4],2)
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 0 & em_df$OG_value_minus1 == 4],2)
+round(em_df$yvar[em_df$barrier_all_rev_minus1 == 2 & em_df$OG_value_minus1 == 4],2)
 
-ggplot(em_df, aes(x = factor(barrier_all_rev_s2), y = yvar, 
-                  color = factor(OG_value_s2))) +
+ggplot(em_df, aes(x = factor(barrier_all_rev_minus1), y = yvar, 
+                  color = factor(OG_value_minus1))) +
   geom_point() + 
   geom_errorbar(aes(ymin = LCL, ymax = UCL), width = 0.1) +
-  geom_line(aes(group = factor(OG_value_s2))) +
+  geom_line(aes(group = factor(OG_value_minus1))) +
   theme_minimal() +
   scale_x_discrete(labels=c("0" = "None", "1" = "Somewhat",
                               "2" = "Moderate", "3" = "High")) +
@@ -255,249 +244,280 @@ ggplot(em_df, aes(x = factor(barrier_all_rev_s2), y = yvar,
 ggsave('figures/figure_ix.png', width = 4.9, height = 3.7)
 
 # How does this compare to the actual data?
+table(df.full$OG_value)
+round(prop.table(table(df.full$OG_value)), 2)
+
+count_table <- df.full %>% 
+  mutate(OG_value_minus1 = ifelse(OG_value_minus1 <= 2, "<= Neutral", "High")) %>% 
+  group_by(barrier_all_rev_minus1, OG_value_minus1) %>% 
+  count()
+
+sum_tbl <- df.full %>% 
+  mutate(OG_value_minus1 = ifelse(OG_value_minus1 <= 2, "<= Neutral", "High")) %>% 
+  group_by(barrier_all_rev_minus1, OG_value_minus1) %>% 
+  summarize(mean(OGseed_percent_maincrop_prop))
+
 df.full %>% 
-  mutate(OG_value_s = ifelse(OG_value_s <= 2, "Neutral", "High")) %>% 
-  ggplot(aes(x = barrier_allowable_rev_s, 
+  mutate(OG_value_minus1 = ifelse(OG_value_minus1 <= 2, "<= Neutral", "High")) %>% 
+  ggplot(aes(x = barrier_all_rev_minus1, 
                     y = OGseed_percent_maincrop_prop, 
-                  color = OG_value_s)) +
-  geom_point(position = "jitter", alpha = .5) + 
+                  color = factor(OG_value_minus1, c("<= Neutral", "High")))) +
+  geom_boxplot(aes(group = interaction(barrier_all_rev_minus1, OG_value_minus1)), 
+               alpha = .5) +
   #geom_errorbar(aes(ymin = LCL, ymax = UCL), width = 0.1) +
   geom_smooth(method = "lm") +
   theme_minimal() +
-  scale_x_discrete(labels=c("0" = "None", "1" = "Somewhat",
-                            "2" = "Moderate", "3" = "High")) +
-  #scale_color_grey(start = 0, end = 0.7, labels = c("None",
-  #                                                  "High")) +
-  labs(x = "Capability", 
-       color = "Norms", y = "Linear prediction") +
+  #scale_x_discrete(labels=c("0" = "None", "1" = "Somewhat",
+  #                          "2" = "Moderate", "3" = "High")) +
+  scale_x_continuous(breaks = c(0, 1, 2, 3),
+                     labels = c("None", "Somewhat", "Moderate", "High")) +
+  scale_color_manual(values = c( "black", "gray50")) +
+  labs(x = "Ability", 
+       color = "Duty", y = "Acreage planted to organic seed") +
+  annotate("text", x = -.2, y = 1.07, label = count_table$n[1], 
+           size = 3, family = "Times") +
+  annotate("text", x = .2, y = 1.07, label = count_table$n[2], 
+           size = 3, family = "Times", color = "gray50") +
+  annotate("text", x = .8, y = 1.07, label = count_table$n[3], 
+           size = 3, family = "Times") +
+  annotate("text", x = 1.2, y = 1.07, label = count_table$n[4], 
+           size = 3, family = "Times", color = "gray50") +
+  annotate("text", x = 1.8, y = 1.07, label = count_table$n[5], 
+           size = 3, family = "Times") +
+  annotate("text", x = 2.2, y = 1.07, label = count_table$n[6], 
+           size = 3, family = "Times", color = "gray50") +
+  annotate("text", x = 2.8, y = 1.07, label = count_table$n[7], 
+           size = 3, family = "Times") +
+  annotate("text", x = 3.2, y = 1.07, label = count_table$n[8], 
+           size = 3, family = "Times", color = "gray50") +
   theme(legend.position = "bottom",
         text = element_text(family = "Times"),
         axis.title.x = element_text(vjust = -2))
+ggsave('figures/figure_ix_observed.png', width = 5, height = 4)
 
-
-# PREDICTED PROBABILITY NOT USED ----
+# NOT USED: PREDICTED PROBABILITY BY CROP----
 ## Vegetables ----
-focal_crop = "Vegetables"
-dfw11 <- make_pp_df(filter(df.full, Region == "West" &
-                              maincrop == focal_crop & 
-                              survey_year == 2011))
-dfs11 <- make_pp_df(filter(df.full, Region == "South" &
-                   maincrop == focal_crop & 
-                   survey_year == 2011))
-dfnc11 <- make_pp_df(filter(df.full, Region == "North Central" &
-                    maincrop == focal_crop & 
-                    survey_year == 2011))
-dfne11 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                    maincrop == focal_crop & 
-                    survey_year == 2011))
-dfw16 <- make_pp_df(filter(df.full, Region == "West" &
-                          maincrop == focal_crop & 
-                          survey_year == 2016))
-dfs16 <- make_pp_df(filter(df.full, Region == "South" &
-                   maincrop == focal_crop & 
-                   survey_year == 2016))
-dfnc16 <- make_pp_df(filter(df.full, Region == "North Central" &
-                   maincrop == focal_crop & 
-                   survey_year == 2016))
-dfne16 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                    maincrop == focal_crop & 
-                    survey_year == 2016))
-dfw21 <- make_pp_df(filter(df.full, Region == "West" &
-                   maincrop == focal_crop & 
-                   survey_year == 2021))
-dfs21 <- make_pp_df(filter(df.full, Region == "South" &
-                   maincrop == focal_crop & 
-                   survey_year == 2021))
-dfnc21 <- make_pp_df(filter(df.full, Region == "North Central" &
-                    maincrop == focal_crop & 
-                    survey_year == 2021))
-dfne21 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                    maincrop == focal_crop & 
-                    survey_year == 2021))
-
-
-df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
-      dfnc11, dfnc16, dfnc21, dfne11, dfne16, dfne21)
-df_og$OGseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
-df <- select(df_og, colnames(df.full_rounded))
-
-df$mean <- predict(m, newdata = df)
-df$model <- ifelse(df$OG_value_s < 0, "Practical", "Principled")
-plot_predicted_probs(df, .35, .8)
-
-ggsave('figures/figure3.png', width = 7, height = 4)
-
-# Text
-wide11 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2011) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-
-sort(wide11$Principled-wide11$Practical)
-
-wide16 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2016) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-sort(wide16$Principled-wide16$Practical)
-
-wide21 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2021) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-sort(wide21$Principled-wide21$Practical)
-
-## Field ----
-focal_crop = "Field"
-dfw11 <- make_pp_df(filter(df.full, Region == "West" &
-                             maincrop == focal_crop & 
-                             survey_year == 2011))
-dfs11 <- make_pp_df(filter(df.full, Region == "South" &
-                             maincrop == focal_crop & 
-                             survey_year == 2011))
-dfnc11 <- make_pp_df(filter(df.full, Region == "North Central" &
-                              maincrop == focal_crop & 
-                              survey_year == 2011))
-dfne11 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                              maincrop == focal_crop & 
-                              survey_year == 2011))
-dfw16 <- make_pp_df(filter(df.full, Region == "West" &
-                             maincrop == focal_crop & 
-                             survey_year == 2016))
-dfs16 <- make_pp_df(filter(df.full, Region == "South" &
-                             maincrop == focal_crop & 
-                             survey_year == 2016))
-dfnc16 <- make_pp_df(filter(df.full, Region == "North Central" &
-                              maincrop == focal_crop & 
-                              survey_year == 2016))
-dfne16 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                              maincrop == focal_crop & 
-                              survey_year == 2016))
-dfw21 <- make_pp_df(filter(df.full, Region == "West" &
-                             maincrop == focal_crop & 
-                             survey_year == 2021))
-dfs21 <- make_pp_df(filter(df.full, Region == "South" &
-                             maincrop == focal_crop & 
-                             survey_year == 2021))
-dfnc21 <- make_pp_df(filter(df.full, Region == "North Central" &
-                              maincrop == focal_crop & 
-                              survey_year == 2021))
-dfne21 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                              maincrop == focal_crop & 
-                              survey_year == 2021))
-
-
-df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
-               dfnc11, dfnc16, dfnc21, dfne11, dfne16, dfne21)
-df_og$OGseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
-df <- select(df_og, colnames(df.full_rounded))
-
-df$mean <- predict(m, newdata = df)
-df$model <- ifelse(df$OG_value_s < 0, "Practical", "Principled")
-plot_predicted_probs(df, .2, .8)
-ggsave('figures/append_field_pp.png', width = 7, height = 4)
-
-# Text
-wide11 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2011) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-
-wide11$Practical-wide11$Principled
-
-wide16 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2016) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-wide16$Practical-wide16$Principled
-
-wide21 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2021) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-wide21$Practical-wide21$Principled
-
-## Forage ----
-focal_crop = "Forage"
-dfw11 <- make_pp_df(filter(df.full, Region == "West" &
-                             maincrop == focal_crop & 
-                             survey_year == 2011))
-dfs11 <- make_pp_df(filter(df.full, Region == "South" &
-                             maincrop == focal_crop & 
-                             survey_year == 2011))
-dfnc11 <- make_pp_df(filter(df.full, Region == "North Central" &
-                              maincrop == focal_crop & 
-                              survey_year == 2011))
-dfne11 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                              maincrop == focal_crop & 
-                              survey_year == 2011))
-dfw16 <- make_pp_df(filter(df.full, Region == "West" &
-                             maincrop == focal_crop & 
-                             survey_year == 2016))
-dfs16 <- make_pp_df(filter(df.full, Region == "South" &
-                             maincrop == focal_crop & 
-                             survey_year == 2016))
-dfnc16 <- make_pp_df(filter(df.full, Region == "North Central" &
-                              maincrop == focal_crop & 
-                              survey_year == 2016))
-dfne16 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                              maincrop == focal_crop & 
-                              survey_year == 2016))
-dfw21 <- make_pp_df(filter(df.full, Region == "West" &
-                             maincrop == focal_crop & 
-                             survey_year == 2021))
-dfs21 <- make_pp_df(filter(df.full, Region == "South" &
-                             maincrop == focal_crop & 
-                             survey_year == 2021))
-dfnc21 <- make_pp_df(filter(df.full, Region == "North Central" &
-                              maincrop == focal_crop & 
-                              survey_year == 2021))
-dfne21 <- make_pp_df(filter(df.full, Region == "Northeast" &
-                              maincrop == focal_crop & 
-                              survey_year == 2021))
-
-
-df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
-               dfnc11, dfnc16, dfnc21, dfne11, dfne16, dfne21)
-df_og$OGseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
-df <- select(df_og, colnames(df.full_rounded))
-
-df$mean <- predict(m, newdata = df)
-df$model <- ifelse(df$OG_value_s < 0, "Practical", "Principled")
-df$model <- ifelse(df$Region == "South" & df$survey_year == 2016 &
-                     df$OG_value_s > -0.5, "Principled", 
-                   ifelse(df$Region == "South" & df$survey_year == 2021 &
-                            df$OG_value_s < 0.3, "Practical", df$model))
-plot_predicted_probs(df, .2, .8)
-
-ggsave('figures/append_forage_pp.png', width = 7, height = 4)
-
-# Text
-wide11 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2011) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-
-wide11$Practical-wide11$Principled
-
-wide16 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2016) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-wide16$Practical-wide16$Principled
-
-wide21 <- df %>%
-  select(survey_year, Region, model, mean) %>% 
-  filter(survey_year == 2021) %>% 
-  pivot_wider(names_from = model,
-              values_from = mean) 
-wide21$Practical-wide21$Principled
+#focal_crop = "Vegetables"
+#dfw11 <- make_pp_df(filter(df.full, Region == "West" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2011))
+#dfs11 <- make_pp_df(filter(df.full, Region == "South" &
+#                   maincrop == focal_crop & 
+#                   survey_year == 2011))
+#dfnc11 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                    maincrop == focal_crop & 
+#                    survey_year == 2011))
+#dfne11 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                    maincrop == focal_crop & 
+#                    survey_year == 2011))
+#dfw16 <- make_pp_df(filter(df.full, Region == "West" &
+#                          maincrop == focal_crop & 
+#                          survey_year == 2016))
+#dfs16 <- make_pp_df(filter(df.full, Region == "South" &
+#                   maincrop == focal_crop & 
+#                   survey_year == 2016))
+#dfnc16 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                   maincrop == focal_crop & 
+#                   survey_year == 2016))
+#dfne16 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                    maincrop == focal_crop & 
+#                    survey_year == 2016))
+#dfw21 <- make_pp_df(filter(df.full, Region == "West" &
+#                   maincrop == focal_crop & 
+#                   survey_year == 2021))
+#dfs21 <- make_pp_df(filter(df.full, Region == "South" &
+#                   maincrop == focal_crop & 
+#                   survey_year == 2021))
+#dfnc21 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                    maincrop == focal_crop & 
+#                    survey_year == 2021))
+#dfne21 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                    maincrop == focal_crop & 
+#                    survey_year == 2021))
+#
+#
+#df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
+#      dfnc11, dfnc16, dfnc21, dfne11, dfne16, dfne21)
+#df_og$OGseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
+#df <- select(df_og, colnames(df.full_rounded))
+#
+#df$mean <- predict(m, newdata = df)
+#df$model <- ifelse(df$OG_value_s < 0, "Practical", "Principled")
+#plot_predicted_probs(df, .35, .8)
+#
+#ggsave('figures/figure3.png', width = 7, height = 4)
+#
+## Text
+#wide11 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2011) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#
+#sort(wide11$Principled-wide11$Practical)
+#
+#wide16 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2016) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#sort(wide16$Principled-wide16$Practical)
+#
+#wide21 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2021) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#sort(wide21$Principled-wide21$Practical)
+#
+### Field ----
+#focal_crop = "Field"
+#dfw11 <- make_pp_df(filter(df.full, Region == "West" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2011))
+#dfs11 <- make_pp_df(filter(df.full, Region == "South" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2011))
+#dfnc11 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2011))
+#dfne11 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2011))
+#dfw16 <- make_pp_df(filter(df.full, Region == "West" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2016))
+#dfs16 <- make_pp_df(filter(df.full, Region == "South" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2016))
+#dfnc16 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2016))
+#dfne16 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2016))
+#dfw21 <- make_pp_df(filter(df.full, Region == "West" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2021))
+#dfs21 <- make_pp_df(filter(df.full, Region == "South" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2021))
+#dfnc21 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2021))
+#dfne21 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2021))
+#
+#
+#df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
+#               dfnc11, dfnc16, dfnc21, dfne11, dfne16, dfne21)
+#df_og$OGseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
+#df <- select(df_og, colnames(df.full_rounded))
+#
+#df$mean <- predict(m, newdata = df)
+#df$model <- ifelse(df$OG_value_s < 0, "Practical", "Principled")
+#plot_predicted_probs(df, .2, .8)
+#ggsave('figures/append_field_pp.png', width = 7, height = 4)
+#
+## Text
+#wide11 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2011) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#
+#wide11$Practical-wide11$Principled
+#
+#wide16 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2016) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#wide16$Practical-wide16$Principled
+#
+#wide21 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2021) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#wide21$Practical-wide21$Principled
+#
+### Forage ----
+#focal_crop = "Forage"
+#dfw11 <- make_pp_df(filter(df.full, Region == "West" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2011))
+#dfs11 <- make_pp_df(filter(df.full, Region == "South" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2011))
+#dfnc11 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2011))
+#dfne11 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2011))
+#dfw16 <- make_pp_df(filter(df.full, Region == "West" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2016))
+#dfs16 <- make_pp_df(filter(df.full, Region == "South" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2016))
+#dfnc16 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2016))
+#dfne16 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2016))
+#dfw21 <- make_pp_df(filter(df.full, Region == "West" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2021))
+#dfs21 <- make_pp_df(filter(df.full, Region == "South" &
+#                             maincrop == focal_crop & 
+#                             survey_year == 2021))
+#dfnc21 <- make_pp_df(filter(df.full, Region == "North Central" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2021))
+#dfne21 <- make_pp_df(filter(df.full, Region == "Northeast" &
+#                              maincrop == focal_crop & 
+#                              survey_year == 2021))
+#
+#
+#df_og <- rbind(dfw11, dfw16, dfw21, dfs11, dfs16, dfs21,
+#               dfnc11, dfnc16, dfnc21, dfne11, dfne16, dfne21)
+#df_og$OGseed_percent_maincrop_prop <- rep(NA, nrow(df_og))
+#df <- select(df_og, colnames(df.full_rounded))
+#
+#df$mean <- predict(m, newdata = df)
+#df$model <- ifelse(df$OG_value_s < 0, "Practical", "Principled")
+#df$model <- ifelse(df$Region == "South" & df$survey_year == 2016 &
+#                     df$OG_value_s > -0.5, "Principled", 
+#                   ifelse(df$Region == "South" & df$survey_year == 2021 &
+#                            df$OG_value_s < 0.3, "Practical", df$model))
+#plot_predicted_probs(df, .2, .8)
+#
+#ggsave('figures/append_forage_pp.png', width = 7, height = 4)
+#
+## Text
+#wide11 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2011) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#
+#wide11$Practical-wide11$Principled
+#
+#wide16 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2016) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#wide16$Practical-wide16$Principled
+#
+#wide21 <- df %>%
+#  select(survey_year, Region, model, mean) %>% 
+#  filter(survey_year == 2021) %>% 
+#  pivot_wider(names_from = model,
+#              values_from = mean) 
+#wide21$Practical-wide21$Principled
 

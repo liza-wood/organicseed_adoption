@@ -44,14 +44,27 @@ The data used in these analyses are individual-level data based on Organic Seed 
       appendices/
         00_compiled_appendix: brings together results from the scripts in this
            directory to create the appendix. 
-        01_sample_v_usda_census: brings in USDA census data with tidyUSDA to
-           identify N operations and acreage for organic farmers across the US,
-           and compare our sample to that. The main challenge here is that the census
-        only gives total acreages and N operations per state, so we are unable to
-        really identify farm size distribution, only a crude mean. Creates 
-        Appendix Tables A1 and A2. Unused is a more crop-specific look, because
-        only possible for field and vegetable crops. 
-        02_model selection: compares several different model builds to justify
-        model selection. At once point ran through with both INLA estimation and
-        betareg function, settling for betareg
+        01_sampling_method: includes data collection method for descriptive
+           purposes to make Table S1 comparing convenience and random sampling
+        02_data_collection_models: models whether or not data collection method 
+           or distributor (e.g. OSA) affects model results, Table S2 
+        03_sample_v_usda_organic_census: brings in USDA census data with tidyUSDA 
+           to identify N operations for organic farmers across the US regions and 
+           compare our sample to that. (Could also do by crop, but this gets
+           messier). Makes Table S3
+        04_farmsize_representativeness_usda: uses the USDA organic tabulations
+           (not in the API) from usdaoRganic to get information on farm size
+        05_model selection: compares several different model builds to justify
+           model selection, and comparing betareg to INLA. Not using in appendix. 
+        06_models_timeperiod: runs each model by year to think through question
+           wording variation  
+        07_other_barriers: models the barriers disaggregated between allowable/
+           non-allowable, and by each barrier individually 
+        08_mediation_figures: exploring mediation analysis. Not included in 
+           appendix
+        09_mediation: exploring mediation analysis. Not included in appendix  
+        10_certifier_models: adds (when available) the certifying agency of the
+           producer to consider effects. Not included in appendix.
+      review/ - ignored in the git repo  
+        
 ```

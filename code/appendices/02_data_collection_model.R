@@ -108,14 +108,14 @@ df.full_rounded16_21$Region <- factor(df.full_rounded16_21$Region,
 m16_21_datacoll <- betareg(OGseed_percent_maincrop_prop ~ 
                              barrier_all_rev_s +
                              OG_value_s + 
-                             barrier_all_rev_s*OG_value_s + 
-                             CertifierRequestn +
+                             barrier_all_rev_s*OG_value_s +
+                             CertifierRequestn + 
                              acreage_log_s + 
                              cropcat_n_s +
                              noncommercial_seedsource_s +
                              years_certified_s + 
                              maincrop +
-                             Region + 
+                             Region +
                              survey_year +
                              data_coll_method, 
              data = df.full_rounded16_21, link = "logit", link.phi = NULL, type = "ML")
@@ -126,14 +126,14 @@ plot_betareg_models(m16_21_datacoll_df, 1)
 m16_21 <- betareg(OGseed_percent_maincrop_prop ~ 
                     barrier_all_rev_s +
                     OG_value_s + 
-                    barrier_all_rev_s*OG_value_s + 
-                    CertifierRequestn +
+                    barrier_all_rev_s*OG_value_s +
+                    CertifierRequestn + 
                     acreage_log_s + 
                     cropcat_n_s +
                     noncommercial_seedsource_s +
                     years_certified_s + 
                     maincrop +
-                    Region + 
+                    Region +
                     survey_year,
                     data = df.full_rounded16_21, link = "logit", link.phi = NULL, type = "ML")
 summary(m16_21)
@@ -169,14 +169,14 @@ df.full_rounded11_16$distributor <- factor(df.full_rounded11_16$distributor,
 m11_16_dist <- betareg(OGseed_percent_maincrop_prop ~ 
                          barrier_all_rev_s +
                          OG_value_s + 
-                         barrier_all_rev_s*OG_value_s + 
-                         CertifierRequestn +
+                         barrier_all_rev_s*OG_value_s +
+                         CertifierRequestn + 
                          acreage_log_s + 
                          cropcat_n_s +
                          noncommercial_seedsource_s +
                          years_certified_s + 
                          maincrop +
-                         Region + 
+                         Region +
                          survey_year +
                          distributor, 
                         data = df.full_rounded11_16, link = "logit", link.phi = NULL, type = "ML")
@@ -187,14 +187,14 @@ plot_betareg_models(m11_16_dist_df, 1)
 m11_16 <- betareg(OGseed_percent_maincrop_prop ~ 
                     barrier_all_rev_s +
                     OG_value_s + 
-                    barrier_all_rev_s*OG_value_s + 
-                    CertifierRequestn +
+                    barrier_all_rev_s*OG_value_s +
+                    CertifierRequestn + 
                     acreage_log_s + 
                     cropcat_n_s +
                     noncommercial_seedsource_s +
                     years_certified_s + 
                     maincrop +
-                    Region + 
+                    Region +
                     survey_year, 
                data = df.full_rounded11_16, link = "logit", link.phi = NULL, type = "ML")
 summary(m11_16)
