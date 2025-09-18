@@ -38,7 +38,7 @@ The breakdown between random and convenience sampling used in our analysis is su
 ```{r, echo = F}
 tablea1 <- read.csv('tables/append_samplet1.csv') ; 
 tablea1[1,4] <- "0 (0 %)"
-colnames(tablea1) <- c("Year", "Total usable responses", "Convenience sample responses (%)", "Random sample responses (%)")
+colnames(tablea1) <- c("Year", "Total usable responses", "Convenience sample responses", "Random sample responses")
 kbl(tablea1, align = 'c', booktabs = T, caption = 'Convenience and random samples, usable responses') %>% kable_styling(latex_options = c("scale_down", "hold_position")) %>% 
   column_spec(2:4, width = '4cm')
 ```
