@@ -1,3 +1,4 @@
+library(dplyr)
 df11 <- read.csv("~/Dropbox/SOSInteractiveSurvey/2011SurveyData.csv")
 
 df11$Last.year..what.approximate.percentage....of.total.acreage.of..field.crops.was.planted.with.certified.organic.seed...i..Please.fill.in.number....i.
@@ -16,6 +17,7 @@ df11_clean <- readRDS("~/Dropbox/SOSInteractiveSurvey/data2011_cleaned.rds") %>%
                NoOGSeedPrice, NoOGSeedVar , NoOGSeedTrait, SeedInterest,
                AddStepsOther)) 
 table(df11$Please.indicate.the.reasons.you.have.not.purchased.organic.seed.in.the.past...i..Please.indicate.one.response.per.reason.below....i.)
+table(df11_clean$OGSeedOGIntegrity)
 table(df11_clean$NoOGSeedTreat)
 
 

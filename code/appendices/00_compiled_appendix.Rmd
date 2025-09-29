@@ -230,32 +230,34 @@ Across the three time periods that data were collected there were some changes t
 **Acreage planted to organic seed [vegetable crop example]**  
 
 2010:  
-Q3a. How many organic acres in a given season do you have in [annual vegetables and fruits]? Please fill in number. (Open response)
-Q3b. What approximate percentage of the total acreage of the above crops is planted with certified organic seed? Please fill in number. (Open response)  
+Q3a. How many organic acres in a given season do you have in [annual vegetables and fruits]?  
+Q3b. What approximate percentage of the total acreage of the above crops is planted with certified organic seed? 
 
 
 2015:  
 Q3. Last year, did you have any organic acres in annual vegetables? (Y/N)  
 _The following two questions are conditional on the previous question:_   
-Q4. How many organic acres did you have in [annual vegetables] last year? (Open response)  
-Q5. Last year, what approximate percentage of total acreage of [annual vegetables] was planted with certified organic seed? (Open response)   
+Q4. How many organic acres did you have in [annual vegetables] last year?  
+Q5. Last year, what approximate percentage of total acreage of [annual vegetables] was planted with certified organic seed?   
 
 2020:  
-Q5. How many certified organic acres did you have in [annual vegetable crops] last year? (Open response)  
+Q5. How many certified organic acres did you have in [annual vegetable crops] last year?   
 _The following question is conditional on the previous question:_  
-Q4A. Last year, approximately what percentage of your certified organic [annual vegetable crops] were planted with certified organic seed? (Open response)    
+Q5A. Last year, approximately what percentage of your certified organic [annual vegetable crops] were planted with certified organic seed?    
 
 **Duty**  
 
 2010:  
-Q17. In your opinion, to what degree is using organic seed in organic systems important to the integrity of organic food production? (Select one: (strongly disagree, disagree, neutral, agree, strongly agree))
+Q17. In your opinion, to what degree is using organic seed in organic systems important to the integrity of organic food production? (very important/high priority, important/medium priority, not very important/low priority, not at all important/not a priority, uncertain)
 
-Q18. In your opinion, are varieties bred for organic system management important to the overall success of organic agriculture? (Select one) / (Select one: (strongly disagree, disagree, neutral, agree, strongly agree)) 
+Q18. In your opinion, are varieties bred for organic system management important to the overall success of organic agriculture? (very important/high priority, important/medium priority, not very important/low priority, not at all important/not a priority, uncertain)
 
 2015 / 2020:  
 Q27. / Q30. Please indicate the extent to which you disagree or agree with the following statements. (strongly disagree, disagree, neutral, agree, strongly agree)  
 - Organic seed is important to the integrity of organic food production  
 - Varieties bred for organic production are important to the overall success of organic agriculture  
+
+Transformation: The 'uncertain' category from 2010 was re-categorized as 'neutral' to align with the scale from the 2015 and 2020 surveys.  
 
 **Ability**  
 

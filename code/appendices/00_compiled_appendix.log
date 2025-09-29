@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  18 SEP 2025 11:54
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.4.7)  29 SEP 2025 10:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -658,36 +658,36 @@ Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
 _adoption/figures/append_repf1_usda.png  used on input line 339.
 (pdftex.def)             Requested size: 469.75502pt x 587.1923pt.
 [4] [5 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures
-/append_repf1_usda.png>] [6] [7] [8] [9]
-Overfull \hbox (31.24548pt too wide) in paragraph at lines 595--645
+/append_repf1_usda.png>] [6] [7] [8] [9] [10]
+Overfull \hbox (31.24548pt too wide) in paragraph at lines 597--647
  [][] 
  []
 
-[10] [11]
+[11] [12]
 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/table_
-typology.jpeg, id=88, 5018.75pt x 4215.75pt>
+typology.jpeg, id=92, 5018.75pt x 4215.75pt>
 File: /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/t
 able_typology.jpeg Graphic file (type jpg)
 <use /Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ta
 ble_typology.jpeg>
 Package pdftex.def Info: /Users/lizawood/Documents/Davis/R-Projects/organicseed
-_adoption/figures/table_typology.jpeg  used on input line 717.
+_adoption/figures/table_typology.jpeg  used on input line 719.
 (pdftex.def)             Requested size: 375.80544pt x 315.653pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 719.
-[12 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ta
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 721.
+[13 </Users/lizawood/Documents/Davis/R-Projects/organicseed_adoption/figures/ta
 ble_typology.jpeg>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 719.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 721.
 (./00_compiled_appendix.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 719.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 719.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 721.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 721.
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 15014 strings out of 480608
- 221640 string characters out of 5903631
- 555983 words of memory out of 5000000
+ 15015 strings out of 480608
+ 221647 string characters out of 5903631
+ 555986 words of memory out of 5000000
  30494 multiletter control sequences out of 15000+600000
  587298 words of font info for 111 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -705,10 +705,10 @@ ist/fonts/type1/public/lm/lmr17.pfb></usr/local/texlive/2020/texmf-dist/fonts/t
 ype1/public/lm/lmr7.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/
 lm/lmri10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.
 pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/lm/lmsy7.pfb>
-Output written on 00_compiled_appendix.pdf (12 pages, 1424884 bytes).
+Output written on 00_compiled_appendix.pdf (13 pages, 1425338 bytes).
 PDF statistics:
- 189 PDF objects out of 1000 (max. 8388607)
- 160 compressed objects within 2 object streams
- 36 named destinations out of 1000 (max. 500000)
+ 197 PDF objects out of 1000 (max. 8388607)
+ 167 compressed objects within 2 object streams
+ 37 named destinations out of 1000 (max. 500000)
  12419 words of extra memory for PDF output out of 14400 (max. 10000000)
 
