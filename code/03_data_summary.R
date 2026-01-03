@@ -31,10 +31,11 @@ df <- df %>%
          contains("AddSteps"),
          RespondentID) 
 
+# Using only the IDs with full responses that come from the model
 model_ids <- readRDS('data/model_ids.RDS')
 df.full <- df %>% 
   filter(RespondentID %in% model_ids) %>% 
-  select(OGseed_percent_maincrop,
+  select(OGseed_percent_maincrop, IncreasedOGSeed,
                   barrier_buyerReq,
                   barrier_price,
                   barrier_insuffQuantity,
@@ -173,7 +174,6 @@ ft %>%
 # Appendix correlation table ----
 
 cor(df.full[,c('OGVarietiesSuccessn')], df.full[,c('OGSeedOGIntegrityn')])
-
 
 av_quant <- ltm::cronbach.alpha(df.full[,c('barrier_availability', 'barrier_insuffQuantity')],
                                 na.rm = T)

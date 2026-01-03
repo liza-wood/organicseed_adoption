@@ -78,29 +78,8 @@ df$cropcat_n <- (df$growsVeg + df$growsField + df$growsForage)
 table(df$cropcat_n) # 0 = 834, 1 = 1459, 2 = 1027, 3 = 153
 table(is.na(df$cropcat_n)) # No NAs
 
-# One way to think about main crop is to A) assign each producer to a single crop, or B) have repeated observations for each farmer-crop. Here I create the variable for A
-# Last year how many organic acres did you have in [crop]. Please fill in number
 
-# This just does not seem like the best way to do this
-#df <- df %>% 
-  #mutate(maincrop = case_when(
-  #  # Making the distinction below because 2011 did not have cover crops
-  #  survey_year %in% c(2016, 2021) & VegiAcreage/TotalAcreage > .26 ~ "Vegetables",
-  #  survey_year %in% c(2016, 2021) & FieldAcreage/TotalAcreage > .26 ~ "Field",
-  #  survey_year %in% c(2016, 2021) & ForageAcreage/TotalAcreage > .26 ~ "Forage",
-  #  survey_year == 2011 & VegiAcreage/TotalAcreage > .34 ~ "Vegetables",
-  #  survey_year == 2011 & FieldAcreage/TotalAcreage > .34 ~ "Field",
-  #  survey_year == 2011 & ForageAcreage/TotalAcreage > .34 ~ "Forage",
-    # There are some that have no acreage listed but say they grow this thing, so I am choosing in a random order since I cannot discern main;
-  #  growsForage == 1 ~ "Forage",
-  #  growsField == 1 ~ "Field",
-  #  growsVeg == 1 ~ "Vegetables", 
-  #  VegiAcreage == 0 & FieldAcreage == 0 & ForageAcreage == 0 |
-  #    growsVeg == 0 & growsField == 0 & growsForage == 0 ~ "Unknown",
-  #  T ~ "Mix"
-  #)) %>% 
-
-# Try this instead, looking for the maximum and the minimum
+# Looking for the maximum and the minimum
 crops <- c("Vegetables", "Field", "Forage")
 acre_cols <- which(colnames(df) %in% c('VegiAcreage', 'FieldAcreage', 'ForageAcreage'))
 max_acres <- apply(df[,acre_cols], 1, function(x) max(x, na.rm = T))
@@ -332,58 +311,6 @@ table(df$NoOGSeedTreat)
 table(df$barrier_seedTreatlack)
 table(df$barrier_seedTreatlackf)
 df <- select(df, -contains("NoOG"))
-
-# Exploratory factor analysis of barriers ----
-## So far this is not convincing
-mat <- df %>% 
-  filter(!is.na(RespondentID)) %>% 
-  tibble::column_to_rownames("RespondentID") %>% 
-  dplyr::select(barrier_seedTreatlack:barrier_lackdesiredTraits) 
-
-ResponseId <- rownames(mat)
-
-nrow(mat[complete.cases(mat),])
-mat.nona <- mat[complete.cases(mat),]
-
-fa = stats::factanal(mat.nona, 
-                     factors = 3, 
-                     n.obs = nrow(mat.nona), 
-                     rotation="varimax")
-psy::scree.plot(fa$correlation) # looks like 3 or 4
-
-fa = factanal(mat.nona, 
-              factors = 3, 
-              n.obs = length(mat.nona), 
-              rotation="varimax")
-print(fa, digits=2, cutoff=.2, sort=TRUE)
-
-loadings <- as.data.frame(fa$loadings[1:8, 1:3])
-loadings$max <- apply(X=loadings, MARGIN=1, FUN=which.max)
-
-#Factor 1
-f <- loadings %>% filter(max == 1) %>% 
-  row.names() ; f
-#ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) 
-f1 <- mat %>% select(f) %>% 
-  mutate(barrier_f_traits = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_traits)
-
-#Factor 2
-f <- loadings %>% filter(max == 2) %>% 
-  row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .57
-f2 <- mat %>% select(f) %>% 
-  mutate(barrier_f_availability = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_availability)
-
-#Factor 3
-f <- loadings %>% filter(max == 3) %>% 
-  row.names() ; f
-ltm::cronbach.alpha(dplyr::select(mat, f), na.rm = T) # .40
-f3 <- mat %>% select(f) %>% 
-  mutate(barrier_f_misc = rowMeans(., na.rm = T)) %>% 
-  select(barrier_f_misc)
-
 
 saveRDS(df, "~/Box/organicseed_adoption/df.rds")
 saveRDS(df, "~/OneDrive - University of Exeter/data/organicseed_adoption/df.rds")

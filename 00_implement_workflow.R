@@ -7,7 +7,6 @@ sapply(main_analyses, source)
 
 suppl_analyses <- c('code/appendices/01_sampling_method.R',
                     'code/appendices/02_data_collection_model.R',
-                    # Excluding right now because tidyUSDA stopped working
                     #'code/appendices/03_sample_v_usda_organic_census.R',
                     'code/appendices/04_farmsize_representativeness_usda.R',
                     'code/appendices/06_models_timeperiod.R',
