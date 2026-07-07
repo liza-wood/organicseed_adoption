@@ -140,8 +140,13 @@ tablea3 <- tablea3 %>%
   arrange(rev(term)) %>% 
   mutate(term = as.character(term)) %>% 
   rbind(c("Observations:", m1$nobs, m2$nobs, m3$nobs, m_ix$nobs)) %>% 
-  rbind(c("R2", round(m1$pseudo.r.squared,3), round(m2$pseudo.r.squared,3),
+  rbind(c("Pseudo R2", round(m1$pseudo.r.squared,3), round(m2$pseudo.r.squared,3),
           round(m3$pseudo.r.squared,3), round(m_ix$pseudo.r.squared,3))) %>% 
+  rbind(c("Log-likelihood", round(m1$loglik), round(m2$loglik),
+          round(m3$loglik), round(m_ix$loglik))) %>% 
+  rbind(c("BIC", round(BIC(m1)), round(BIC(m2)),
+          round(BIC(m3)), round(BIC(m_ix)))) %>% 
+  
   mutate(Variables = c(rep('Main effects and interaction', 3), rep('Controls', (nrow(.)-3))))
 
 tablea3 %>% 
@@ -241,7 +246,9 @@ ggplot(em_df, aes(x = factor(barrier_all_rev_minus1), y = yvar,
         text = element_text(family = "Times"),
         axis.title.x = element_text(vjust = -2))
   
-ggsave('figures/figure_ix.png', width = 4.9, height = 3.7)
+ggsave('figures/figure_ix.png', width = 3600, height = 3000, 
+       unit = 'px',
+       dpi = 800)
 
 # How does this compare to the actual data?
 table(df.full$OG_value)

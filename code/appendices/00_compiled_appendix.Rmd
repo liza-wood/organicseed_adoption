@@ -127,7 +127,9 @@ stargazer::stargazer(m_list,  type = "latex",
            intercept.bottom = T,
            no.space = TRUE, header = FALSE, 
            title = "Beta regression model results including sampling and distributor effects", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq'))
+           table.placement = "!h", keep.stat = c("n",  'rsq'),
+           add.lines = list(c("BIC", round(sapply(m_list, BIC)))),
+          notes = "R-squared reported is pseudo R-squared")
 ```
 
 
@@ -308,7 +310,10 @@ stargazer::stargazer(list(m_list, m_ix20),  type = "latex",
            model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
            title = "Model results by year", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq'),
+           table.placement = "!h", keep.stat = c("n",  'rsq'), 
+           
+           add.lines = list(c("BIC", round(sapply(m_list, BIC)), round(BIC(m_ix20)))),
+          notes = "R-squared reported is pseudo R-squared",
            order = c(1,2,14,3:13)) 
 
 ```
@@ -389,7 +394,9 @@ stargazer::stargazer(m_list,  type = "latex",
            model.numbers = T, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
            title = "Beta regression model results disaggregating allowable and non-allowable ability factors", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
+           table.placement = "!h", keep.stat = c("n", 'rsq'),
+           add.lines = list(c("BIC", round(sapply(m_list, BIC)))),
+          notes = "R-squared reported is pseudo R-squared") 
 
 ```
 
@@ -412,7 +419,9 @@ stargazer::stargazer(m_list,  type = "latex",
            model.numbers = FALSE, nobs = TRUE, dep.var.caption = "", 
            no.space = TRUE, header = FALSE, 
            title = "Beta regression model results disaggregating all ability factors", 
-           table.placement = "!h", keep.stat = c("n", "ll", 'rsq')) 
+           table.placement = "!h", keep.stat = c("n", 'rsq'),
+           add.lines = list(c("BIC", round(BIC(m_list)))),
+          notes = "R-squared reported is pseudo R-squared") 
 
 ```
 
