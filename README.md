@@ -1,10 +1,9 @@
 
-This repository houses code for the paper: *Compliance in regulatory gray areas: The case of the organic seed standard*  
+Repository for Wood, Zystro, Hubbard and Vantaggiato (2026), "Compliance in regulatory gray areas: The case of the organic seed standard" in _Policy Studies Journal_.
 
 ### File structure:
 ```
-00_implement_workflow: runs the main paper code, appendix sections, and reviewer
-   response supplements
+00_implement_workflow: runs the main paper code and appendix sections
 code/
   00_creating_codebook: looks at the three organic producer survey data sets
      (2011, 2016, 2022), and extracts the column titles and question text from 

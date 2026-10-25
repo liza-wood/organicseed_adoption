@@ -38,6 +38,8 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
+.DS_Store
+
 code/01x_aca_variable_creation.R
 code/keys.R
 code/review
