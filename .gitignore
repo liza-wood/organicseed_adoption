@@ -40,6 +40,6 @@ vignettes/*.pdf
 
 code/01x_aca_variable_creation.R
 code/keys.R
-/code/review
-/code/scraps
+code/review
+code/scraps
 /data
